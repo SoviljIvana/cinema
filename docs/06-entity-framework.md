@@ -314,31 +314,5 @@ using (var context = new BloggingContext())
 https://docs.microsoft.com/en-us/ef/core/saving/
 
 ## CodeFirst
-
-### What is Code-First?
-
-In the Code-First approach, you focus on the domain of your application and start creating classes for your domain entity rather 
-than design your database first and then create the classes which match your database design. The following figure illustrates the code-first approach. 
-
-![picture alt](images/ef-code-first.png)
-
-As you can see in the above figure, EF API will create the database based on your domain classes and configuration. 
-This means you need to start coding first in C# and then EF will create the database from your code.
-
-## DbFirst
-
-### What is Database-First?
-
-Database First approach allows developers to build software applications from their existing databases. 
-You connect to an exisitng database and Visual Studio and EF build a data object model and the complete application for you with very little code. 
-
-![picture alt](images/ef-database-first.png)
-
+## DBFirst
 ## ModelFirst
-
-### What is Model-First?
-
-In the model-first approach, you create entities, relationships, and inheritance hierarchies directly on the visual designer integrated in Visual Studio 
-and then generate entities, the context class, and the database script from your visual model.
-
-![picture alt](images/ef-model-first.png)
