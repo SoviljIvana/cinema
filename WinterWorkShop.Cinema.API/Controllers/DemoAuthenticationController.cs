@@ -20,7 +20,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             _configuration = configuration;
         }
 
-        //no comment
+        //comment
         // NOT FOR PRODUCTION USE!!!
         // you will need a robust auth implementation for production
         // i.e. try IdentityServer4
