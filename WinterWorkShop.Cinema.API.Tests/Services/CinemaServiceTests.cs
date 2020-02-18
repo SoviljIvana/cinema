@@ -24,25 +24,25 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _cinema = new Data.Cinema
             {
                 Id = 1,
-                Name = "ImeFilma",
+                Name = "CinemaName",
                 Auditoriums = new List<Auditorium>()                              
             };
 
             _cinema.Auditoriums.Add(new Auditorium
             {
-                Name = "NazivAuditoriuma",
+                Name = "AuditoriumName",
                 Id = 1,
                 CinemaId = 1,
                 Cinema = new Data.Cinema
                 {
-                    Name = "ImeCinema",
+                    Name = "CinemaName",
                 }
             });
 
             _cinemaDomainModel = new CinemaDomainModel
             {
                 Id = 1,
-                Name = "ImeFilma2"
+                Name = "CinemaName2"
             };
 
             List<Data.Cinema> cinemasModelsList = new List<Data.Cinema>();
