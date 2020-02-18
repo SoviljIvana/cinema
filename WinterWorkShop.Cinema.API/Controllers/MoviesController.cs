@@ -234,6 +234,45 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(movies);
 
         }
+        [HttpPut]
+        [Route("currentstatus/{id}")]
+        public async Task<ActionResult> UpdateMovieCurrentStatus(Guid id, [FromBody]bool currentModel)
+        {
+            MovieDomainModel movieToUpdate;
+
+            movieToUpdate = await _movieService.GetMovieByIdAsync(id);
+
+            if (movieToUpdate == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+ 
+            movieToUpdate.Current = currentModel;
+
+            MovieDomainModel movieDomainModel;
+            try
+            {
+                movieDomainModel = await _movieService.UpdateMovie(movieToUpdate);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Accepted("movies//" + movieDomainModel.Id, movieDomainModel);
+        }
 
     }
 }
