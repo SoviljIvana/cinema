@@ -71,6 +71,24 @@ namespace WinterWorkShop.Cinema.Tests.Services
             Assert.IsInstanceOfType(result[0], typeof(CinemaDomainModel));
         }
 
+        [TestMethod]
+        public void CinemaService_GetAllAsync_ReturnNull()
+        {
+            //Arrange
+            IEnumerable<Data.Cinema> cinemas = null;
+            Task<IEnumerable<Data.Cinema>> responseTask = Task.FromResult(cinemas);
+            
+            _mockCinemasRepository = new Mock<ICinemasRepository>();
+            _mockCinemasRepository.Setup(x => x.GetAll()).Returns(responseTask);
+            CinemaService cinemaService = new CinemaService(_mockCinemasRepository.Object);
+
+            //Act
+            var resultAction = cinemaService.GetAllAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+
+            //Assert
+            Assert.IsNull(resultAction);
+        }
+                                
     }
 }
     
