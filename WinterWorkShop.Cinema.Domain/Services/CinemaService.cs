@@ -48,7 +48,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 Name = newCinema.Name
             };
 
-            var data = _cinemasRepository.Insert(cinemaToCreate);
+            var data =  _cinemasRepository.Insert(cinemaToCreate);
             if (data == null)
             {
                 return null;
@@ -66,13 +66,27 @@ namespace WinterWorkShop.Cinema.Domain.Services
         }
 
 
-
-        public Task<CinemaDomainModel> GetCinemaByIdAsync(Guid id)
+        public async Task<CinemaDomainModel> GetCinemaByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var data = await _cinemasRepository.GetByIdAsync(id);
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            CinemaDomainModel domainModel = new CinemaDomainModel
+            {
+                Id = data.Id,
+                Name = data.Name
+
+            };
+
+            return domainModel;
         }
 
-      
+ 
+
 
         public Task<CinemaDomainModel> UpdateCinema(CinemaDomainModel updateMovie)
         {
