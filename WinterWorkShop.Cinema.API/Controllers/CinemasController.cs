@@ -58,11 +58,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 Name = cinemaModel.Name
             };
 
-            CinemaDomainModel createCinema;
+            CreateCinemaResultModel createCinemaResultModel;
 
             try
             {
-                createCinema = await _cinemaService.AddCinema(domainModel);
+                createCinemaResultModel = await _cinemaService.AddCinema(domainModel);
             }
             catch (DbUpdateException e)
             {
@@ -73,7 +73,18 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 };
                 return BadRequest(errorResponse);
             }
-            return Created("cinema//" + createCinema.Id, createCinema);
+            if (!createCinemaResultModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = createCinemaResultModel.ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Created("auditoriums//" + createCinemaResultModel.Cinema.Id, createCinemaResultModel);
         }
 
         //Gets cinema by id
