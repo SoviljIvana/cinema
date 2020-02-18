@@ -16,13 +16,12 @@ using WinterWorkShop.Cinema.Repositories;
 
 namespace WinterWorkShop.Cinema.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieService _movieService;
-
         private readonly ILogger<MoviesController> _logger;
 
         public MoviesController(ILogger<MoviesController> logger, IMovieService movieService)
@@ -220,5 +219,21 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Accepted("movies//" + deletedMovie.Id, deletedMovie);
         }
+
+        [HttpGet]
+        [Route("top")]
+        public async Task<ActionResult<IEnumerable<MovieDomainModel>>> GetTopList() 
+        {
+           var movies = await _movieService.GetTopTenMovies(); 
+
+            if (movies == null)
+            {
+                movies = new List<MovieDomainModel>();
+            }
+
+            return Ok(movies);
+
+        }
+
     }
 }

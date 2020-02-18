@@ -12,6 +12,7 @@ namespace WinterWorkShop.Cinema.Repositories
     public interface IMoviesRepository : IRepository<Movie> 
     {
         IEnumerable<Movie> GetCurrentMovies();
+        Task<IEnumerable<Movie>> GetTopTenMovies();
     }
 
     public class MoviesRepository : IMoviesRepository
@@ -76,5 +77,15 @@ namespace WinterWorkShop.Cinema.Repositories
 
             return updatedEntry;
         }
+
+        public async Task<IEnumerable<Movie>> GetTopTenMovies() 
+        {
+            var data = await _cinemaContext.Movies.ToListAsync();
+            var sortedData = data.OrderByDescending(x => x.Rating).ToList();
+            var result = sortedData.Take(10).ToList();
+
+            return result; 
+        }
+
     }
 }
