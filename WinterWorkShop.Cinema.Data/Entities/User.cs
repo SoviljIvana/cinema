@@ -19,5 +19,6 @@ namespace WinterWorkShop.Cinema.Data
 
         [Column("isAdmin")]
         public bool IsAdmin { get; set; }
+
     }
 }
