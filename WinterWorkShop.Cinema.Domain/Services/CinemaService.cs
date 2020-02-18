@@ -65,7 +65,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
         }
 
 
-        public async Task<CinemaDomainModel> GetCinemaByIdAsync(Guid id)
+        public async Task<CinemaDomainModel> GetCinemaByIdAsync(int id)
         {
             var data = await _cinemasRepository.GetByIdAsync(id);
 
@@ -112,7 +112,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return domainModel;
         }
 
-        public async Task<CinemaDomainModel> DeleteCinema(Guid id)
+        public async Task<CinemaDomainModel> DeleteCinema(int id)
         {
             var data = _cinemasRepository.Delete(id);
 
