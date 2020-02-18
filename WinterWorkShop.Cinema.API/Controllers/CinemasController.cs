@@ -74,7 +74,23 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 return BadRequest(errorResponse);
             }
             return Created("cinema//" + createCinema.Id, createCinema);
+        }
 
+        //Gets cinema by id
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<CinemaDomainModel>> GetAsync(int id)
+        {
+            CinemaDomainModel cinema;
+
+            cinema = await _cinemaService.GetCinemaByIdAsync(id);
+
+            if (cinema == null)
+            {
+                return NotFound(Messages.MOVIE_DOES_NOT_EXIST);
+            }
+
+            return Ok(cinema);
         }
     }
 }
