@@ -23,6 +23,11 @@
 
         #region Cinemas
         public const string CINEMA_GET_ALL_CINEMAS_ERROR = "Error occured while getting all cinemas, please try again";
+        public const string CINEMA_DOES_NOT_EXIST = "Cinema does not exist.";
+        public const string CINEMA_PROPERTIE_NAME_NOT_VALID = "The cinema name cannot be longer than 255 characters.";
+        public const string CINEMA_CREATION_ERROR = "Error occured while creating new cinema, please try again.";
+        public const string CINEMA_GET_BY_ID = "Error occured while getting cinema by Id, please try again.";
+
         #endregion
 
         #region Movies        
