@@ -9,5 +9,13 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
     public interface ICinemaService
     {
         Task<IEnumerable<CinemaDomainModel>> GetAllAsync();
+
+        Task<CinemaDomainModel> GetCinemaByIdAsync(Guid id);
+
+        Task<CinemaDomainModel> AddCinema(CinemaDomainModel newMovie);
+
+        Task<CinemaDomainModel> UpdateCinema(CinemaDomainModel updateMovie);
+
+        Task<CinemaDomainModel> DeleteCinema(Guid id);
     }
 }
