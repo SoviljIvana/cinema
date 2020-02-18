@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WinterWorkShop.Cinema.Domain.Common;
 using WinterWorkShop.Cinema.Domain.Interfaces;
 using WinterWorkShop.Cinema.Domain.Models;
 using WinterWorkShop.Cinema.Repositories;
@@ -40,7 +41,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        public async Task<CinemaDomainModel> AddCinema(CinemaDomainModel newCinema)
+        public async Task<CreateCinemaResultModel> AddCinema(CinemaDomainModel newCinema)
         {
             Data.Cinema cinemaToCreate = new Data.Cinema()
             {
@@ -50,18 +51,28 @@ namespace WinterWorkShop.Cinema.Domain.Services
             var data = _cinemasRepository.Insert(cinemaToCreate);
             if (data == null)
             {
-                return null;
+                return new CreateCinemaResultModel
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = Messages.CINEMA_CREATION_ERROR
+                };
             }
 
             _cinemasRepository.Save();
 
-            CinemaDomainModel domainModel = new CinemaDomainModel()
+            CreateCinemaResultModel createCinemaResultModel = new CreateCinemaResultModel()
             {
-                Id = data.Id,
-                Name = data.Name
+                Cinema = new CinemaDomainModel 
+                {
+                    Id = data.Id,
+                    Name = data.Name
+                },
+                IsSuccessful = true,
+                ErrorMessage = null
+
             };
 
-            return domainModel;
+            return createCinemaResultModel;
         }
 
 
