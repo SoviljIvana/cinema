@@ -18,14 +18,6 @@ namespace WinterWorkShop.Cinema.Data
 
         public bool Current { get; set; }
 
-        public string Actor { get; set; }
-
-        public string Country { get; set; }
-
-        public string Genre { get; set; }
-
-        public string StageManager { get; set; }
-
         public virtual ICollection<Projection> Projections { get; set; }
 
 
