@@ -19,5 +19,7 @@ namespace WinterWorkShop.Cinema.Data
         public bool Current { get; set; }
 
         public virtual ICollection<Projection> Projections { get; set; }
+
+
     }
 }
