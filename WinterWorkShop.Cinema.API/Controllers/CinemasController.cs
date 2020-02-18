@@ -92,5 +92,96 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Ok(cinema);
         }
+
+        /// <summary>
+        /// Delete a cinema by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            CinemaDomainModel deletedCinema;
+            try
+            {
+                deletedCinema = await _cinemaService.DeleteCinema(id);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            if (deletedCinema == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.CINEMA_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+
+            return Accepted("cinemas//" + deletedCinema.Id, deletedCinema);
+        }
+
+        /// <summary>
+        /// Updates a cinema
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cinemaModel"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody]CreateCinemaModel cinemaModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            CinemaDomainModel cinemaToUpdate;
+
+            cinemaToUpdate = await _cinemaService.GetCinemaByIdAsync(id);
+
+            if (cinemaToUpdate == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            cinemaToUpdate.Name = cinemaModel.Name;
+
+            CinemaDomainModel cinemaDomainModel;
+            try
+            {
+                cinemaDomainModel = await _cinemaService.UpdateCinema(cinemaToUpdate);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Accepted("movies//" + cinemaDomainModel.Id, cinemaDomainModel);
+
+        }
     }
 }
