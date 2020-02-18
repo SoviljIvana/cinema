@@ -87,7 +87,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             if (cinema == null)
             {
-                return NotFound(Messages.MOVIE_DOES_NOT_EXIST);
+                return NotFound(Messages.CINEMA_DOES_NOT_EXIST);
             }
 
             return Ok(cinema);
