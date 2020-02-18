@@ -9,8 +9,6 @@ namespace WinterWorkShop.Cinema.API.Models
     public class CreateCinemaModel
     {
         [Required]
-        public int Id { get; set; }
-        [Required]
         public string Name{ get; set; }
     }
 }

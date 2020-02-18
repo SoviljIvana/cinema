@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -40,8 +41,40 @@ namespace WinterWorkShop.Cinema.API.Controllers
             {
                 cinemaDomainModels = new List<CinemaDomainModel>();
             }
-
             return Ok(cinemaDomainModels);
+        }
+
+        //Add a new cinema
+        [HttpPost]
+        [Route("create")]
+        public async Task<ActionResult> Post([FromBody]CreateCinemaModel cinemaModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            CinemaDomainModel domainModel = new CinemaDomainModel
+            {
+                Name = cinemaModel.Name
+            };
+
+            CinemaDomainModel createCinema;
+
+            try
+            {
+                createCinema = await _cinemaService.AddCinema(domainModel);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return BadRequest(errorResponse);
+            }
+            return Created("cinema//" + createCinema.Id, createCinema);
+
         }
     }
 }
