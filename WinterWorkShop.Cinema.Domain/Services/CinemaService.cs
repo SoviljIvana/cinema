@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using WinterWorkShop.Cinema.Domain.Interfaces;
 using WinterWorkShop.Cinema.Domain.Models;
@@ -41,14 +40,14 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-       public async Task<CinemaDomainModel> AddCinema(CinemaDomainModel newCinema)
+        public async Task<CinemaDomainModel> AddCinema(CinemaDomainModel newCinema)
         {
             Data.Cinema cinemaToCreate = new Data.Cinema()
             {
                 Name = newCinema.Name
             };
 
-            var data =  _cinemasRepository.Insert(cinemaToCreate);
+            var data = _cinemasRepository.Insert(cinemaToCreate);
             if (data == null)
             {
                 return null;
@@ -85,18 +84,52 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return domainModel;
         }
 
- 
 
-
-        public Task<CinemaDomainModel> UpdateCinema(CinemaDomainModel updateMovie)
+        public async Task<CinemaDomainModel> UpdateCinema(CinemaDomainModel updateCinema)
         {
-            throw new NotImplementedException();
+
+            Data.Cinema cinema = new Data.Cinema()
+            {
+                Id = updateCinema.Id,
+                Name = updateCinema.Name
+
+            };
+
+            var data = _cinemasRepository.Update(cinema);
+
+            if (data == null)
+            {
+                return null;
+            }
+            _cinemasRepository.Save();
+
+            CinemaDomainModel domainModel = new CinemaDomainModel()
+            {
+                Id = data.Id,
+                Name = data.Name
+            };
+
+            return domainModel;
         }
 
-        public Task<CinemaDomainModel> DeleteCinema(Guid id)
+        public async Task<CinemaDomainModel> DeleteCinema(Guid id)
         {
-            throw new NotImplementedException();
+            var data = _cinemasRepository.Delete(id);
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            _cinemasRepository.Save();
+
+            CinemaDomainModel domainModel = new CinemaDomainModel
+            {
+                Name = data.Name,
+                Id = data.Id
+            };
+
+            return domainModel;
         }
     }
-
 }
