@@ -155,7 +155,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
-                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    ErrorMessage = Messages.CINEMA_DOES_NOT_EXIST,
                     StatusCode = System.Net.HttpStatusCode.BadRequest
                 };
 
@@ -180,7 +180,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 return BadRequest(errorResponse);
             }
 
-            return Accepted("movies//" + cinemaDomainModel.Id, cinemaDomainModel);
+            return Accepted("cinemas//" + cinemaDomainModel.Id, cinemaDomainModel);
 
         }
     }
