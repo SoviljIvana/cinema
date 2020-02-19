@@ -44,9 +44,13 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(cinemaDomainModels);
         }
 
-        //Add a new cinema
+        /// <summary>
+        /// Adds a new movie
+        /// </summary>
+        /// <param name="cinemaModel"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
         [HttpPost]
-        [Route("create")]
         public async Task<ActionResult> Post([FromBody]CreateCinemaModel cinemaModel)
         {
             if (!ModelState.IsValid)
