@@ -52,7 +52,6 @@ class NewCinema extends React.Component {
   }
 
   addCinema() {
- 
     const {name} = this.state;
     const data = {
       Name: name

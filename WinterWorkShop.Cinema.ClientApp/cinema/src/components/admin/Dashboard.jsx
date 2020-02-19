@@ -9,6 +9,7 @@ import NewMovie from './MovieActions/NewMovie';
 import EditMovie from './MovieActions/EditMovie';
 import ShowAllMovies from './MovieActions/ShowAllMovies';
 import NewCinema from './CinemaActions/NewCinema';
+import EditCinema from './CinemaActions/EditCinema';
 import ShowAllCinemas from './CinemaActions/ShowAllCinemas';
 import NewAuditorium from './AuditoriumActions/NewAuditorium';
 import ShowAllAuditoriums from './AuditoriumActions/ShowAllAuditoriums';
@@ -67,6 +68,7 @@ class Dashboard extends Component {
                         <PrivateRouteAdmin path="/dashboard/AllMovies" component={ShowAllMovies} />
                         <PrivateRouteAdmin path="/dashboard/EditMovie/:id" component={EditMovie} />
                         <PrivateRouteAdmin path="/dashboard/NewCinema" component={NewCinema} />
+                        <PrivateRouteAdmin path="/dashboard/EditCinema/:id" component={EditCinema} />
                         <PrivateRouteAdmin path="/dashboard/AllCinemas" component={ShowAllCinemas} />
                         <PrivateRouteAdmin path="/dashboard/NewAuditorium" component={NewAuditorium} />
                         <PrivateRouteAdmin path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
