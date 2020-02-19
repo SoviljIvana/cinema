@@ -13,7 +13,7 @@ namespace WinterWorkShop.Cinema.Repositories
     {
         IEnumerable<Movie> GetCurrentMovies();
         Task<IEnumerable<Movie>> GetTopTenMovies();
-    }
+        }
 
     public class MoviesRepository : IMoviesRepository
     {

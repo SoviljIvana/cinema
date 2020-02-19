@@ -39,6 +39,9 @@
         public const string MOVIE_GET_ALL_CURRENT_MOVIES_ERROR = "Error occured while getting current movies, please try again.";
         public const string MOVIE_GET_BY_ID = "Error occured while getting movie by Id, please try again.";
         public const string MOVIE_GET_ALL_MOVIES_ERROR = "Error occured while getting all movies, please try again.";
+        public const string MOVIE_CURRENT_UPDATE_ERROR = "Error occured while updating current movie status, please try again.";
+
+        public const string BREAKPOINT = "It breaks here";
         #endregion
 
         #region Projections

@@ -24,6 +24,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         private readonly IMovieService _movieService;
         private readonly ILogger<MoviesController> _logger;
 
+
         public MoviesController(ILogger<MoviesController> logger, IMovieService movieService)
         {
             _logger = logger;
@@ -236,8 +237,9 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
         [HttpPut]
         [Route("currentstatus/{id}")]
-        public async Task<ActionResult> UpdateMovieCurrentStatus(Guid id, [FromBody]bool currentModel)
+        public async Task<ActionResult> UpdateMovieCurrentStatus(Guid id, CreateUpdateCurrentStatusModel movieModel)
         {
+
             MovieDomainModel movieToUpdate;
 
             movieToUpdate = await _movieService.GetMovieByIdAsync(id);
@@ -252,13 +254,14 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return BadRequest(errorResponse);
             }
- 
-            movieToUpdate.Current = currentModel;
 
-            MovieDomainModel movieDomainModel;
+
+            movieToUpdate.Current = movieModel.Current;
+
+            CreateMovieResultModel createMovieResultModel;
             try
             {
-                movieDomainModel = await _movieService.UpdateMovie(movieToUpdate);
+                createMovieResultModel = await _movieService.UpdateMovieStatus(movieToUpdate);
             }
             catch (DbUpdateException e)
             {
@@ -271,7 +274,18 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 return BadRequest(errorResponse);
             }
 
-            return Accepted("movies//" + movieDomainModel.Id, movieDomainModel);
+            if (!createMovieResultModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = createMovieResultModel.ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Accepted("movies//" + createMovieResultModel.Movie.Id, createMovieResultModel.Movie);
         }
 
     }
