@@ -75,7 +75,6 @@ class Dashboard extends Component {
                     </Switch>
                 </Col>
             </Row>
-            
         );
       }
 }

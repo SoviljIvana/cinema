@@ -24,6 +24,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         private readonly IMovieService _movieService;
         private readonly ILogger<MoviesController> _logger;
 
+
         public MoviesController(ILogger<MoviesController> logger, IMovieService movieService)
         {
             _logger = logger;
@@ -233,6 +234,58 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Ok(movies);
 
+        }
+        [HttpPut]
+        [Route("currentstatus/{id}")]
+        public async Task<ActionResult> UpdateMovieCurrentStatus(Guid id, CreateUpdateCurrentStatusModel movieModel)
+        {
+
+            MovieDomainModel movieToUpdate;
+
+            movieToUpdate = await _movieService.GetMovieByIdAsync(id);
+
+            if (movieToUpdate == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+
+            movieToUpdate.Current = movieModel.Current;
+
+            CreateMovieResultModel createMovieResultModel;
+            try
+            {
+                createMovieResultModel = await _movieService.UpdateMovieStatus(movieToUpdate);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            if (!createMovieResultModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = createMovieResultModel.ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Accepted("movies//" + createMovieResultModel.Movie.Id, createMovieResultModel.Movie);
         }
 
     }
