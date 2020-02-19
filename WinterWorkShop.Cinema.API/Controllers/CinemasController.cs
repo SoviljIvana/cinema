@@ -109,10 +109,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
-        /// Delete a cinema by id
+        /// Delete a movie by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize(Roles = "admin")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult> Delete(int id)
@@ -148,11 +149,12 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
-        /// Updates a cinema
+        /// Updates a movie
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="cinemaModel"></param>
+        /// <param name="movieModel"></param>
         /// <returns></returns>
+        [Authorize(Roles = "admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody]CreateCinemaModel cinemaModel)
