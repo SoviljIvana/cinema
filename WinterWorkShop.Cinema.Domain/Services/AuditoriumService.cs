@@ -93,6 +93,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
 
             Auditorium insertedAuditorium = _auditoriumsRepository.Insert(newAuditorium);
+
             if (insertedAuditorium == null)
             {
                 return new CreateAuditoriumResultModel
@@ -101,7 +102,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     ErrorMessage = Messages.AUDITORIUM_CREATION_ERROR
                 };
             }
-
+            _auditoriumsRepository.Save();
             CreateAuditoriumResultModel resultModel = new CreateAuditoriumResultModel
             {
                 IsSuccessful = true,
@@ -127,6 +128,71 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
 
             return resultModel;
+        }
+
+        public async Task<AuditoriumDomainModel> GetAuditoriumByIdAsync(int id)
+        {
+            var data = await _auditoriumsRepository.GetByIdAsync(id);
+
+            if (data == null)
+            {
+                return null;
+            }
+            AuditoriumDomainModel domainModel = new AuditoriumDomainModel
+            {
+                Id = data.Id,
+                Name = data.Name
+
+            };
+            return domainModel;
+        }
+
+        public async Task<AuditoriumDomainModel> DeleteAuditorium(int id)
+        {
+            var data = _auditoriumsRepository.Delete(id);
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            _auditoriumsRepository.Save();
+
+            AuditoriumDomainModel domainModel = new AuditoriumDomainModel
+            {
+                Name = data.Name,
+                Id = data.Id
+            };
+
+            return domainModel;
+        }
+
+        public async Task<AuditoriumDomainModel> UpdateAuditorium(AuditoriumDomainModel auditoriumToUpdate)
+        {
+
+            Auditorium auditorium = new Auditorium()
+            {
+                Id = auditoriumToUpdate.Id,
+                Name = auditoriumToUpdate.Name
+
+            };
+
+            var data = _auditoriumsRepository.Update(auditorium);
+
+            if (data == null)
+            {
+                return null;
+            }
+            _auditoriumsRepository.Save();
+
+            AuditoriumDomainModel domainModel = new AuditoriumDomainModel()
+            {
+                Id = data.Id,
+                Name = data.Name
+            };
+
+            return domainModel;
+
         }
     }
 }
