@@ -53,7 +53,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<AuditoriumDomainModel>> PostAsync(CreateAuditoriumModel createAuditoriumModel) 
+        public async Task<ActionResult<AuditoriumDomainModel>> PostAsync(CreateAuditoriumModel createAuditoriumModel)
         {
             if (!ModelState.IsValid)
             {
@@ -68,7 +68,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             CreateAuditoriumResultModel createAuditoriumResultModel;
 
-            try 
+            try
             {
                 createAuditoriumResultModel = await _auditoriumService.CreateAuditorium(auditoriumDomainModel, createAuditoriumModel.numberOfSeats, createAuditoriumModel.seatRows);
             }
@@ -93,8 +93,32 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return BadRequest(errorResponse);
             }
-            
+
             return Created("auditoriums//" + createAuditoriumResultModel.Auditorium.Id, createAuditoriumResultModel);
         }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<AuditoriumDomainModel>> GetAsync(int id)
+        {
+            AuditoriumDomainModel auditorium;
+
+            auditorium = await _auditoriumService.GetAuditoriumByIdAsync(id);
+
+            if (auditorium == null)
+            {
+                return NotFound(Messages.CINEMA_DOES_NOT_EXIST);
+            }
+
+            return Ok(auditorium);
+        }
+
+       
+
     }
+
+
+
+
+
 }

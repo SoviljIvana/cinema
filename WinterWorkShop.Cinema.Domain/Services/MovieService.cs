@@ -141,17 +141,20 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 return null;
             }
-            List<Projection> checkProjection = item.Projections.ToList();
 
-            var dateTimeNow = DateTime.Now;
-            foreach (var projection in checkProjection)
+            if (item.Projections != null)
             {
-                if (projection.DateTime > dateTimeNow)
+                List<Projection> checkProjection = item.Projections.ToList();
+
+                var dateTimeNow = DateTime.Now;
+                foreach (var projection in checkProjection)
                 {
-                    return null;
+                    if (projection.DateTime > dateTimeNow)
+                    {
+                        return null;
+                    }
                 }
             }
-
 
             Movie movie = new Movie()
             {

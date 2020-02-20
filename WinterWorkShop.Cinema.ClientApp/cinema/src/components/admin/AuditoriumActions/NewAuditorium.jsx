@@ -468,7 +468,7 @@ class NewAuditorium extends React.Component {
 
                             </FormGroup>
 
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Add Projection</Button>
+                            <Button type="submit" disabled={submitted || !canSubmit} block>Add Auditorium</Button>
 
                         </form>
 
