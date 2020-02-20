@@ -173,7 +173,9 @@ namespace WinterWorkShop.Cinema.Domain.Services
             Auditorium auditorium = new Auditorium()
             {
                 Id = auditoriumToUpdate.Id,
-                Name = auditoriumToUpdate.Name
+                Name = auditoriumToUpdate.Name,
+                CinemaId = auditoriumToUpdate.CinemaId
+                
 
             };
 
@@ -188,7 +190,9 @@ namespace WinterWorkShop.Cinema.Domain.Services
             AuditoriumDomainModel domainModel = new AuditoriumDomainModel()
             {
                 Id = data.Id,
-                Name = data.Name
+                Name = data.Name,
+                CinemaId = data.CinemaId
+
             };
 
             return domainModel;

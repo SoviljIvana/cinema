@@ -96,7 +96,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody]MovieModel movieModel)
+        public async Task<ActionResult> Post([FromBody]CreateMovieModel movieModel)
         {
             if (!ModelState.IsValid)
             {
@@ -151,7 +151,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Authorize(Roles = "admin")]
         [HttpPut]
         [Route("{id}")]
-        public async Task<ActionResult> Put(Guid id, [FromBody]MovieModel movieModel)
+        public async Task<ActionResult> Put(Guid id, [FromBody]CreateMovieModel movieModel)
         {
             if (!ModelState.IsValid)
             {
