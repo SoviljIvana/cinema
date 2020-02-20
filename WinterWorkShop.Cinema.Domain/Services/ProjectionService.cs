@@ -98,5 +98,130 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             return result;
         }
+
+        public async Task<IEnumerable<ProjectionDomainFilterModel>> FilterAllProjections(string searchData)
+        {
+            var data = _projectionsRepository.FilterAllProjections(searchData).Result.ToList();
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<ProjectionDomainFilterModel> result = new List<ProjectionDomainFilterModel>();
+            ProjectionDomainFilterModel model; 
+
+            foreach(var item in data)
+            {
+                model = new ProjectionDomainFilterModel
+                {
+                    AditoriumName = item.Auditorium.Name, 
+                    MovieTitle = item.Movie.Title, 
+                    ProjectionTime = item.DateTime, 
+                    CinemaName = item.Auditorium.Cinema.Name 
+                };
+                result.Add(model); 
+            }
+            return result; 
+        }
+
+        public async Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectionsByMovieName(string searchData)
+        {
+            var data = _projectionsRepository.FilterProjectionsByMovieTitle(searchData).Result.ToList();
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<ProjectionDomainFilterModel> result = new List<ProjectionDomainFilterModel>();
+            ProjectionDomainFilterModel model;
+
+            foreach (var item in data)
+            {
+                model = new ProjectionDomainFilterModel
+                {
+                    AditoriumName = item.Auditorium.Name,
+                    MovieTitle = item.Movie.Title,
+                    ProjectionTime = item.DateTime,
+                    CinemaName = item.Auditorium.Cinema.Name
+                };
+                result.Add(model);
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectionsByCinemaName(string searchData)
+        {
+            var data = _projectionsRepository.FilterProjectionsByCinemaName(searchData).Result.ToList();
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<ProjectionDomainFilterModel> result = new List<ProjectionDomainFilterModel>();
+            ProjectionDomainFilterModel model;
+
+            foreach (var item in data)
+            {
+                model = new ProjectionDomainFilterModel
+                {
+                    AditoriumName = item.Auditorium.Name,
+                    MovieTitle = item.Movie.Title,
+                    ProjectionTime = item.DateTime,
+                    CinemaName = item.Auditorium.Cinema.Name
+                };
+                result.Add(model);
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectiondByAuditoriumName(string searchData)
+        {
+            var data = _projectionsRepository.FilterProjectionsByAuditoriumName(searchData).Result.ToList();
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<ProjectionDomainFilterModel> result = new List<ProjectionDomainFilterModel>();
+            ProjectionDomainFilterModel model;
+
+            foreach (var item in data)
+            {
+                model = new ProjectionDomainFilterModel
+                {
+                    AditoriumName = item.Auditorium.Name,
+                    MovieTitle = item.Movie.Title,
+                    ProjectionTime = item.DateTime,
+                    CinemaName = item.Auditorium.Cinema.Name
+                };
+                result.Add(model);
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectiondByDates(DateTime startDate, DateTime endDate)
+        {
+            var data = _projectionsRepository.FilterProjectionsByDates(startDate, endDate).Result.ToList();
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<ProjectionDomainFilterModel> result = new List<ProjectionDomainFilterModel>();
+            ProjectionDomainFilterModel model;
+
+            foreach (var item in data)
+            {
+                model = new ProjectionDomainFilterModel
+                {
+                    AditoriumName = item.Auditorium.Name,
+                    MovieTitle = item.Movie.Title,
+                    ProjectionTime = item.DateTime,
+                    CinemaName = item.Auditorium.Cinema.Name
+                };
+                result.Add(model);
+            }
+            return result;
+        }
     }
 }
