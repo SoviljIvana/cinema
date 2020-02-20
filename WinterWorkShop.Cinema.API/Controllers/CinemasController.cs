@@ -45,7 +45,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
-        /// Adds a new movie
+        /// Adds a new cinema
         /// </summary>
         /// <param name="cinemaModel"></param>
         /// <returns></returns>
@@ -109,7 +109,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
-        /// Delete a movie by id
+        /// Delete a cinema by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -149,10 +149,10 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
-        /// Updates a movie
+        /// Updates a cinema
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="movieModel"></param>
+        /// <param name="cinemaModel"></param>
         /// <returns></returns>
         [Authorize(Roles = "admin")]
         [HttpPut]

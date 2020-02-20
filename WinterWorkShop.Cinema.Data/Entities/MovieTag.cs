@@ -5,8 +5,8 @@ using System.Text;
 
 namespace WinterWorkShop.Cinema.Data.Entities
 {
-    [Table("description")]
-    public class Description
+    [Table("movietag")]
+    public class MovieTag
     {
         public Guid DescriptionId { get; set; }
         public Guid MovieId { get; set; }
