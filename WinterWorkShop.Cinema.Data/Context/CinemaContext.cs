@@ -15,7 +15,7 @@ namespace WinterWorkShop.Cinema.Data
         public DbSet<Auditorium> Auditoriums { get; set; }
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public DbSet<Description> Descriptions { get; set; }
+        public DbSet<MovieTag> MovieTag { get; set; }
 
         public CinemaContext(DbContextOptions options)
             : base(options)
@@ -110,7 +110,7 @@ namespace WinterWorkShop.Cinema.Data
             /// </summary>
             /// <returns></returns>
             modelBuilder.Entity<Tag>()
-               .HasMany(x => x.Descriptions)
+               .HasMany(x => x.MovieTags)
                .WithOne(x => x.Tag)
                .IsRequired();
 
@@ -118,9 +118,9 @@ namespace WinterWorkShop.Cinema.Data
             /// Description -> Tag relation
             /// </summary>
             /// <returns></returns>
-            modelBuilder.Entity<Description>()
+            modelBuilder.Entity<MovieTag>()
                 .HasOne(x => x.Tag)
-                .WithMany(x => x.Descriptions)
+                .WithMany(x => x.MovieTags)
                 .HasForeignKey(x => x.TagId)
                 .IsRequired();
 
@@ -128,9 +128,9 @@ namespace WinterWorkShop.Cinema.Data
             /// Description -> Movie relation
             /// </summary>
             /// <returns></returns>
-            modelBuilder.Entity<Description>()
+            modelBuilder.Entity<MovieTag>()
                 .HasOne(x => x.Movie)
-                .WithMany(x => x.Descriptions)
+                .WithMany(x => x.MovieTags)
                 .HasForeignKey(x => x.MovieId)
                 .IsRequired();
 
@@ -139,7 +139,7 @@ namespace WinterWorkShop.Cinema.Data
             /// </summary>
             /// <returns></returns>
             modelBuilder.Entity<Movie>()
-                .HasMany(x => x.Descriptions)
+                .HasMany(x => x.MovieTags)
                 .WithOne(x => x.Movie)
                 .IsRequired();
 
