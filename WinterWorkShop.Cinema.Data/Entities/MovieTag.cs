@@ -8,12 +8,10 @@ namespace WinterWorkShop.Cinema.Data.Entities
     [Table("movietag")]
     public class MovieTag
     {
-        public Guid DescriptionId { get; set; }
+        public Guid Id { get; set; }
         public Guid MovieId { get; set; }
         public int TagId { get; set; }
-
         public virtual Movie Movie { get; set; }
-
         public virtual Tag Tag { get; set; }
     }
 }
