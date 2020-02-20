@@ -55,10 +55,10 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         [HttpGet]
         [Route("MovieSearchByTag/{searchThing}")]
-        public async Task<ActionResult<IEnumerable<Movie>>> SearchByTag(string searchThing)
+        public async Task<ActionResult<IEnumerable<Movie>>> SearchByTag(string searchData)
         {
             IEnumerable<MovieDomainModel> movieDomainModels;
-            movieDomainModels = await _movieService.GetAllMoviesWithThisTag(searchThing);
+            movieDomainModels = await _movieService.GetAllMoviesWithThisTag(searchData);
 
             if (movieDomainModels == null)
             {
