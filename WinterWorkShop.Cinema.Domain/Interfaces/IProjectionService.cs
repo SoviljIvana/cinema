@@ -13,8 +13,8 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
         Task<IEnumerable<ProjectionDomainFilterModel>> FilterAllProjections(string searchData);
         Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectionsByMovieName(string searchData);
         Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectionsByCinemaName(string searchData);
-        Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectiondByAuditoriumName(string searchData);
-        Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectiondByDates(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectionsByAuditoriumName(string searchData);
+        Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectionsByDates(DateTime startDate, DateTime endDate);
 
 
 

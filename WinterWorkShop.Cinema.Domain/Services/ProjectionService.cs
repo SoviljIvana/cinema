@@ -174,7 +174,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        public async Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectiondByAuditoriumName(string searchData)
+        public async Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectionsByAuditoriumName(string searchData)
         {
             var data = _projectionsRepository.FilterProjectionsByAuditoriumName(searchData).Result.ToList();
             if (data == null)
@@ -199,7 +199,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        public async Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectiondByDates(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<ProjectionDomainFilterModel>> FilterProjectionsByDates(DateTime startDate, DateTime endDate)
         {
             var data = _projectionsRepository.FilterProjectionsByDates(startDate, endDate).Result.ToList();
             if (data == null)
