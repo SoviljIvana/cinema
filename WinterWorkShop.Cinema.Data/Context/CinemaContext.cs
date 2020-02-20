@@ -106,7 +106,7 @@ namespace WinterWorkShop.Cinema.Data
                 .IsRequired();
 
             /// <summary>
-            /// Tag -> Description relation
+            /// Tag -> MovieTag relation
             /// </summary>
             /// <returns></returns>
             modelBuilder.Entity<Tag>()
@@ -115,7 +115,7 @@ namespace WinterWorkShop.Cinema.Data
                .IsRequired();
 
             /// <summary>
-            /// Description -> Tag relation
+            /// MovieTag -> Tag relation
             /// </summary>
             /// <returns></returns>
             modelBuilder.Entity<MovieTag>()
@@ -125,7 +125,7 @@ namespace WinterWorkShop.Cinema.Data
                 .IsRequired();
 
             /// <summary>
-            /// Description -> Movie relation
+            /// MovieTag -> Movie relation
             /// </summary>
             /// <returns></returns>
             modelBuilder.Entity<MovieTag>()
@@ -135,7 +135,7 @@ namespace WinterWorkShop.Cinema.Data
                 .IsRequired();
 
             /// <summary>
-            /// Movie -> Description relation
+            /// Movie -> MovieTag relation
             /// </summary>
             /// <returns></returns>
             modelBuilder.Entity<Movie>()
