@@ -12,6 +12,7 @@ import NewCinema from './CinemaActions/NewCinema';
 import EditCinema from './CinemaActions/EditCinema';
 import ShowAllCinemas from './CinemaActions/ShowAllCinemas';
 import NewAuditorium from './AuditoriumActions/NewAuditorium';
+import EditAuditorium from './AuditoriumActions/EditAuditorium';
 import ShowAllAuditoriums from './AuditoriumActions/ShowAllAuditoriums';
 import ShowAllProjections from './ProjectionActions/ShowAllProjections';
 import NewProjection from './ProjectionActions/NewProjection';
@@ -19,10 +20,10 @@ import NewProjection from './ProjectionActions/NewProjection';
 // higher order component
 import { PrivateRouteAdmin } from '../hoc/privateRouteAdmin';
 
+
 class Dashboard extends Component {
     render() {
         return (
-            
             <Row className="justify-content-center no-gutters">
                 <Col lg={2} className="dashboard-navigation">
                     <Row className="justify-content-center mt-2">
@@ -71,6 +72,7 @@ class Dashboard extends Component {
                         <PrivateRouteAdmin path="/dashboard/EditCinema/:id" component={EditCinema} />
                         <PrivateRouteAdmin path="/dashboard/AllCinemas" component={ShowAllCinemas} />
                         <PrivateRouteAdmin path="/dashboard/NewAuditorium" component={NewAuditorium} />
+                        <PrivateRouteAdmin path="/dashboard/EditAuditorium/:id" component={EditAuditorium} />
                         <PrivateRouteAdmin path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
                         <PrivateRouteAdmin path="/dashboard/AllProjections" component={ShowAllProjections} />
                         <PrivateRouteAdmin path="/dashboard/NewProjection" component={NewProjection} />
