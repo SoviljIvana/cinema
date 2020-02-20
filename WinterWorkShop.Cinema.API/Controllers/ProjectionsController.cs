@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WinterWorkShop.Cinema.API.Models;
+using WinterWorkShop.Cinema.Data;
 using WinterWorkShop.Cinema.Domain.Common;
 using WinterWorkShop.Cinema.Domain.Interfaces;
 using WinterWorkShop.Cinema.Domain.Models;
@@ -102,6 +103,76 @@ namespace WinterWorkShop.Cinema.API.Controllers
             }
 
             return Created("projections//" + createProjectionResultModel.Projection.Id, createProjectionResultModel.Projection);
+        }
+
+        [HttpGet]
+        [Route("FilterByText/{searchData}")]
+        public async Task<ActionResult<IEnumerable<Projection>>> FilterByAll(string searchData)
+        {
+            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            projectionDomainModels = await _projectionService.FilterAllProjections(searchData);
+
+            if (projectionDomainModels == null)
+            {
+                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+            }
+            return Ok(projectionDomainModels);
+        }
+
+        [HttpGet]
+        [Route("moviename/{searchData}")]
+        public async Task<ActionResult<IEnumerable<Projection>>> FilterByMovieName(string searchData)
+        {
+            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            projectionDomainModels = await _projectionService.FilterProjectionsByMovieName(searchData);
+
+            if (projectionDomainModels == null)
+            {
+                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+            }
+            return Ok(projectionDomainModels);
+        }
+
+        [HttpGet]
+        [Route("cinemaname/{searchData}")]
+        public async Task<ActionResult<IEnumerable<Projection>>> FilterByCinemaName(string searchData)
+        {
+            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            projectionDomainModels = await _projectionService.FilterProjectionsByCinemaName(searchData);
+
+            if (projectionDomainModels == null)
+            {
+                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+            }
+            return Ok(projectionDomainModels);
+        }
+
+        [HttpGet]
+        [Route("auditname/{searchData}")]
+        public async Task<ActionResult<IEnumerable<Projection>>> FilterByAuditoriumName(string searchData)
+        {
+            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            projectionDomainModels = await _projectionService.FilterProjectionsByAuditoriumName(searchData);
+
+            if (projectionDomainModels == null)
+            {
+                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+            }
+            return Ok(projectionDomainModels);
+        }
+
+        [HttpGet]
+        [Route("dates/{startDate},{endDate}")]
+        public async Task<ActionResult<IEnumerable<Projection>>> FilterByDates(DateTime startDate, DateTime endDate)
+        {
+            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            projectionDomainModels = await _projectionService.FilterProjectionsByDates(startDate, endDate);
+
+            if (projectionDomainModels == null)
+            {
+                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+            }
+            return Ok(projectionDomainModels);
         }
     }
 }
