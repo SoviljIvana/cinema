@@ -91,6 +91,59 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Created("auditoriums//" + createCinemaResultModel.Cinema.Id, createCinemaResultModel);
         }
 
+        [HttpPost]
+        [Route("create2")]
+        public async Task<ActionResult> PostWithAuditoriumsAndSeats([FromBody]CreateCinemaWithAuditoriumAndSeatsModel createCinemaWithAuditoriumAndSeatsModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            CreateCinemaDomainModel domainModel = new CreateCinemaDomainModel
+            {
+                CinemaName = createCinemaWithAuditoriumAndSeatsModel.CinemaName,
+                listOfAuditoriums = new List<AuditoriumDomainModel>()
+            };
+            var listofAuditoriums = createCinemaWithAuditoriumAndSeatsModel.listOfAuditoriums;
+            foreach (var item in listofAuditoriums)
+            {
+                domainModel.listOfAuditoriums.Add(new AuditoriumDomainModel
+                {
+                    Name = item.auditName,
+                    SeatRows = item.seatRows,
+                    NumberOfSeats = item.numberOfSeats
+                });
+            }
+
+            CreateCinemaResultModel createCinemaResultModel;
+
+            try
+            {
+                createCinemaResultModel = await _cinemaService.AddCinemaWithAuditoriumsAndSeats(domainModel);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return BadRequest(errorResponse);
+            }
+            if (!createCinemaResultModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = createCinemaResultModel.ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Created("cinemas//" + createCinemaResultModel.Cinema.Id, createCinemaResultModel);
+        }
+
         //Gets cinema by id
         [HttpGet]
         [Route("{id}")]
