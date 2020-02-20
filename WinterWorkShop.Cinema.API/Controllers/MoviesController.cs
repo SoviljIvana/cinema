@@ -52,6 +52,23 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(movie);
         }
 
+
+        [HttpGet]
+        [Route("MovieSearchByTag/{searchThing}")]
+        public async Task<ActionResult<IEnumerable<Movie>>> SearchByTag(string searchThing)
+        {
+            IEnumerable<MovieDomainModel> movieDomainModels;
+            movieDomainModels = await _movieService.GetAllMoviesWithThisTag(searchThing);
+
+            if (movieDomainModels == null)
+            {
+                movieDomainModels = new List<MovieDomainModel>();
+            }
+            return Ok(movieDomainModels);
+            
+        }
+
+
         /// <summary>
         /// Gets all current movies
         /// </summary>

@@ -43,6 +43,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
+        
+
         public async Task<CreateCinemaResultModel> AddCinema(CinemaDomainModel newCinema)
         {
             Data.Cinema cinemaToCreate = new Data.Cinema()
