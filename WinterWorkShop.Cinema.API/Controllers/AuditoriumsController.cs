@@ -108,6 +108,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             if (auditorium == null)
             {
                 return NotFound(Messages.AUDITORIUM_DOES_NOT_EXIST);
+
             }
 
             return Ok(auditorium);
