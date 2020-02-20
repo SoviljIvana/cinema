@@ -114,12 +114,65 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(auditorium);
         }
 
-       
 
+
+
+        /// <summary>
+        /// Updates a movie
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="auditoriumModel"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody]CreateAuditoriumModel auditoriumModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            AuditoriumDomainModel auditoriumToUpdate;
+
+            auditoriumToUpdate = await _auditoriumService.GetAuditoriumByIdAsync(id);
+
+            if (auditoriumToUpdate == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.AUDITORIUM_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            auditoriumToUpdate.CinemaId = auditoriumModel.cinemaId;
+            auditoriumToUpdate.Name = auditoriumModel.auditName;
+            auditoriumToUpdate.NumberOfSeats = auditoriumModel.numberOfSeats;
+            auditoriumToUpdate.SeatRows = auditoriumModel.seatRows;
+
+
+            AuditoriumDomainModel auditoriumDomainModel;
+            try
+            {
+                auditoriumDomainModel = await _auditoriumService.UpdateAuditorium(auditoriumToUpdate);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Accepted("auditoriums//" + auditoriumDomainModel.Id, auditoriumDomainModel);
+
+        }
+    
     }
-
-
-
-
-
 }
