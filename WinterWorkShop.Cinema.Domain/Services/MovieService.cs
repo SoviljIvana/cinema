@@ -15,11 +15,42 @@ namespace WinterWorkShop.Cinema.Domain.Services
     {
         private readonly IMoviesRepository _moviesRepository;
         private readonly IProjectionsRepository _projectionsRepository;
+        private readonly IMovieTagsRepository _movieTagsRepository;
 
-        public MovieService(IMoviesRepository moviesRepository, IProjectionsRepository projectionsRepository)
+        public MovieService(IMoviesRepository moviesRepository, IProjectionsRepository projectionsRepository, IMovieTagsRepository movieTagsRepository)
         {
             _moviesRepository = moviesRepository;
             _projectionsRepository = projectionsRepository;
+            _movieTagsRepository = movieTagsRepository;
+        }
+
+        public async Task<IEnumerable<MovieDomainModel>> GetAllMoviesWithThisTag(string tag)
+        {
+            var data = _movieTagsRepository.GetAllMovieTagsForSpecificTag(tag).Result.ToList();
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<MovieDomainModel> result = new List<MovieDomainModel>();
+            MovieDomainModel model;
+
+            foreach (var item in data)
+            {
+                model = new MovieDomainModel
+                {
+                    Current = item.Movie.Current,
+                    Id = item.Movie.Id,
+                    Rating = item.Movie.Rating ?? 0,
+                    Title = item.Movie.Title,
+                    Year = item.Movie.Year
+                    
+                };
+                result.Add(model);
+            }
+
+            return result;
+
         }
 
         public IEnumerable<MovieDomainModel> GetAllMovies(bool? isCurrent)
@@ -268,5 +299,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
             return result;
         }
+
+        
     }
 }
