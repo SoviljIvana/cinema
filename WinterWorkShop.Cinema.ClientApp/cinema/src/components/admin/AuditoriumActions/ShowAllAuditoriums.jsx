@@ -16,7 +16,7 @@ class ShowAllAuditoriums extends Component {
       this.editAuditorium = this.editAuditorium.bind(this);
       this.removeAuditorium = this.removeAuditorium.bind(this);
     }
-
+    
     componentDidMount() {
       this.getAuditoriums();
     }
@@ -120,5 +120,4 @@ class ShowAllAuditoriums extends Component {
         );
       }
 }
-
 export default ShowAllAuditoriums;

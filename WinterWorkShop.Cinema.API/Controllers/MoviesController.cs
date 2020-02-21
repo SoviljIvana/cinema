@@ -238,7 +238,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Accepted("movies//" + deletedMovie.Id, deletedMovie);
         }
 
-        [HttpGet]
+        [Authorize(Roles = "admin")]
+        [HttpPut]
         [Route("top")]
         public async Task<ActionResult<IEnumerable<MovieDomainModel>>> GetTopList() 
         {
@@ -256,7 +257,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Route("currentstatus/{id}")]
         public async Task<ActionResult> UpdateMovieCurrentStatus(Guid id, CreateUpdateCurrentStatusModel movieModel)
         {
-
             MovieDomainModel movieToUpdate;
 
             movieToUpdate = await _movieService.GetMovieByIdAsync(id);

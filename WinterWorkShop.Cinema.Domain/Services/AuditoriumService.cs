@@ -147,27 +147,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             return domainModel;
         }
-
-        public async Task<AuditoriumDomainModel> DeleteAuditorium(int id)
-        {
-            var data = _auditoriumsRepository.Delete(id);
-
-            if (data == null)
-            {
-                return null;
-            }
-
-            _auditoriumsRepository.Save();
-
-            AuditoriumDomainModel domainModel = new AuditoriumDomainModel
-            {
-                Name = data.Name,
-                Id = data.Id
-            };
-
-            return domainModel;
-        }
-
+  
         public async Task<AuditoriumDomainModel> UpdateAuditorium(AuditoriumDomainModel auditoriumToUpdate)
         {
 
@@ -197,6 +177,11 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             return domainModel;
 
+        }
+
+        public Task<AuditoriumDomainModel> DeleteAuditorium(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

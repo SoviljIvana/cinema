@@ -93,7 +93,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return BadRequest(errorResponse);
             }
-
             return Created("auditoriums//" + createAuditoriumResultModel.Auditorium.Id, createAuditoriumResultModel);
         }
 
@@ -113,9 +112,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Ok(auditorium);
         }
-
-
-
 
         /// <summary>
         /// Updates a movie
@@ -180,6 +176,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Accepted("auditoriums//" + auditoriumDomainModel.Id, auditoriumDomainModel);
 
         }
-    
+
     }
 }
