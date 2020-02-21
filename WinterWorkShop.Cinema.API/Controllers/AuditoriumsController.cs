@@ -63,7 +63,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             AuditoriumDomainModel auditoriumDomainModel = new AuditoriumDomainModel
             {
                 CinemaId = createAuditoriumModel.cinemaId,
-                Name = createAuditoriumModel.auditName
+                auditName = createAuditoriumModel.auditName
             };
 
             CreateAuditoriumResultModel createAuditoriumResultModel;
@@ -126,7 +126,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Authorize(Roles = "admin")]
         [HttpPut]
         [Route("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody]CreateAuditoriumModel auditoriumModel)
+        public async Task<ActionResult> Put(int id, [FromBody]UpdateAuditoriumModel auditoriumModel)
         {
             if (!ModelState.IsValid)
             {
@@ -147,11 +147,18 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return BadRequest(errorResponse);
             }
+            if(auditoriumModel.cinemaId!=0)
+                auditoriumToUpdate.CinemaId = auditoriumModel.cinemaId;
 
-            auditoriumToUpdate.CinemaId = auditoriumModel.cinemaId;
-            auditoriumToUpdate.Name = auditoriumModel.auditName;
-            auditoriumToUpdate.NumberOfSeats = auditoriumModel.numberOfSeats;
-            auditoriumToUpdate.SeatRows = auditoriumModel.seatRows;
+            if (auditoriumModel.numberOfSeats != 0)
+                auditoriumToUpdate.NumberOfSeats = auditoriumModel.numberOfSeats;
+
+            if (auditoriumModel.seatRows!=0)
+                auditoriumToUpdate.SeatRows = auditoriumModel.seatRows;
+
+            auditoriumToUpdate.auditName = auditoriumModel.auditName;
+            
+           
 
 
             AuditoriumDomainModel auditoriumDomainModel;

@@ -39,7 +39,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 {
                     Id = item.Id,
                     CinemaId = item.CinemaId,
-                    Name = item.Name
+                    auditName = item.Name
                 };
                 result.Add(model);
             }
@@ -59,7 +59,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 };
             }
 
-            var auditorium = await _auditoriumsRepository.GetByAuditName(domainModel.Name, domainModel.CinemaId);
+            var auditorium = await _auditoriumsRepository.GetByAuditName(domainModel.auditName, domainModel.CinemaId);
             var sameAuditoriumName = auditorium.ToList();
             if (sameAuditoriumName != null && sameAuditoriumName.Count > 0)
             {
@@ -72,7 +72,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             Auditorium newAuditorium = new Auditorium
             {
-                Name = domainModel.Name,
+                Name = domainModel.auditName,
                 CinemaId = domainModel.CinemaId,
             };
 
@@ -110,7 +110,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 Auditorium = new AuditoriumDomainModel
                 {
                     Id = insertedAuditorium.Id,
-                    Name = insertedAuditorium.Name,
+                    auditName = insertedAuditorium.Name,
                     CinemaId = insertedAuditorium.CinemaId,
                     SeatsList = new List<SeatDomainModel>()
                 }
@@ -141,9 +141,10 @@ namespace WinterWorkShop.Cinema.Domain.Services
             AuditoriumDomainModel domainModel = new AuditoriumDomainModel
             {
                 Id = data.Id,
-                Name = data.Name
-
+                auditName = data.Name,
+                CinemaId = data.CinemaId
             };
+
             return domainModel;
         }
 
@@ -160,7 +161,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             AuditoriumDomainModel domainModel = new AuditoriumDomainModel
             {
-                Name = data.Name,
+                auditName = data.Name,
                 Id = data.Id
             };
 
@@ -173,10 +174,9 @@ namespace WinterWorkShop.Cinema.Domain.Services
             Auditorium auditorium = new Auditorium()
             {
                 Id = auditoriumToUpdate.Id,
-                Name = auditoriumToUpdate.Name,
+                Name = auditoriumToUpdate.auditName,
                 CinemaId = auditoriumToUpdate.CinemaId
                 
-
             };
 
             var data = _auditoriumsRepository.Update(auditorium);
@@ -190,7 +190,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             AuditoriumDomainModel domainModel = new AuditoriumDomainModel()
             {
                 Id = data.Id,
-                Name = data.Name,
+                auditName = data.Name,
                 CinemaId = data.CinemaId
 
             };

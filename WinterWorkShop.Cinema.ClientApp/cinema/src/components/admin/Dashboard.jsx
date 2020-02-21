@@ -13,7 +13,6 @@ import EditCinema from './CinemaActions/EditCinema';
 import ShowAllCinemas from './CinemaActions/ShowAllCinemas';
 import NewAuditorium from './AuditoriumActions/NewAuditorium';
 import EditAuditorium from './AuditoriumActions/EditAuditorium';
-
 import ShowAllAuditoriums from './AuditoriumActions/ShowAllAuditoriums';
 import ShowAllProjections from './ProjectionActions/ShowAllProjections';
 import NewProjection from './ProjectionActions/NewProjection';
