@@ -24,31 +24,56 @@ namespace WinterWorkShop.Cinema.Domain.Services
             _movieTagsRepository = movieTagsRepository;
         }
 
-        public async Task<IEnumerable<MovieDomainModel>> GetAllMoviesWithThisTag(string tag)
+        public async Task<IEnumerable<CreateMovieResultModel>> GetAllMoviesWithThisTag(string tag)
         {
             var data = _movieTagsRepository.GetAllMovieTagsForSpecificTag(tag).Result.ToList();
+            List<CreateMovieResultModel> result = new List<CreateMovieResultModel>();
+
             if (data == null)
             {
-                return null;
+                result.Add(new CreateMovieResultModel
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = Messages.PROJECTION_SEARCH_ERROR
+                });
+                return result;
+            }
+            var n = data.Count();
+
+
+            if (data.Count() == 0)
+            {
+                result.Add(new CreateMovieResultModel
+                {
+                    IsSuccessful = true,
+                    ErrorMessage = Messages.PROJECTION_SEARCH_NORESULT,
+                    Movie = new MovieDomainModel
+                    {
+                        Title = "Movie not found"
+                    }
+                });
+                return result;
             }
 
-            List<MovieDomainModel> result = new List<MovieDomainModel>();
-            MovieDomainModel model;
+            List<ProjectionDomainFilterModel> listProjDomMode = new List<ProjectionDomainFilterModel>();
 
             foreach (var item in data)
             {
-                model = new MovieDomainModel
+                CreateMovieResultModel model = new CreateMovieResultModel
                 {
-                    Current = item.Movie.Current,
-                    Id = item.Movie.Id,
-                    Rating = item.Movie.Rating ?? 0,
-                    Title = item.Movie.Title,
-                    Year = item.Movie.Year
-                    
+                    IsSuccessful = true,
+                    ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
+                    Movie = new MovieDomainModel
+                    {
+                         Title = item.Movie.Title,
+                        Current = item.Movie.Current,
+                        Id = item.Id,
+                        Year = item.Movie.Year, 
+                        Rating = item.Movie.Rating ?? 0
+                    }
                 };
                 result.Add(model);
             }
-
             return result;
 
         }
