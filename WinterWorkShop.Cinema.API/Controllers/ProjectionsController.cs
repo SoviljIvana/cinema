@@ -35,8 +35,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
         public async Task<ActionResult<IEnumerable<ProjectionDomainModel>>> GetAsync()
         {
             IEnumerable<ProjectionDomainModel> projectionDomainModels;
-           
-             projectionDomainModels = await _projectionService.GetAllAsync();            
+
+            projectionDomainModels = await _projectionService.GetAllAsync();
 
             if (projectionDomainModels == null)
             {
@@ -99,7 +99,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                     StatusCode = System.Net.HttpStatusCode.BadRequest
                 };
 
-                return BadRequest(errorResponse);                
+                return BadRequest(errorResponse);
             }
 
             return Created("projections//" + createProjectionResultModel.Projection.Id, createProjectionResultModel.Projection);
@@ -107,71 +107,125 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         [HttpGet]
         [Route("FilterByText/{searchData}")]
-        public async Task<ActionResult<IEnumerable<Projection>>> FilterByAll(string searchData)
+        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByAll(string searchData)
         {
-            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
+            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+
             projectionDomainModels = await _projectionService.FilterAllProjections(searchData);
 
-            if (projectionDomainModels == null)
+            list = projectionDomainModels.ToList();
+
+            if (!list[0].IsSuccessful)
             {
-                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = list[0].ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
             }
+
             return Ok(projectionDomainModels);
         }
 
         [HttpGet]
         [Route("moviename/{searchData}")]
-        public async Task<ActionResult<IEnumerable<Projection>>> FilterByMovieName(string searchData)
+        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByMovieName(string searchData)
         {
-            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
+            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+
             projectionDomainModels = await _projectionService.FilterProjectionsByMovieName(searchData);
 
-            if (projectionDomainModels == null)
+            list = projectionDomainModels.ToList();
+
+            if (!list[0].IsSuccessful)
             {
-                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = list[0].ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
             }
+
             return Ok(projectionDomainModels);
         }
 
         [HttpGet]
         [Route("cinemaname/{searchData}")]
-        public async Task<ActionResult<IEnumerable<Projection>>> FilterByCinemaName(string searchData)
+        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByCinemaName(string searchData)
         {
-            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
+            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+
             projectionDomainModels = await _projectionService.FilterProjectionsByCinemaName(searchData);
 
-            if (projectionDomainModels == null)
+            list = projectionDomainModels.ToList();
+
+            if (!list[0].IsSuccessful)
             {
-                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = list[0].ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
             }
+
             return Ok(projectionDomainModels);
         }
 
         [HttpGet]
         [Route("auditname/{searchData}")]
-        public async Task<ActionResult<IEnumerable<Projection>>> FilterByAuditoriumName(string searchData)
+        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByAuditoriumName(string searchData)
         {
-            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
+            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+
             projectionDomainModels = await _projectionService.FilterProjectionsByAuditoriumName(searchData);
 
-            if (projectionDomainModels == null)
+            list = projectionDomainModels.ToList();
+
+            if (!list[0].IsSuccessful)
             {
-                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = list[0].ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
             }
+
             return Ok(projectionDomainModels);
         }
-
         [HttpGet]
         [Route("dates/{startDate},{endDate}")]
-        public async Task<ActionResult<IEnumerable<Projection>>> FilterByDates(DateTime startDate, DateTime endDate)
+        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByDates(DateTime startDate, DateTime endDate)
         {
-            IEnumerable<ProjectionDomainFilterModel> projectionDomainModels;
+            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
+            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+
             projectionDomainModels = await _projectionService.FilterProjectionsByDates(startDate, endDate);
 
-            if (projectionDomainModels == null)
+            list = projectionDomainModels.ToList();
+
+            if (!list[0].IsSuccessful)
             {
-                projectionDomainModels = new List<ProjectionDomainFilterModel>();
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = list[0].ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
             }
+
             return Ok(projectionDomainModels);
         }
     }
