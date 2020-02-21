@@ -103,7 +103,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 newCinemaToAdd.Auditoriums.Add(new Auditorium 
                 {
-                    Name = item.auditName,
+                    Name = item.Name,
                     Seats = new List<Seat>()
                 });
 
@@ -154,7 +154,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 {
                     CinemaId = insertedAuditorium.CinemaId,
                     Id = insertedAuditorium.Id,
-                    auditName = insertedAuditorium.Name,
+                    Name = insertedAuditorium.Name,
                     SeatsList = new List<SeatDomainModel>()
                 });
 

@@ -20,7 +20,7 @@ class NewAuditorium extends React.Component {
 
         this.state = {
             cinemaId: 0,
-            auditName: '',
+            name: '',
             seatRows: 0,
             numberOfSeats: 0,
             cinemas: [],
@@ -51,8 +51,8 @@ class NewAuditorium extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         this.setState({ submitted: true });
-        const { numberOfSeats, cinemaId, seatRows, auditName } = this.state;
-        if (auditName && numberOfSeats && cinemaId && seatRows) {
+        const { numberOfSeats, cinemaId, seatRows, name } = this.state;
+        if (name && numberOfSeats && cinemaId && seatRows) {
             this.addAuditorium();
         } else {
             NotificationManager.error('Please fill form with data.');
@@ -63,7 +63,7 @@ class NewAuditorium extends React.Component {
 
 
     validate(id, value) {
-        if (id === 'auditName') {
+        if (id === 'name') {
             if (value === '') {
                 this.setState({
                     auditNameError: 'Fill in auditorium name',
@@ -118,12 +118,12 @@ class NewAuditorium extends React.Component {
     }
 
     addAuditorium() {
-        const { cinemaId, numberOfSeats, seatRows, auditName } = this.state;
+        const { cinemaId, numberOfSeats, seatRows, name } = this.state;
         const data = {
             cinemaId: cinemaId,
             numberOfSeats: +numberOfSeats,
             seatRows: +seatRows,
-            auditName: auditName
+            name: name
         };
         const requestOptions = {
             method: 'POST',
@@ -205,7 +205,7 @@ class NewAuditorium extends React.Component {
     }
 
     render() {
-        const { cinemas, numberOfSeats, submitted, seatRows, auditName, auditNameError, numOfSeatsError,
+        const { cinemas, numberOfSeats, submitted, seatRows, name, auditNameError, numOfSeatsError,
             seatRowsError, cinemaIdError, canSubmit } = this.state;
         const auditorium = this.renderRows(seatRows, numberOfSeats);
         return (
@@ -216,10 +216,10 @@ class NewAuditorium extends React.Component {
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <FormControl
-                                    id="auditName"
+                                    id="name"
                                     type="text"
                                     placeholder="Auditorium Name"
-                                    value={auditName}
+                                    value={name}
                                     onChange={this.handleChange}
                                 />
 
