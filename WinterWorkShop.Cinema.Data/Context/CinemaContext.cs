@@ -16,6 +16,7 @@ namespace WinterWorkShop.Cinema.Data
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<MovieTag> MovieTags { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
 
         public CinemaContext(DbContextOptions options)
             : base(options)
@@ -25,6 +26,63 @@ namespace WinterWorkShop.Cinema.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            /// <summary>
+            /// Ticket -> Projection relation
+            /// </summary>
+            /// <returns></returns>
+            modelBuilder.Entity<Ticket>()
+                .HasOne(x => x.Projection)
+                .WithMany(x => x.Tickets)
+                .HasForeignKey(x => x.ProjectionId)
+                .IsRequired();
+
+            /// <summary>
+            /// Projection -> Ticket relation
+            /// </summary>
+            /// <returns></returns>
+            modelBuilder.Entity<Projection>()
+                .HasMany(x => x.Tickets)
+                .WithOne(x => x.Projection)
+                .IsRequired();
+
+            /// <summary>
+            /// Ticket -> User relation
+            /// </summary>
+            /// <returns></returns>
+            modelBuilder.Entity<Ticket>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.Tickets)
+                .HasForeignKey(x => x.UserId)
+                .IsRequired();
+
+            /// <summary>
+            /// User -> Ticket relation
+            /// </summary>
+            /// <returns></returns>
+            modelBuilder.Entity<User>()
+                .HasMany(x => x.Tickets)
+                .WithOne(x => x.User)
+                .IsRequired();
+
+            /// <summary>
+            /// Seat -> Ticket relation
+            /// </summary>
+            /// <returns></returns>
+            modelBuilder.Entity<Seat>()
+                .HasMany(x => x.Tickets)
+                .WithOne(x => x.Seat)
+                .IsRequired();
+
+            /// <summary>
+            /// Ticket -> Seat relation
+            /// </summary>
+            /// <returns></returns>
+            modelBuilder.Entity<Ticket>()
+                .HasOne(x => x.Seat)
+                .WithMany(x => x.Tickets)
+                .HasForeignKey(x => x.SeatId)
+                .IsRequired();
 
             /// <summary>
             /// Seat -> Auditorium relation
