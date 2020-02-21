@@ -186,6 +186,7 @@ class NewAuditorium extends React.Component {
             this.validate('cinemaId', null);
         }
     }
+    
     renderRows(rows, seats) {
         const rowsRendered = [];
         for (let i = 0; i < rows; i++) {
@@ -283,5 +284,4 @@ class NewAuditorium extends React.Component {
         );
     }
 }
-
 export default withRouter(NewAuditorium);

@@ -17,6 +17,7 @@ import ShowAllAuditoriums from './AuditoriumActions/ShowAllAuditoriums';
 import ShowAllProjections from './ProjectionActions/ShowAllProjections';
 import NewProjection from './ProjectionActions/NewProjection';
 
+
 // higher order component
 import { PrivateRouteAdmin } from '../hoc/privateRouteAdmin';
 
@@ -34,6 +35,9 @@ class Dashboard extends Component {
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/NewMovie'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Movie</NavLink>
+                    </Row>
+                    <Row className="justify-content-center mt-2">
+                        <NavLink activeClassName="active-link" to='/dashboard/TopTenMovies'><FontAwesomeIcon className='text-primary mr-1' />Top 10 Movies</NavLink>
                     </Row>
                     <Row className="justify-content-center">
                         <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faBinoculars}/>Auditorium</span>
@@ -76,6 +80,7 @@ class Dashboard extends Component {
                         <PrivateRouteAdmin path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
                         <PrivateRouteAdmin path="/dashboard/AllProjections" component={ShowAllProjections} />
                         <PrivateRouteAdmin path="/dashboard/NewProjection" component={NewProjection} />
+             
                     </Switch>
                 </Col>
             </Row>
