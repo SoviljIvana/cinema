@@ -9,7 +9,7 @@ class EditAuditorium extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            auditName: '',
+            name: '',
             id: '',            
             auditNameError: '',
             submitted: false,
@@ -31,10 +31,10 @@ class EditAuditorium extends React.Component {
     }
 
     validate(id, value) {
-        if (id === 'auditName') {
+        if (id === 'name') {
             if (value === '') {
                 this.setState({
-                    auditNameError: 'Fill in auditorium auditName',
+                    auditNameError: 'Fill in auditorium name',
                     canSubmit: false
                 });
             } else {
@@ -50,8 +50,8 @@ class EditAuditorium extends React.Component {
 
         e.preventDefault();
         this.setState({ submitted: true });
-        const { auditName } = this.state;
-        if (auditName) {
+        const { name } = this.state;
+        if (name) {
             this.updateAuditorium();
         } else {
             NotificationManager.error('Please fill in data');
@@ -78,7 +78,7 @@ class EditAuditorium extends React.Component {
             .then(data => {
                 if (data) {
                     this.setState({
-                        auditName: data.auditName,
+                        name: data.name,
                         id: data.id
                     });
                 }
@@ -90,10 +90,10 @@ class EditAuditorium extends React.Component {
     }
 
     updateAuditorium() {
-        const { auditName, id } = this.state;
+        const { name, id } = this.state;
 
         const data = {
-            AuditName: auditName        
+            Name: name        
         };
 
         const requestOptions = {
@@ -123,7 +123,7 @@ class EditAuditorium extends React.Component {
     }
 
     render() {
-        const { auditName, submitted, auditNameError, canSubmit } = this.state;
+        const { name, submitted, auditNameError, canSubmit } = this.state;
         return (
             <Container>
                 <Row>
@@ -133,10 +133,10 @@ class EditAuditorium extends React.Component {
                                <form onSubmit={this.handleSubmit}></form>
                             <FormGroup>
                                 <FormControl
-                                    id="auditName"
+                                    id="name"
                                     type="text"
                                     placeholder="Auditorium Name"
-                                    value={auditName}
+                                    value={name}
                                     onChange={this.handleChange}
                                 />
                                 <FormText className="text-danger">{auditNameError}</FormText>
@@ -149,5 +149,4 @@ class EditAuditorium extends React.Component {
         );
     }
 }
-
 export default withRouter(EditAuditorium);

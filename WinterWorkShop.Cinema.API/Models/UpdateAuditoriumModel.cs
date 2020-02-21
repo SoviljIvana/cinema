@@ -14,7 +14,7 @@ namespace WinterWorkShop.Cinema.API.Models
 
         [Required]
         [StringLength(50, ErrorMessage = Messages.AUDITORIUM_PROPERTIE_NAME_NOT_VALID)]
-        public string auditName { get; set; }
+        public string name { get; set; }
 
         public int seatRows { get; set; }
 

@@ -63,7 +63,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             AuditoriumDomainModel auditoriumDomainModel = new AuditoriumDomainModel
             {
                 CinemaId = createAuditoriumModel.cinemaId,
-                auditName = createAuditoriumModel.auditName
+                Name = createAuditoriumModel.name
             };
 
             CreateAuditoriumResultModel createAuditoriumResultModel;
@@ -156,7 +156,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             if (auditoriumModel.seatRows!=0)
                 auditoriumToUpdate.SeatRows = auditoriumModel.seatRows;
 
-            auditoriumToUpdate.auditName = auditoriumModel.auditName;
+            auditoriumToUpdate.Name = auditoriumModel.name;
             
            
 

@@ -109,7 +109,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             {
                 domainModel.listOfAuditoriums.Add(new AuditoriumDomainModel
                 {
-                    auditName = item.auditName,
+                    Name = item.name,
                     SeatRows = item.seatRows,
                     NumberOfSeats = item.numberOfSeats
                 });

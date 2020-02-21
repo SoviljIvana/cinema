@@ -10,7 +10,7 @@ namespace WinterWorkShop.Cinema.Domain.Models
 
         public int CinemaId { get; set; }
 
-        public string auditName { get; set; }
+        public string Name { get; set; }
 
         public List<SeatDomainModel> SeatsList { get; set; }
 
