@@ -79,7 +79,7 @@ class ShowAllAuditoriums extends Component {
             return <tr key={auditorium.id}>
                         <td width="30%">{auditorium.id}</td>
                         <td width="30%">{auditorium.cinemaId}</td>
-                        <td width="30%">{auditorium.name}</td>
+                        <td width="30%">{auditorium.auditName}</td>
                         <td width="5%" className="text-center cursor-pointer" onClick={() => this.editAuditorium(auditorium.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
                         <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeAuditorium(auditorium.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
                     </tr>
@@ -87,7 +87,7 @@ class ShowAllAuditoriums extends Component {
     }
 
     editAuditorium(id) {
-        this.props.history.push(`editAuditorium/${id}`);
+        this.props.history.push(`editauditorium/${id}`);
     }
 
     render() {
