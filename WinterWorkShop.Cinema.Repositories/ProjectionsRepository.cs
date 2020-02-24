@@ -18,7 +18,7 @@ namespace WinterWorkShop.Cinema.Repositories
         Task<IEnumerable<Projection>> FilterProjectionsByAuditoriumName(string serachData);
         Task<IEnumerable<Projection>> FilterProjectionsByCinemaName(string serachData);
         Task<IEnumerable<Projection>> FilterProjectionsByDates(DateTime startDate, DateTime endDate);
-
+        IEnumerable<Projection> GetAllOfSpecificAuditorium(object id); 
 
     }
 
@@ -84,6 +84,15 @@ namespace WinterWorkShop.Cinema.Repositories
             _cinemaContext.Entry(obj).State = EntityState.Modified;
 
             return updatedEntry;
+        }
+
+        public IEnumerable<Projection> GetAllOfSpecificAuditorium(object id)
+        {
+
+            var findAuditorium = _cinemaContext.Auditoriums.Find(id);
+            var projections = _cinemaContext.Projections.Where(x => x.AuditoriumId.Equals(findAuditorium.Id)).ToList();
+
+            return projections;
         }
         /*///////////////////////////////////////////////////////
         FILTER PROJECTIONS
