@@ -177,5 +177,41 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         }
 
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            AuditoriumDomainModel deletedAuditorium; 
+            try
+            {
+                deletedAuditorium = await _auditoriumService.DeleteAuditorium(id); 
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return BadRequest(errorResponse);
+
+            }
+
+            if (deletedAuditorium == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.AUDITORIUM_DOES_NOT_EXIST, 
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse); 
+            }
+            return Accepted("auditoriums//" + deletedAuditorium.Id, deletedAuditorium);
+
+        }
+
+
     }
 }
