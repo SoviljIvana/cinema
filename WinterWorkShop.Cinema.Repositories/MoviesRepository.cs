@@ -9,11 +9,12 @@ using WinterWorkShop.Cinema.Data;
 
 namespace WinterWorkShop.Cinema.Repositories
 {
-    public interface IMoviesRepository : IRepository<Movie> 
+    public interface IMoviesRepository : IRepository<Movie>
     {
-        IEnumerable<Movie> GetCurrentMovies();
+        IEnumerable<Movie> GetCurrentAndNotCurrentMovies();
         Task<IEnumerable<Movie>> GetTopTenMovies();
-        }
+        IEnumerable<Movie> GetCurrent();
+    }
 
     public class MoviesRepository : IMoviesRepository
     {
@@ -50,10 +51,18 @@ namespace WinterWorkShop.Cinema.Repositories
             return data;
         }
 
-        public IEnumerable<Movie> GetCurrentMovies()
+        public IEnumerable<Movie> GetCurrent()
         {
             var data = _cinemaContext.Movies
-                .Where(x => x.Current);            
+                .Where(x => x.Current);
+
+            return data;
+        }
+
+
+        public IEnumerable<Movie> GetCurrentAndNotCurrentMovies()
+        {
+            var data = _cinemaContext.Movies;
 
             return data;
         }
@@ -78,13 +87,13 @@ namespace WinterWorkShop.Cinema.Repositories
             return updatedEntry;
         }
 
-        public async Task<IEnumerable<Movie>> GetTopTenMovies() 
+        public async Task<IEnumerable<Movie>> GetTopTenMovies()
         {
             var data = await _cinemaContext.Movies.ToListAsync();
             var sortedData = data.OrderByDescending(x => x.Rating).ToList();
             var result = sortedData.Take(10).ToList();
 
-            return result; 
+            return result;
         }
 
     }
