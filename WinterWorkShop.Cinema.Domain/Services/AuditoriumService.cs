@@ -16,13 +16,18 @@ namespace WinterWorkShop.Cinema.Domain.Services
         private readonly IAuditoriumsRepository _auditoriumsRepository;
         private readonly ICinemasRepository _cinemasRepository;
         private readonly ISeatsRepository _seatsRepository;
+        private readonly IProjectionsRepository _projectionsRepository; 
 
 
-        public AuditoriumService(IAuditoriumsRepository auditoriumsRepository, ICinemasRepository cinemasRepository, ISeatsRepository seatsRepository)
+        public AuditoriumService(IAuditoriumsRepository auditoriumsRepository, 
+                                ICinemasRepository cinemasRepository, 
+                                ISeatsRepository seatsRepository, 
+                                IProjectionsRepository projectionsRepository)
         {
             _auditoriumsRepository = auditoriumsRepository;
             _cinemasRepository = cinemasRepository;
-            _seatsRepository = seatsRepository; 
+            _seatsRepository = seatsRepository;
+            _projectionsRepository = projectionsRepository; 
         }
 
         public async Task<IEnumerable<AuditoriumDomainModel>> GetAllAsync()
@@ -186,8 +191,10 @@ namespace WinterWorkShop.Cinema.Domain.Services
         {
             var existingAuditorium = await _auditoriumsRepository.GetByIdAsync(id);
             var seatsInAuditorium =  _seatsRepository.GetAllOfSpecificAuditorium(id);
+            var projectionsInAuditorium = _projectionsRepository.GetAllOfSpecificAuditorium(id); 
 
-            existingAuditorium.Seats = seatsInAuditorium.ToList(); 
+            existingAuditorium.Seats = seatsInAuditorium.ToList();
+            existingAuditorium.Projections = projectionsInAuditorium.ToList(); 
             if(existingAuditorium != null)
             {
                 foreach (var seat in seatsInAuditorium)
@@ -196,7 +203,12 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     //existingAuditorium.Seats.Remove(seat); 
                 }
                 _seatsRepository.Save();
-                _auditoriumsRepository.Save();
+
+                foreach (var projection in projectionsInAuditorium)
+                {
+                    _projectionsRepository.Delete(projection.Id); 
+                }
+                _projectionsRepository.Save(); 
             }
 
             var data = _auditoriumsRepository.Delete(id); 
