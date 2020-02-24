@@ -15,11 +15,14 @@ namespace WinterWorkShop.Cinema.Domain.Services
     {
         private readonly IAuditoriumsRepository _auditoriumsRepository;
         private readonly ICinemasRepository _cinemasRepository;
+        private readonly ISeatsRepository _seatsRepository;
 
-        public AuditoriumService(IAuditoriumsRepository auditoriumsRepository, ICinemasRepository cinemasRepository)
+
+        public AuditoriumService(IAuditoriumsRepository auditoriumsRepository, ICinemasRepository cinemasRepository, ISeatsRepository seatsRepository)
         {
             _auditoriumsRepository = auditoriumsRepository;
             _cinemasRepository = cinemasRepository;
+            _seatsRepository = seatsRepository; 
         }
 
         public async Task<IEnumerable<AuditoriumDomainModel>> GetAllAsync()
@@ -179,9 +182,37 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         }
 
-        public Task<AuditoriumDomainModel> DeleteAuditorium(int id)
+        public async Task<AuditoriumDomainModel> DeleteAuditorium(int id)
         {
-            throw new NotImplementedException();
+            var existingAuditorium = await _auditoriumsRepository.GetByIdAsync(id);
+            var seatsInAuditorium =  _seatsRepository.GetAllOfSpecificAuditorium(id);
+
+            existingAuditorium.Seats = seatsInAuditorium.ToList(); 
+            if(existingAuditorium != null)
+            {
+                foreach (var seat in seatsInAuditorium)
+                {
+                    _seatsRepository.Delete(seat.Id);
+                    //existingAuditorium.Seats.Remove(seat); 
+                }
+                _seatsRepository.Save();
+                _auditoriumsRepository.Save();
+            }
+
+            var data = _auditoriumsRepository.Delete(id); 
+            _auditoriumsRepository.Save();
+
+            AuditoriumDomainModel domainModel = new AuditoriumDomainModel
+            {
+                CinemaId = existingAuditorium.CinemaId,
+                Id = existingAuditorium.Id,
+                Name = existingAuditorium.Name,
+                SeatRows = seatsInAuditorium.Select(x => x.Row).Count(),
+                NumberOfSeats = seatsInAuditorium.Select(x => x.Number).Count(),
+            };
+
+            return domainModel; 
         }
+
     }
 }
