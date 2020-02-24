@@ -14,11 +14,11 @@ namespace WinterWorkShop.Cinema.Repositories
         Task<IEnumerable<MovieTag>> GetAllMovieTagsForSpecificTag(string tag);
     }
 
-    public class MovieTagRepository : IMovieTagsRepository
+    public class MovieTagsRepository : IMovieTagsRepository
     {
         private CinemaContext _cinemaContext;
 
-        public MovieTagRepository(CinemaContext cinemaContext)
+        public MovieTagsRepository(CinemaContext cinemaContext)
         {
             _cinemaContext = cinemaContext;
         }
@@ -51,7 +51,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public void Save()
         {
-            throw new NotImplementedException();
+            _cinemaContext.SaveChanges();
         }
 
         public MovieTag Update(MovieTag obj)
