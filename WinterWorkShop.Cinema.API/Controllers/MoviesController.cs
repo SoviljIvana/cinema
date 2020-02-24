@@ -54,18 +54,28 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
 
         [HttpGet]
-        [Route("MovieSearchByTag/{searchThing}")]
-        public async Task<ActionResult<IEnumerable<Movie>>> SearchByTag(string searchData)
+        [Route("search/{searchData}")]
+        public async Task<ActionResult<IEnumerable<MovieDomainModel>>> SearchByTag(string searchData)
         {
-            IEnumerable<MovieDomainModel> movieDomainModels;
-            movieDomainModels = await _movieService.GetAllMoviesWithThisTag(searchData);
+            IEnumerable<CreateMovieResultModel> projectionDomainModels;
+            List<CreateMovieResultModel> list = new List<CreateMovieResultModel>();
 
-            if (movieDomainModels == null)
+            projectionDomainModels = await _movieService.GetAllMoviesWithThisTag(searchData);
+
+            list = projectionDomainModels.ToList();
+
+            if (!list[0].IsSuccessful)
             {
-                movieDomainModels = new List<MovieDomainModel>();
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = list[0].ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
             }
-            return Ok(movieDomainModels);
-            
+
+            return Ok(projectionDomainModels);
         }
 
 
