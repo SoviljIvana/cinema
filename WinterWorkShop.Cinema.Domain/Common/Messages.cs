@@ -64,5 +64,12 @@
         #region User
         public const string USER_NOT_FOUND = "User does not exist.";
         #endregion
+
+        #region Ticket
+        public const string TICKET_CREATION_ERROR = "Error occured while creating new ticket, please try again.";
+        public const string TICKET_NOT_FOUND = "Error occured while finding ticket, please try again.";
+        public const string TICKET_UPDATE_ERROR = "Error occured while updating ticket pay property, please try again.";
+
+        #endregion
     }
 }
