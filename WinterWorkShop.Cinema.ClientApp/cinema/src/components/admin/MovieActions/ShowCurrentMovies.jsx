@@ -6,7 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
 
-class ShowAllMovies extends Component {
+class ShowCurrentMovies extends Component {
+    
     constructor(props) {
       super(props);
       this.state = {
@@ -29,7 +30,7 @@ class ShowAllMovies extends Component {
       };
 
       this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/Movies/allMovies`, requestOptions)
+      fetch(`${serviceConfig.baseURL}/api/Movies/current`, requestOptions)
         .then(response => {
           if (!response.ok) {
             return Promise.reject(response);
@@ -117,7 +118,7 @@ class ShowAllMovies extends Component {
         return (
             <React.Fragment>
                 <Row className="no-gutters pt-2">
-                    <h1 className="form-header ml-2">All Movies</h1>
+                    <h1 className="form-header ml-2">Current Movies</h1>
                 </Row>
                 <Row className="no-gutters pr-5 pl-5">
                     {showTable}
@@ -127,4 +128,4 @@ class ShowAllMovies extends Component {
       }
 }
 
-export default ShowAllMovies;
+export default ShowCurrentMovies;
