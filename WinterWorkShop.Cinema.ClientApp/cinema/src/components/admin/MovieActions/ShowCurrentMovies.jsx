@@ -79,7 +79,6 @@ class ShowCurrentMovies extends Component {
     fillTableWithDaata() {
         return this.state.movies.map(movie => {
             return <tr key={movie.id}>
-                        <td  className="text-center cursor-pointer">{movie.id}</td>
                         <td  className="text-center cursor-pointer">{movie.title}</td>
                         <td  className="text-center cursor-pointer">{movie.year}</td>
                         <td  className="text-center cursor-pointer">{Math.round(movie.rating)}/10</td>
@@ -100,7 +99,6 @@ class ShowCurrentMovies extends Component {
         const table = (<Table striped bordered hover size="sm" >
                             <thead>
                             <tr>
-                                <th className="text-center cursor-pointer">Id</th>
                                 <th className="text-center cursor-pointer">Title</th>
                                 <th className="text-center cursor-pointer">Year</th>
                                 <th className="text-center cursor-pointer">Rating</th>

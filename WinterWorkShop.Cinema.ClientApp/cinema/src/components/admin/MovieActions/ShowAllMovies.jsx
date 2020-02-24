@@ -79,10 +79,9 @@ class ShowAllMovies extends Component {
     fillTableWithDaata() {
         return this.state.movies.map(movie => {
             return <tr key={movie.id}>
-                        <td>{movie.id}</td>
-                        <td>{movie.title}</td>
-                        <td>{movie.year}</td>
-                        <td>{Math.round(movie.rating)}/10</td>
+                        <td className="text-center cursor-pointer">{movie.title}</td>
+                        <td className="text-center cursor-pointer">{movie.year}</td>
+                        <td className="text-center cursor-pointer">{Math.round(movie.rating)}/10</td>
                         <td className="text-center cursor-pointer">{movie.current ? <Switch onChange={this.handleChange} checked =  {true} /> : <Switch onChange={this.handleChange} checked =  {false} />} </td>
                         <td className="text-center cursor-pointer" onClick={() => this.editMovie(movie.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
                         <td className="text-center cursor-pointer" onClick={() => this.removeMovie(movie.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
@@ -97,16 +96,14 @@ class ShowAllMovies extends Component {
     render() {
         const {isLoading} = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="sm" variant="dark">
+        const table = (<Table striped bordered hover size="sm">
                             <thead>
                             <tr>
-                                <th>Id</th>
-                                <th>Title</th>
-                                <th>Year</th>
-                                <th>Rating</th>
-                                <th>Is Current</th>
-                                <th></th>
-                                <th></th>
+                                <th className="text-center cursor-pointer">Title</th>
+                                <th className="text-center cursor-pointer">Year</th>
+                                <th className="text-center cursor-pointer">Rating</th>
+                                <th className="text-center cursor-pointer">Is Current</th>
+                        
                             </tr>
                             </thead>
                             <tbody>
