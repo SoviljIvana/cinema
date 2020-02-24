@@ -8,6 +8,7 @@ import { faPlus, faList, faFilm, faVideo, faTicketAlt, faBinoculars } from '@for
 import NewMovie from './MovieActions/NewMovie';
 import EditMovie from './MovieActions/EditMovie';
 import ShowAllMovies from './MovieActions/ShowAllMovies';
+import TopTenMovies from './MovieActions/TopTenMovies';
 import NewCinema from './CinemaActions/NewCinema';
 import EditCinema from './CinemaActions/EditCinema';
 import ShowAllCinemas from './CinemaActions/ShowAllCinemas';
@@ -71,6 +72,7 @@ class Dashboard extends Component {
                     <Switch>
                         <PrivateRouteAdmin path="/dashboard/NewMovie" component={NewMovie} />
                         <PrivateRouteAdmin path="/dashboard/AllMovies" component={ShowAllMovies} />
+                        <PrivateRouteAdmin path="/dashboard/TopTenMovies" component={TopTenMovies} />
                         <PrivateRouteAdmin path="/dashboard/EditMovie/:id" component={EditMovie} />
                         <PrivateRouteAdmin path="/dashboard/NewCinema" component={NewCinema} />
                         <PrivateRouteAdmin path="/dashboard/EditCinema/:id" component={EditCinema} />
@@ -80,7 +82,6 @@ class Dashboard extends Component {
                         <PrivateRouteAdmin path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
                         <PrivateRouteAdmin path="/dashboard/AllProjections" component={ShowAllProjections} />
                         <PrivateRouteAdmin path="/dashboard/NewProjection" component={NewProjection} />
-             
                     </Switch>
                 </Col>
             </Row>
