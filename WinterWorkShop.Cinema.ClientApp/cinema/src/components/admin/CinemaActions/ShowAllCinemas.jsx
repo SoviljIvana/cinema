@@ -98,8 +98,8 @@ class ShowAllCinemas extends Component {
                             <tr>
                                 <th>Id</th>
                                 <th>Name</th>
-                                <th></th>
-                                <th></th>
+                         
+          
                             </tr>
                             </thead>
                             <tbody>

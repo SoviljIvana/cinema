@@ -4,7 +4,7 @@ import { FormGroup, FormControl, Button, Container, Row, Col, FormText, } from '
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
 import { YearPicker } from 'react-dropdown-date';
-
+import Switch from "react-switch";
 class EditMovie extends React.Component {
     constructor(props) {
         super(props);
