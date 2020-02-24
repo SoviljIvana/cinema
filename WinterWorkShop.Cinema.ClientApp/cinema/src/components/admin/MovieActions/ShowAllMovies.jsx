@@ -5,7 +5,6 @@ import { Row, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
-import Switch from "react-switch";
 
 class ShowAllMovies extends Component {
     constructor(props) {
