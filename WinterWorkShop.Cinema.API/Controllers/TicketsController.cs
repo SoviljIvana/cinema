@@ -19,13 +19,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
     public class TicketsController : ControllerBase
     {
         private readonly ITicketService _ticketService;
-        private readonly ILevi9PaymentService _paymentService;
 
 
-        public TicketsController(ITicketService ticketService, ILevi9PaymentService levi9PaymentService)
+        public TicketsController(ITicketService ticketService)
         {
             _ticketService = ticketService;
-            _paymentService = levi9PaymentService;
 
         }
 
