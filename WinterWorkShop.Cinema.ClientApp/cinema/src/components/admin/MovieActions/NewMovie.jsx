@@ -6,7 +6,6 @@ import { serviceConfig } from '../../../appSettings';
 import { YearPicker } from 'react-dropdown-date';
 
 class NewMovie extends React.Component {
-    
     constructor(props) {
         super(props);
         this.state = {
