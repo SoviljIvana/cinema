@@ -36,7 +36,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             int expectedStatusCode = 200;
 
             _movieService = new Mock<IMovieService>();
-            _movieService.Setup(x => x.GetAllMovies(true)).Returns(movies);
+            _movieService.Setup(x => x.GetCurrentMovies(true)).Returns(movies);
         }
 
     }

@@ -78,9 +78,9 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         }
 
-        public IEnumerable<MovieDomainModel> GetAllMovies(bool? isCurrent)
+        public IEnumerable<MovieDomainModel> GetCurrentMovies(bool? isCurrent)
         {
-            var data = _moviesRepository.GetCurrentMovies();
+            var data = _moviesRepository.GetCurrent();
 
             if (data == null)
             {
@@ -328,6 +328,32 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        
+        public IEnumerable<MovieDomainModel> GetCurrentAndNotCurrentMovies()
+        {
+            var data = _moviesRepository.GetCurrentAndNotCurrentMovies();
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<MovieDomainModel> result = new List<MovieDomainModel>();
+            MovieDomainModel model;
+            foreach (var item in data)
+            {
+                model = new MovieDomainModel
+                {
+                    Current = item.Current,
+                    Id = item.Id,
+                    Rating = item.Rating ?? 0,
+                    Title = item.Title,
+                    Year = item.Year
+                };
+                result.Add(model);
+            }
+
+            return result;
+
+        }
     }
 }

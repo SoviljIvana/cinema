@@ -85,11 +85,31 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("current")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<Movie>>> GetCurrent()
         {
             IEnumerable<MovieDomainModel> movieDomainModels;
 
-            movieDomainModels = _movieService.GetAllMovies(true);
+            movieDomainModels = _movieService.GetCurrentMovies(true);
+
+            if (movieDomainModels == null)
+            {
+                movieDomainModels = new List<MovieDomainModel>();
+            }
+
+            return Ok(movieDomainModels);
+        }
+
+        /// <summary>
+        /// Gets all movies
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("allMovies")]
+        public async Task<ActionResult<IEnumerable<Movie>>> GetCurrentAndNotCurrent()
+        {
+            IEnumerable<MovieDomainModel> movieDomainModels;
+
+            movieDomainModels = _movieService.GetCurrentAndNotCurrentMovies();
 
             if (movieDomainModels == null)
             {
