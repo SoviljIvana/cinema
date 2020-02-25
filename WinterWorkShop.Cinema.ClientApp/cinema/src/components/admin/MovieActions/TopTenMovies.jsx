@@ -6,6 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
 import Switch from "react-switch";
+import ReactStars from 'react-stars';
+
+const ratingChanged = (newRating) => {
+    console.log(newRating)
+}
 
 class TopTenMovies extends Component {
 
@@ -53,7 +58,7 @@ class TopTenMovies extends Component {
             return <tr key={movie.id}>
                         <td className="text-center cursor-pointer">{movie.title}</td>
                         <td className="text-center cursor-pointer">{movie.year}</td>
-                        <td className="text-center cursor-pointer">{Math.round(movie.rating)}/10</td>
+                        <td className="text-center cursor-pointer">{<ReactStars count={10} onChange={ratingChanged} edit = {false} size={37} value={movie.rating} color1 = {'grey'} color2={'#ffd700'} />}</td>
                         <td className="text-center cursor-pointer">{movie.current ? <Switch onChange={this.handleChange} checked =  {true} /> : <Switch onChange={this.handleChange} checked =  {false} />} </td>
                     </tr>
         })
