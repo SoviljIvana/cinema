@@ -26,27 +26,87 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         public async Task<IEnumerable<CreateMovieResultModel>> GetAllMoviesWithThisTag(string tag)
         {
-            var data = _movieTagsRepository.GetAllMovieTagsForSpecificTag(tag).Result.ToList();
             List<CreateMovieResultModel> result = new List<CreateMovieResultModel>();
 
-            if (data == null)
+            List<string> listOfString = tag.Split(' ').ToList();
+
+            var allMovieTags = await _movieTagsRepository.GetAll();
+            var allMovies = await _moviesRepository.GetAllWithMovieTags();
+
+            List<Movie> listOfFilms = new List<Movie>();
+
+            foreach (var stringData in listOfString)
+            {
+                var movieTags = allMovieTags.Where(y => y.Tag.Name.Contains(stringData) || y.Tag.Type.Contains(stringData)).ToList();
+                
+                if (listOfFilms.Count == 0)
+                {
+                    foreach (var movieTag in movieTags)
+                    {
+                        var movie = allMovies.SingleOrDefault(g => g.Id.Equals(movieTag.MovieId));
+                        listOfFilms.Add(movie);
+                    }
+                    if (listOfFilms == null)
+                    {
+                        result.Add(new CreateMovieResultModel
+                        {
+                            IsSuccessful = false,
+                            ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST
+                        });
+                        return result;
+                    }
+                }
+                else
+                {
+                    var listOfFilmsForCheck = new List<Movie>();
+                    listOfFilmsForCheck = listOfFilms;
+
+                    for (int j = 0; j <listOfFilmsForCheck.Count; j++)
+                    {
+                        int numberOfNotMatching = 0;
+                        for (int i = 0; i < movieTags.Count; i++)
+                        {
+                            if (!movieTags[i].MovieId.Equals(listOfFilmsForCheck[j].Id))
+                            {
+                                numberOfNotMatching = numberOfNotMatching + 1;
+                            }
+                            if (numberOfNotMatching == movieTags.Count)
+                            {
+                                listOfFilms.Remove(listOfFilmsForCheck[j]);
+                            }
+                        }
+
+                        if (listOfFilms == null)
+                        {
+                            result.Add(new CreateMovieResultModel
+                            {
+                                IsSuccessful = false,
+                                ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST
+                            });
+                            return result;
+                        }
+                    }
+                }
+            }
+
+            if (listOfFilms == null)
             {
                 result.Add(new CreateMovieResultModel
                 {
                     IsSuccessful = false,
-                    ErrorMessage = Messages.PROJECTION_SEARCH_ERROR
+                    ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST
                 });
                 return result;
             }
-            var n = data.Count();
+            var n = listOfFilms.Count();
 
 
-            if (data.Count() == 0)
+            if (listOfFilms.Count() == 0)
             {
                 result.Add(new CreateMovieResultModel
                 {
                     IsSuccessful = true,
-                    ErrorMessage = Messages.PROJECTION_SEARCH_NORESULT,
+                    ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST,
                     Movie = new MovieDomainModel
                     {
                         Title = "Movie not found"
@@ -55,21 +115,19 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return result;
             }
 
-            List<ProjectionDomainFilterModel> listProjDomMode = new List<ProjectionDomainFilterModel>();
-
-            foreach (var item in data)
+            foreach (var item in listOfFilms)
             {
                 CreateMovieResultModel model = new CreateMovieResultModel
                 {
                     IsSuccessful = true,
-                    ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
+                    ErrorMessage = Messages.MOVIE_SEARCH_SUCCESSFUL,
                     Movie = new MovieDomainModel
                     {
-                         Title = item.Movie.Title,
-                        Current = item.Movie.Current,
+                         Title = item.Title,
+                        Current = item.Current,
                         Id = item.Id,
-                        Year = item.Movie.Year, 
-                        Rating = item.Movie.Rating ?? 0
+                        Year = item.Year, 
+                        Rating = item.Rating ?? 0
                     }
                 };
                 result.Add(model);
