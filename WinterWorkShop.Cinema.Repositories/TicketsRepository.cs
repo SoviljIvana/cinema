@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WinterWorkShop.Cinema.Data;
@@ -10,7 +11,7 @@ namespace WinterWorkShop.Cinema.Repositories
 {
     public interface ITicketRepository : IRepository<Ticket>
     {
-
+        Task<IEnumerable<Ticket>> GetAllForSpecificProjection(Guid id);
     }
 
     public class TicketsRepository : ITicketRepository
@@ -28,6 +29,12 @@ namespace WinterWorkShop.Cinema.Repositories
         public async Task<IEnumerable<Ticket>> GetAll()
         {
             var data = await _cinemaContext.Tickets.Include(x=>x.Seat.Auditorium.Cinema).Include(x=>x.Projection.Movie).Include(x=>x.User).ToListAsync();
+            return data;
+        }
+
+        public async Task<IEnumerable<Ticket>> GetAllForSpecificProjection(Guid id)
+        {
+            var data = await _cinemaContext.Tickets.Include(x => x.Seat).Include(x => x.Projection).Where(x=>x.ProjectionId == id).ToListAsync();
             return data;
         }
 
