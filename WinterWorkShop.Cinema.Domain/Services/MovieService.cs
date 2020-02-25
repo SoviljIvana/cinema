@@ -136,33 +136,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         }
 
-        public IEnumerable<MovieDomainModel> GetCurrentMovies(bool? isCurrent)
-        {
-            var data = _moviesRepository.GetCurrent();
 
-            if (data == null)
-            {
-                return null;
-            }
-
-            List<MovieDomainModel> result = new List<MovieDomainModel>();
-            MovieDomainModel model;
-            foreach (var item in data)
-            {
-                model = new MovieDomainModel
-                {
-                    Current = item.Current,
-                    Id = item.Id,
-                    Rating = item.Rating ?? 0,
-                    Title = item.Title,
-                    Year = item.Year
-                };
-                result.Add(model);
-            }
-
-            return result;
-
-        }
 
         public async Task<MovieDomainModel> GetMovieByIdAsync(Guid id)
         {
@@ -386,9 +360,37 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        public IEnumerable<MovieDomainModel> GetCurrentAndNotCurrentMovies()
+        public async Task<IEnumerable<MovieDomainModel>> GetCurrentMovies()
         {
-            var data = _moviesRepository.GetCurrentAndNotCurrentMovies();
+            var data = await _moviesRepository.GetCurrent();
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<MovieDomainModel> result = new List<MovieDomainModel>();
+            MovieDomainModel model;
+            foreach (var item in data)
+            {
+                model = new MovieDomainModel
+                {
+                    Current = item.Current,
+                    Id = item.Id,
+                    Rating = item.Rating ?? 0,
+                    Title = item.Title,
+                    Year = item.Year
+                };
+                result.Add(model);
+            }
+
+            return result;
+
+        }
+
+        public async Task<IEnumerable<MovieDomainModel>> GetCurrentAndNotCurrentMovies()
+        {
+            var data = await _moviesRepository.GetCurrentAndNotCurrentMovies();
 
             if (data == null)
             {
