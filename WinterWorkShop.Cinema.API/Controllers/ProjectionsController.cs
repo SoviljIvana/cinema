@@ -228,5 +228,39 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Ok(projectionDomainModels);
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            CreateProjectionResultModel deletedProjection;
+            try
+            {
+                deletedProjection = await _projectionService.DeleteProjection(id);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return BadRequest(errorResponse);
+
+            }
+
+            if (deletedProjection == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.AUDITORIUM_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+            return Accepted("auditoriums//" + deletedProjection.Projection.Id, deletedProjection);
+
+        }
     }
 }

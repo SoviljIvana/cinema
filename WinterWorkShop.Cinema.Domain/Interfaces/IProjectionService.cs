@@ -15,8 +15,7 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
         Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByCinemaName(string searchData);
         Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByAuditoriumName(string searchData);
         Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByDates(DateTime startDate, DateTime endDate);
-
-
+        Task<CreateProjectionResultModel> DeleteProjection(Guid id);
 
 
 

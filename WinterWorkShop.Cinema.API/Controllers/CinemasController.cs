@@ -171,7 +171,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            CinemaDomainModel deletedCinema;
+            CreateCinemaResultModel deletedCinema;
             try
             {
                 deletedCinema = await _cinemaService.DeleteCinema(id);
@@ -187,18 +187,18 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 return BadRequest(errorResponse);
             }
 
-            if (deletedCinema == null)
+            if (deletedCinema.Cinema == null)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
-                    ErrorMessage = Messages.CINEMA_DOES_NOT_EXIST,
+                    ErrorMessage = Messages.CINEMA_NOT_FOUND,
                     StatusCode = System.Net.HttpStatusCode.InternalServerError
                 };
 
                 return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
 
-            return Accepted("cinemas//" + deletedCinema.Id, deletedCinema);
+            return Accepted("cinemas//" + deletedCinema.Cinema.Id, deletedCinema);
         }
 
         /// <summary>

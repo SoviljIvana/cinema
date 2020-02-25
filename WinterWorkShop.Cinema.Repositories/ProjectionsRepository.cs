@@ -18,7 +18,8 @@ namespace WinterWorkShop.Cinema.Repositories
         Task<IEnumerable<Projection>> FilterProjectionsByAuditoriumName(string serachData);
         Task<IEnumerable<Projection>> FilterProjectionsByCinemaName(string serachData);
         Task<IEnumerable<Projection>> FilterProjectionsByDates(DateTime startDate, DateTime endDate);
-        IEnumerable<Projection> GetAllOfSpecificAuditorium(object id); 
+        IEnumerable<Projection> GetAllOfSpecificAuditorium(object id);
+        Projection GetProjectionById(Guid id);
 
     }
 
@@ -54,9 +55,10 @@ namespace WinterWorkShop.Cinema.Repositories
         }
 
 
-        public async Task<Projection> GetByIdAsync(object id)
-        {
-            return await _cinemaContext.Projections.FindAsync(id);
+        public Projection GetProjectionById(Guid id)
+        { 
+            var x =  _cinemaContext.Projections.Include(x=>x.Movie).Include(s=>s.Auditorium).SingleOrDefault(x=>x.Id == id);
+            return x; 
         }
 
         public IEnumerable<Projection> GetByAuditoriumId(int auditoriumId)
@@ -88,11 +90,18 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public IEnumerable<Projection> GetAllOfSpecificAuditorium(object id)
         {
-
-            var findAuditorium = _cinemaContext.Auditoriums.Find(id);
-            var projections = _cinemaContext.Projections.Where(x => x.AuditoriumId.Equals(findAuditorium.Id)).ToList();
+            var projections = _cinemaContext.Projections.Where(x => x.AuditoriumId.Equals((int)id)).ToList();
 
             return projections;
+
+            //var findAuditorium = _cinemaContext.Auditoriums.Find(id);
+            //if (findAuditorium != null)
+            //{
+            //    var projections = _cinemaContext.Projections.Where(x => x.AuditoriumId.Equals(findAuditorium.Id)).ToList();
+            //    return projections; 
+            //}
+
+            //return null;
         }
         /*///////////////////////////////////////////////////////
         FILTER PROJECTIONS
@@ -130,5 +139,9 @@ namespace WinterWorkShop.Cinema.Repositories
             return data;
         }
 
+        public async Task<Projection> GetByIdAsync(object id)
+        {
+            return await _cinemaContext.Projections.FindAsync(id);
+        }
     }
 }

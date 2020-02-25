@@ -88,9 +88,7 @@ namespace WinterWorkShop.Cinema.Repositories
         }
         public IEnumerable<Auditorium> GetAllOfSpecificCinema(object id)
         {
-
-            var findCinema = _cinemaContext.Cinemas.Find(id);
-            var auditoriums = _cinemaContext.Auditoriums.Where(x => x.CinemaId.Equals(findCinema.Id)).ToList();
+            var auditoriums = _cinemaContext.Auditoriums.Where(x=>x.CinemaId.Equals((int)id)).ToList();
 
             return auditoriums;
         }

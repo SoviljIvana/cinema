@@ -182,7 +182,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            AuditoriumDomainModel deletedAuditorium; 
+            CreateAuditoriumResultModel deletedAuditorium; 
             try
             {
                 deletedAuditorium = await _auditoriumService.DeleteAuditorium(id); 
@@ -198,17 +198,17 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             }
 
-            if (deletedAuditorium == null)
+            if (deletedAuditorium.Auditorium == null)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
-                    ErrorMessage = Messages.AUDITORIUM_DOES_NOT_EXIST, 
+                    ErrorMessage = Messages.AUDITORIUM_DELETION_ERROR, 
                     StatusCode = System.Net.HttpStatusCode.InternalServerError
                 };
 
                 return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse); 
             }
-            return Accepted("auditoriums//" + deletedAuditorium.Id, deletedAuditorium);
+            return Accepted("auditoriums//" + deletedAuditorium.Auditorium.Id, deletedAuditorium);
 
         }
 
