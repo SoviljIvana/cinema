@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WinterWorkShop.Cinema.Domain.Interfaces;
@@ -11,10 +12,12 @@ namespace WinterWorkShop.Cinema.Domain.Services
     public class SeatService : ISeatService
     {
         private readonly ISeatsRepository _seatsRepository;
+        private readonly ITicketRepository _ticketRepository;
 
-        public SeatService(ISeatsRepository seatsRepository)
+        public SeatService(ISeatsRepository seatsRepository, ITicketRepository ticketRepository)
         {
             _seatsRepository = seatsRepository;
+            _ticketRepository = ticketRepository;
         }
 
         public async Task<IEnumerable<SeatDomainModel>> GetAllAsync()
@@ -45,9 +48,12 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         public async Task<IEnumerable<SeatDomainModel>> GetAllSeatsForProjection(Guid id)
         {
-            var data = await _seatsRepository.GetAllOfSpecificProjection(id);
+            var allSeatsForProjection = await _seatsRepository.GetAllOfSpecificProjection(id);
 
-            if (data == null)
+            var reservedSeatsForThisProjection = await _ticketRepository.GetAllForSpecificProjection(id);
+            
+
+            if (allSeatsForProjection == null)
             {
                 return null;
             }
@@ -55,15 +61,24 @@ namespace WinterWorkShop.Cinema.Domain.Services
             List<SeatDomainModel> result = new List<SeatDomainModel>();
             SeatDomainModel model;
 
-            foreach (var item in data)
+            foreach (var seat in allSeatsForProjection)
             {
+                
                 model = new SeatDomainModel
                 {
-                    AuditoriumId = item.AuditoriumId,
-                    Id = item.Id,
-                    Number = item.Number,
-                    Row = item.Row
+                    AuditoriumId = seat.AuditoriumId,
+                    Id = seat.Id,
+                    Number = seat.Number,
+                    Row = seat.Row
                 };
+
+                foreach (var reservedSeat in reservedSeatsForThisProjection)
+                {
+                    if (seat.Id == reservedSeat.SeatId)
+                    {
+                        model.Reserved = true;
+                    }
+                }
                 result.Add(model);
             }
 
