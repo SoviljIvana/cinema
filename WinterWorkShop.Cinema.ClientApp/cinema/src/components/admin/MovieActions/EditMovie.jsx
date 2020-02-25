@@ -229,5 +229,4 @@ class EditMovie extends React.Component {
         );
     }
 }
-
 export default withRouter(EditMovie);
