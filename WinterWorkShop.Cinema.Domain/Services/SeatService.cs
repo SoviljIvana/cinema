@@ -24,11 +24,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
         {
             var data = await _seatsRepository.GetAll();
 
-            if (data == null)
-            {
-                return null;
-            }
-
             List<SeatDomainModel> result = new List<SeatDomainModel>();
             SeatDomainModel model;
             foreach (var item in data)
@@ -83,6 +78,37 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
 
             return result;
+        }
+
+
+        public async Task<SeatDomainModel> DeleteSeat(Guid id)
+        {
+            var existingSeats = await _seatsRepository.GetByIdAsync(id);
+
+            if (existingSeats == null)
+            {
+                return null;
+            }
+
+            _seatsRepository.Delete(id);
+
+            _seatsRepository.Save();
+
+            if (existingSeats.Tickets != null)
+            {
+                return null;
+            }
+
+            SeatDomainModel domainModel = new SeatDomainModel
+            {
+                AuditoriumId = existingSeats.AuditoriumId, 
+                Id = existingSeats.Id, 
+                Number = existingSeats.Number, 
+                Row = existingSeats.Row
+            };
+
+            return domainModel;
+
         }
     }
 }

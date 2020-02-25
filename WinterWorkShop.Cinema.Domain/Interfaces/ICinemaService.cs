@@ -16,7 +16,7 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
 
         Task<CinemaDomainModel> UpdateCinema(CinemaDomainModel updateCinema);
 
-        Task<CinemaDomainModel> DeleteCinema(int id);
+        Task<CreateCinemaResultModel> DeleteCinema(int id);
         Task<CreateCinemaResultModel> AddCinemaWithAuditoriumsAndSeats(CreateCinemaDomainModel newCinema);
 
     }

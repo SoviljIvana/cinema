@@ -14,21 +14,15 @@ namespace WinterWorkShop.Cinema.Domain.Services
     {
         private readonly IAuditoriumsRepository _auditoriumsRepository;
         private readonly ICinemasRepository _cinemasRepository;
-        private readonly ISeatsRepository _seatsRepository;
-        private readonly IProjectionsRepository _projectionsRepository;
         private readonly IAuditoriumService _auditoriumService;
 
 
         public CinemaService(IAuditoriumsRepository auditoriumsRepository,
                                 ICinemasRepository cinemasRepository,
-                                ISeatsRepository seatsRepository,
-                                IProjectionsRepository projectionsRepository,
                                 IAuditoriumService auditoriumservice)
         {
             _auditoriumsRepository = auditoriumsRepository;
             _cinemasRepository = cinemasRepository;
-            _seatsRepository = seatsRepository;
-            _projectionsRepository = projectionsRepository;
             _auditoriumService = auditoriumservice;
         }
 
@@ -238,27 +232,53 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return domainModel;
         }
 
-        public async Task<CinemaDomainModel> DeleteCinema(int id)
+        public async Task<CreateCinemaResultModel> DeleteCinema(int id)
         {
             var existingCinema = await _cinemasRepository.GetByIdAsync(id);
-            var auditoriumsInCinema = _auditoriumsRepository.GetAllOfSpecificCinema(id).ToList();
+            var auditoriumsInCinema = _auditoriumsRepository.GetAllOfSpecificCinema(id);
+
+            if (existingCinema == null)
+            {
+                CreateCinemaResultModel errorModel = new CreateCinemaResultModel
+                {
+                    ErrorMessage = Messages.CINEMA_DOES_NOT_EXIST,
+                    IsSuccessful = false
+                };
+                return errorModel;
+            }
 
             existingCinema.Auditoriums = auditoriumsInCinema.ToList(); 
 
-            AuditoriumDomainModel methodData = new AuditoriumDomainModel(); 
-
             foreach(var item in auditoriumsInCinema)
             {
-                await _auditoriumService.DeleteAuditorium(item.Id);
-
+                var x = await _auditoriumService.DeleteAuditorium(item.Id);
+                if (!x.IsSuccessful)
+                {
+                    CreateCinemaResultModel errorModel = new CreateCinemaResultModel
+                    {
+                        ErrorMessage = Messages.CINEMA_DELETION_ERROR, 
+                        IsSuccessful = false, 
+                        Cinema = new CinemaDomainModel
+                        {
+                            Id = existingCinema.Id, 
+                            Name = existingCinema.Name
+                        }
+                    };
+                    return errorModel;
+                }
             }
             var data = _cinemasRepository.Delete(id);
             _cinemasRepository.Save();
 
-            CinemaDomainModel domainModel = new CinemaDomainModel
+            CreateCinemaResultModel domainModel = new CreateCinemaResultModel
             {
-                Id = existingCinema.Id,
-                Name = existingCinema.Name
+                ErrorMessage = null, 
+                IsSuccessful = true, 
+                Cinema = new CinemaDomainModel
+                {
+                    Id = existingCinema.Id, 
+                    Name = existingCinema.Name
+                }
             };
 
             return domainModel; 

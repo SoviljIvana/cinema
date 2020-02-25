@@ -18,6 +18,7 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
         Task<IEnumerable<ProjectionDomainModel>> GetAllAsyncForSpecificMovie(Guid id);
 
 
+        Task<CreateProjectionResultModel> DeleteProjection(Guid id);
 
 
 

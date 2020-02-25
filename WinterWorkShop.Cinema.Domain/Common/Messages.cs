@@ -20,6 +20,9 @@
         public const string AUDITORIUM_SAME_NAME = "Cannot create new auditorium, auditorium with same name alredy exist.";
         public const string AUDITORIUM_UNVALID_CINEMAID = "Cannot create new auditorium, auditorium with given cinemaId does not exist.";
         public const string AUDITORIUM_DOES_NOT_EXIST = "Auditorium does not exist.";
+        public const string AUDITORIUM_DELETION_ERROR = "Unable to find auditorium, please try again. ";
+        public const string AUDITORIUM_NOT_FOUND = "Unable to find auditorium. ";
+
         #endregion
 
         #region Cinemas
@@ -29,6 +32,10 @@
         public const string CINEMA_CREATION_ERROR = "Error occured while creating new cinema, please try again.";
         public const string CINEMA_GET_BY_ID = "Error occured while getting cinema by Id, please try again.";
         public const string CINEMA_SAME_NAME = "Cannot create new cinema, cinema with same name alredy exist.";
+        public const string CINEMA_DELETION_ERROR = "Cannot delete cinema as one or more auditoriums has at least one projection scheduled in the future. ";
+        public const string CINEMA_NOT_FOUND = "Unable to find cinema, please try again. ";
+
+
 
         #endregion
 
@@ -55,6 +62,8 @@
         public const string PROJECTION_SEARCH_ERROR = "Please enter search parameter";
         public const string PROJECTION_SEARCH_NORESULT = "Search returned with no results. Please try with different search parameter. ";
         public const string PROJECTION_SEARCH_SUCCESSFUL = "Search successful. ";
+        public const string PROJECTION_IN_FUTURE = "Cannot delete projection as it is scheduled in the future. ";
+
         #endregion
 
         #region Seats

@@ -399,5 +399,60 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
             return result;
         }
+
+        public async Task<CreateProjectionResultModel> DeleteProjection(Guid id)
+        {
+
+            var existingProjections = _projectionsRepository.GetProjectionById(id);
+
+            if (existingProjections == null)
+            {
+                CreateProjectionResultModel errorModel = new CreateProjectionResultModel
+                {
+                    ErrorMessage = Messages.PROJECTION_IN_FUTURE,
+                    IsSuccessful = true
+                };
+                return errorModel;
+            }
+
+            if (existingProjections.DateTime > DateTime.Now)
+            {
+                CreateProjectionResultModel errorModel = new CreateProjectionResultModel
+                {
+                    ErrorMessage = Messages.PROJECTION_IN_FUTURE,
+                    IsSuccessful = false,
+                    Projection = new ProjectionDomainModel
+                    {
+                        AuditoriumId = existingProjections.AuditoriumId,
+                        Id = existingProjections.Id,
+                        MovieId = existingProjections.MovieId,
+                        AditoriumName = existingProjections.Auditorium.Name, 
+                        MovieTitle = existingProjections.Movie.Title, 
+                        ProjectionTime = existingProjections.DateTime
+                    }
+                };
+                return errorModel;
+            }
+
+            _projectionsRepository.Delete(id);
+
+            _projectionsRepository.Save();
+
+            CreateProjectionResultModel domainModel = new CreateProjectionResultModel
+            {
+                ErrorMessage = null,
+                IsSuccessful = true,
+                Projection = new ProjectionDomainModel
+                {
+                    AditoriumName = existingProjections.Auditorium.Name,
+                    AuditoriumId = existingProjections.AuditoriumId,
+                    Id = existingProjections.Id,
+                    MovieId = existingProjections.MovieId,
+                    MovieTitle = existingProjections.Movie.Title
+                }
+            };
+            return domainModel;
+        }
+
     }
 }
