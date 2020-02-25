@@ -47,6 +47,35 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
+        public async Task<IEnumerable<ProjectionDomainModel>> GetAllAsyncForSpecificMovie(Guid id)
+        {
+            var data = await _projectionsRepository.GetAllFromOneMovie(id);
+            List<ProjectionDomainModel> result = new List<ProjectionDomainModel>();
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            ProjectionDomainModel model;
+            foreach (var item in data)
+            {
+                model = new ProjectionDomainModel
+                {
+                    Id = item.Id,
+                    MovieId = item.MovieId,
+                    AuditoriumId = item.AuditoriumId,
+                    ProjectionTime = item.DateTime,
+                    MovieTitle = item.Movie.Title,
+                    AditoriumName = item.Auditorium.Name
+                };
+                result.Add(model);
+            }
+
+            return result;
+        }
+
+
         public async Task<CreateProjectionResultModel> CreateProjection(ProjectionDomainModel domainModel)
         {
             int projectionTime = 3;
