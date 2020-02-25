@@ -75,16 +75,7 @@ namespace WinterWorkShop.Cinema.Repositories
         public IEnumerable<Seat> GetAllOfSpecificAuditorium(object id)
         {
             var seats = _cinemaContext.Seats.Where(x => x.AuditoriumId.Equals((int)id)).ToList();
-
             return seats;
-
-            //var findAuditorium = _cinemaContext.Auditoriums.Find(id);
-            //if (findAuditorium != null)
-            //{
-            //    var seats = _cinemaContext.Seats.Where(x => x.AuditoriumId.Equals(findAuditorium.Id)).ToList();
-            //    return seats; 
-            //}
-            //return null; 
         }
 
     }

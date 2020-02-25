@@ -93,15 +93,6 @@ namespace WinterWorkShop.Cinema.Repositories
             var projections = _cinemaContext.Projections.Where(x => x.AuditoriumId.Equals((int)id)).ToList();
 
             return projections;
-
-            //var findAuditorium = _cinemaContext.Auditoriums.Find(id);
-            //if (findAuditorium != null)
-            //{
-            //    var projections = _cinemaContext.Projections.Where(x => x.AuditoriumId.Equals(findAuditorium.Id)).ToList();
-            //    return projections; 
-            //}
-
-            //return null;
         }
         /*///////////////////////////////////////////////////////
         FILTER PROJECTIONS
