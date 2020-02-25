@@ -6,54 +6,68 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
 import Switch from "react-switch";
+import ReactStars from 'react-stars';
+
+const ratingChanged = (newRating) => {
+    console.log(newRating)
+}
+
 
 class ShowAllMovies extends Component {
+
     constructor(props) {
-      super(props);
-      this.state = {
-          movies: [],
-          isLoading: true
-      };
-      this.editMovie = this.editMovie.bind(this);
-      this.removeMovie = this.removeMovie.bind(this);
+        super(props);
+        this.state = {
+            movies: [],
+            isLoading: true,
+
+        };
+        this.editMovie = this.editMovie.bind(this);
+        this.removeMovie = this.removeMovie.bind(this);
     }
+
 
     componentDidMount() {
-      this.getProjections();
+        this.getProjections();
     }
 
-    getProjections() {
-      const requestOptions = {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-      };
 
-      this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/Movies/allMovies`, requestOptions)
-        .then(response => {
-          if (!response.ok) {
-            return Promise.reject(response);
-        }
-        return response.json();
-        })
-        .then(data => {
-          if (data) {
-            this.setState({ movies: data, isLoading: false });
+    getProjections() {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
             }
-        })
-        .catch(response => {
-            this.setState({isLoading: false});
-            NotificationManager.error(response.message || response.statusText);
-            this.setState({ submitted: false });
-        });
+        };
+
+        this.setState({ isLoading: true });
+        fetch(`${serviceConfig.baseURL}/api/Movies/allMovies`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({ movies: data, isLoading: false });
+                }
+            })
+            .catch(response => {
+                this.setState({ isLoading: false });
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
     }
 
     removeMovie(id) {
         const requestOptions = {
             method: 'DELETE',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
         };
 
         fetch(`${serviceConfig.baseURL}/api/movies/${id}`, requestOptions)
@@ -68,7 +82,7 @@ class ShowAllMovies extends Component {
                 const newState = this.state.movies.filter(movie => {
                     return movie.id !== id;
                 })
-                this.setState({movies: newState});
+                this.setState({ movies: newState });
             })
             .catch(response => {
                 NotificationManager.error(response.message || response.statusText);
@@ -79,13 +93,13 @@ class ShowAllMovies extends Component {
     fillTableWithDaata() {
         return this.state.movies.map(movie => {
             return <tr key={movie.id}>
-                        <td className="text-center cursor-pointer">{movie.title}</td>
-                        <td className="text-center cursor-pointer">{movie.year}</td>
-                        <td className="text-center cursor-pointer">{Math.round(movie.rating)}/10</td>
-                        <td className="text-center cursor-pointer">{movie.current ? <Switch onChange={this.handleChange} checked =  {true} /> : <Switch onChange={this.handleChange} checked =  {false} />} </td>
-                        <td className="text-center cursor-pointer" onClick={() => this.editMovie(movie.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
-                        <td className="text-center cursor-pointer" onClick={() => this.removeMovie(movie.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
-                    </tr>
+                <td className="text-center cursor-pointer">{movie.title}</td>
+                <td className="text-center cursor-pointer">{movie.year}</td>
+                <td className="text-center cursor-pointer">{<ReactStars count={10} onChange={ratingChanged} edit = {false} size={37} value={movie.rating} color1 = {'grey'} color2={'#ffd700'} />}</td>
+                <td className="text-center cursor-pointer">{movie.current ? <Switch onChange={this.handleChange} checked={true} /> : <Switch onChange={this.handleChange} checked={false} />} </td>
+                <td className="text-center cursor-pointer" onClick={() => this.editMovie(movie.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit} /></td>
+                <td className="text-center cursor-pointer" onClick={() => this.removeMovie(movie.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash} /></td>
+            </tr>
         })
     }
 
@@ -94,24 +108,22 @@ class ShowAllMovies extends Component {
     }
 
     render() {
-        const {isLoading} = this.state;
+        const { isLoading } = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm">
-                            <thead>
-                            <tr>
-                                <th className="text-center cursor-pointer">Title</th>
-                                <th className="text-center cursor-pointer">Year</th>
-                                <th className="text-center cursor-pointer">Rating</th>
-                                <th className="text-center cursor-pointer">Is Current</th>
-                        
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {rowsData}
-                            </tbody>
-                        </Table>);
+            <thead>
+                <tr>
+                    <th className="text-center cursor-pointer">Title</th>
+                    <th className="text-center cursor-pointer">Year</th>
+                    <th className="text-center cursor-pointer">Rating</th>
+                    <th className="text-center cursor-pointer">Is Current</th>
+                </tr>
+            </thead>
+            <tbody>
+                {rowsData}
+            </tbody>
+        </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
-                            
         return (
             <React.Fragment>
                 <Row className="no-gutters pt-2">
@@ -122,7 +134,7 @@ class ShowAllMovies extends Component {
                 </Row>
             </React.Fragment>
         );
-      }
+    }
 }
 
 export default ShowAllMovies;
