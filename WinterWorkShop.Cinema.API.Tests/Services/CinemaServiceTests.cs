@@ -68,6 +68,12 @@
 
 //        }
 
+        //[TestMethod]
+        //public void CinemaService_GetAllAsync_ReturnNull()
+        //{
+        //    //Arrange
+        //    IEnumerable<Data.Cinema> cinemas = null;
+        //    Task<IEnumerable<Data.Cinema>> responseTask = Task.FromResult(cinemas);
 //        [TestMethod]
 //        public void CinemaService_GetAllAsync_ReturnNull()
 //        {
@@ -78,7 +84,12 @@
 //            _mockCinemasRepository = new Mock<ICinemasRepository>();
 //            _mockCinemasRepository.Setup(x => x.GetAll()).Returns(responseTask);
 //            CinemaService cinemaService = new CinemaService(_mockCinemasRepository.Object);
+        //    _mockCinemasRepository = new Mock<ICinemasRepository>();
+        //    _mockCinemasRepository.Setup(x => x.GetAll()).Returns(responseTask);
+        //    CinemaService cinemaService = new CinemaService(_mockCinemasRepository.Object);
 
+        //    //Act
+        //    var resultAction = cinemaService.GetAllAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 //            //Act
 //            var resultAction = cinemaService.GetAllAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
@@ -100,13 +111,36 @@
 //            Assert.AreEqual(_cinema.Id, result[0].Id);
 //            Assert.IsInstanceOfType(result[0], typeof(CinemaDomainModel));
 //        }
+        //    //Assert
+        //    Assert.IsNull(resultAction);
+        //}
+        //[TestMethod]
+        //public void CinemaService_GetAllAsync_ReturnListOfCinemas()
+        //{
+        //    //Arrange
+        //    int expectedResultCount = 1;
+        //    CinemaService projectionController = new CinemaService(_mockCinemasRepository.Object);
+        //    //Act
+        //    var resultAction = projectionController.GetAllAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+        //    var result = (List<CinemaDomainModel>)resultAction;
+        //    //Assert
+        //    Assert.IsNotNull(result);
+        //    Assert.AreEqual(expectedResultCount, result.Count);
+        //    Assert.AreEqual(_cinema.Id, result[0].Id);
+        //    Assert.IsInstanceOfType(result[0], typeof(CinemaDomainModel));
+        //}
 
 //        [TestMethod]
 //        public void CinemaService_CreateCinema_HappyFlow()
 //        {
 //            CinemaService cinemaService = new CinemaService(_mockCinemasRepository.Object);
+        //[TestMethod]
+        //public void CinemaService_CreateCinema_HappyFlow()
+        //{
+        //    CinemaService cinemaService = new CinemaService(_mockCinemasRepository.Object);
 
 //            var result = cinemaService.AddCinema(_cinemaDomainModel).Result;
+        //    var result = cinemaService.AddCinema(_cinemaDomainModel).Result;
 
 //            Assert.IsNotNull(result);
 //            Assert.IsTrue(result.IsSuccessful);
@@ -114,6 +148,12 @@
 //            Assert.IsNotNull(result.Cinema);
 //            Assert.AreEqual(_newCinema.Id, result.Cinema.Id);
 //        }
+        //    Assert.IsNotNull(result);
+        //    Assert.IsTrue(result.IsSuccessful);
+        //    Assert.IsNull(result.ErrorMessage);
+        //    Assert.IsNotNull(result.Cinema);
+        //    Assert.AreEqual(_newCinema.Id, result.Cinema.Id);
+        //}
 
 //    }
 //}

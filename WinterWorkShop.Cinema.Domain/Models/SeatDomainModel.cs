@@ -13,5 +13,6 @@ namespace WinterWorkShop.Cinema.Domain.Models
         public int Row { get; set; }
 
         public int Number { get; set; }
+        public bool Reserved { get; set; }
     }
 }

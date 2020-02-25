@@ -11,9 +11,9 @@ namespace WinterWorkShop.Cinema.Repositories
 {
     public interface IMoviesRepository : IRepository<Movie>
     {
-        IEnumerable<Movie> GetCurrentAndNotCurrentMovies();
+        Task<IEnumerable<Movie>> GetCurrentAndNotCurrentMovies();
         Task<IEnumerable<Movie>> GetTopTenMovies();
-        IEnumerable<Movie> GetCurrent();
+        Task<IEnumerable<Movie>> GetCurrent();
         Task<IEnumerable<Movie>> GetAllWithMovieTags();
     }
 
@@ -58,18 +58,18 @@ namespace WinterWorkShop.Cinema.Repositories
             return data;
         }
 
-        public IEnumerable<Movie> GetCurrent()
+        public async Task<IEnumerable<Movie>> GetCurrent()
         {
-            var data = _cinemaContext.Movies
-                .Where(x => x.Current);
+            var data = await _cinemaContext.Movies
+                .Where(x => x.Current).ToListAsync();
 
             return data;
         }
 
 
-        public IEnumerable<Movie> GetCurrentAndNotCurrentMovies()
+        public async Task<IEnumerable<Movie>> GetCurrentAndNotCurrentMovies()
         {
-            var data = _cinemaContext.Movies;
+            var data = await _cinemaContext.Movies.ToListAsync();
 
             return data;
         }

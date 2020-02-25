@@ -4,7 +4,11 @@ import { FormGroup, FormControl, Button, Container, Row, Col, FormText, } from '
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
 import { YearPicker } from 'react-dropdown-date';
-
+import Switch from "react-switch";
+import ReactStars from 'react-stars';
+const ratingChanged = (newRating) => {
+    console.log(newRating)
+}
 class EditMovie extends React.Component {
     constructor(props) {
         super(props);
@@ -19,17 +23,17 @@ class EditMovie extends React.Component {
             submitted: false,
             canSubmit: true
         };
-        this.handleChange = this.handleChange.bind(this);
+        this.change = this.change.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleYearChange = this.handleYearChange.bind(this);
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params; 
+        const { id } = this.props.match.params;
         this.getMovie(id);
     }
 
-    handleChange(e) {
+    change(e) {
         const { id, value } = e.target;
         this.setState({ [id]: value });
         this.validate(id, value);
@@ -38,22 +42,30 @@ class EditMovie extends React.Component {
     validate(id, value) {
         if (id === 'title') {
             if (value === '') {
-                this.setState({titleError: 'Fill in movie title', 
-                                canSubmit: false});
+                this.setState({
+                    titleError: 'Fill in movie title',
+                    canSubmit: false
+                });
             } else {
-                this.setState({titleError: '',
-                                canSubmit: true});
+                this.setState({
+                    titleError: '',
+                    canSubmit: true
+                });
             }
         }
-        
-        if(id === 'year') {
+
+        if (id === 'year') {
             const yearNum = +value;
-            if(!value || value === '' || (yearNum<1895 || yearNum>2100)){
-                this.setState({yearError: 'Please chose valid year',
-                                canSubmit: false});
+            if (!value || value === '' || (yearNum < 1895 || yearNum > 2100)) {
+                this.setState({
+                    yearError: 'Please chose valid year',
+                    canSubmit: false
+                });
             } else {
-                this.setState({yearError: '',
-                                canSubmit: true});
+                this.setState({
+                    yearError: '',
+                    canSubmit: true
+                });
             }
         }
     }
@@ -72,37 +84,41 @@ class EditMovie extends React.Component {
     }
 
     handleYearChange(year) {
-        this.setState({year: year});
+        this.setState({ year: year });
         this.validate('year', year);
     }
 
     getMovie(movieId) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
-    };
-
-    fetch(`${serviceConfig.baseURL}/api/movies/` + movieId, requestOptions)
-        .then(response => {
-        if (!response.ok) {
-            return Promise.reject(response);
-        }
-        return response.json();
-        })
-        .then(data => {
-            if (data) {
-                this.setState({title: data.title,
-                               year: data.year,
-                               rating: Math.round(data.rating) + '',
-                               current: data.current + '',
-                               id: data.id});
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
             }
-        })
-        .catch(response => {
-            NotificationManager.error(response.message || response.statusText);
-            this.setState({ submitted: false });
-        });
+        };
+
+        fetch(`${serviceConfig.baseURL}/api/movies/` + movieId, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({
+                        title: data.title,
+                        year: data.year,
+                        rating: Math.round(data.rating) + '',
+                        current: data.current + '',
+                        id: data.id
+                    });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
     }
 
     updateMovie() {
@@ -117,8 +133,10 @@ class EditMovie extends React.Component {
 
         const requestOptions = {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
             body: JSON.stringify(data)
         };
 
@@ -139,6 +157,7 @@ class EditMovie extends React.Component {
             });
     }
 
+
     render() {
         const { title, year, current, rating, submitted, titleError, yearError, canSubmit } = this.state;
         return (
@@ -153,7 +172,7 @@ class EditMovie extends React.Component {
                                     type="text"
                                     placeholder="Movie Title"
                                     value={title}
-                                    onChange={this.handleChange}
+                                    onChange={this.change}
                                 />
                                 <FormText className="text-danger">{titleError}</FormText>
                             </FormGroup>
@@ -177,7 +196,7 @@ class EditMovie extends React.Component {
                                 <FormText className="text-danger">{yearError}</FormText>
                             </FormGroup>
                             <FormGroup>
-                                <FormControl as="select" placeholder="Rating" id="rating" value={rating} onChange={this.handleChange}>
+                                <FormControl as="select" placeholder="Rating" id="rating" value={rating} onChange={this.change}>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
@@ -191,10 +210,16 @@ class EditMovie extends React.Component {
                                 </FormControl>
                             </FormGroup>
                             <FormGroup>
-                                <FormControl as="select" placeholder="Current" id="current" value={current} onChange={this.handleChange}>
-                                <option value="true">Current</option>
-                                <option value="false">Not Current</option>
+                            <td className="text-center cursor-pointer">{<ReactStars count={10} onChange={ratingChanged} edit = {false} size={37} value={rating} color1 = {'grey'} color2={'#ffd700'} />}</td>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormControl as="select" placeholder="Current" id="current" value={current} onChange={this.change}>
+                                    <option value="true">Current</option>
+                                    <option value="false">Not Current</option>
                                 </FormControl>
+                            </FormGroup>
+                            <FormGroup>
+                                <td className >{current === 'true' ? <Switch onChange={this.handleChange} checked={true} /> : <Switch onChange={this.handleChange} checked={false} />}      </td>
                             </FormGroup>
                             <Button type="submit" disabled={submitted || !canSubmit} block>Edit Movie</Button>
                         </form>
@@ -204,5 +229,4 @@ class EditMovie extends React.Component {
         );
     }
 }
-
 export default withRouter(EditMovie);

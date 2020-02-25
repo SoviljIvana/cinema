@@ -89,7 +89,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         {
             IEnumerable<MovieDomainModel> movieDomainModels;
 
-            movieDomainModels = _movieService.GetCurrentMovies(true);
+            movieDomainModels = await _movieService.GetCurrentMovies();
 
             if (movieDomainModels == null)
             {
@@ -109,7 +109,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         {
             IEnumerable<MovieDomainModel> movieDomainModels;
 
-            movieDomainModels = _movieService.GetCurrentAndNotCurrentMovies();
+            movieDomainModels = await _movieService.GetCurrentAndNotCurrentMovies();
 
             if (movieDomainModels == null)
             {
