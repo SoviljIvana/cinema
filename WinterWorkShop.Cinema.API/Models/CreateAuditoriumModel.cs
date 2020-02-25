@@ -9,7 +9,7 @@ namespace WinterWorkShop.Cinema.API.Models
 {
     public class CreateAuditoriumModel
     {
-        [Required]        
+        //[Required]        
         public int cinemaId { get; set; }
 
         [Required]
