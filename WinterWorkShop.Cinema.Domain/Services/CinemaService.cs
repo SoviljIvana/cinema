@@ -50,7 +50,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        
+
 
         public async Task<CreateCinemaResultModel> AddCinema(CinemaDomainModel newCinema)
         {
@@ -73,7 +73,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             CreateCinemaResultModel createCinemaResultModel = new CreateCinemaResultModel()
             {
-                Cinema = new CinemaDomainModel 
+                Cinema = new CinemaDomainModel
                 {
                     Id = data.Id,
                     Name = data.Name
@@ -108,25 +108,24 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             foreach (var item in listofAuditoriums)
             {
-                newCinemaToAdd.Auditoriums.Add(new Auditorium 
+                newCinemaToAdd.Auditoriums.Add(new Auditorium
                 {
                     Name = item.Name,
                     Seats = new List<Seat>()
                 });
 
-                foreach (var auditorium in newCinemaToAdd.Auditoriums)
+                var auditoriumName = newCinemaToAdd.Auditoriums.FirstOrDefault(x => x.Name.Equals(item.Name)).Name;
+
+                for (int i = 1; i < item.SeatRows + 1; i++)
                 {
-                    for (int i = 1; i < item.SeatRows + 1; i++)
+                    for (int j = 1; j < item.NumberOfSeats + 1; j++)
                     {
-                        for (int j = 1; j < item.NumberOfSeats + 1; j++)
+                        Seat seat = new Seat()
                         {
-                            Seat seat = new Seat()
-                            {
-                                Row = i,
-                                Number = j
-                            };
-                            auditorium.Seats.Add(seat);
-                        }
+                            Row = i,
+                            Number = j
+                        };
+                        newCinemaToAdd.Auditoriums.SingleOrDefault(x => x.Name.Equals(auditoriumName)).Seats.Add(seat);
                     }
                 }
             }
@@ -161,25 +160,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 {
                     CinemaId = insertedAuditorium.CinemaId,
                     Id = insertedAuditorium.Id,
-                    Name = insertedAuditorium.Name,
-                    SeatsList = new List<SeatDomainModel>()
+                    Name = insertedAuditorium.Name
                 });
-
-                var seatsForThisAuditorium = insertedAuditorium.Seats.ToList();
-
-                foreach (var item in createCinemaResultModel.Cinema.AuditoriumDomainModels)
-                {
-                    foreach (var seat in seatsForThisAuditorium)
-                    {
-                        item.SeatsList.Add(new SeatDomainModel
-                        {
-                            Number = seat.Number,
-                            Id = seat.Id,
-                            Row = seat.Row,
-                            AuditoriumId = seat.AuditoriumId
-                        });
-                    }
-                }
             }
             return createCinemaResultModel;
         }
@@ -247,20 +229,20 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return errorModel;
             }
 
-            existingCinema.Auditoriums = auditoriumsInCinema.ToList(); 
+            existingCinema.Auditoriums = auditoriumsInCinema.ToList();
 
-            foreach(var item in auditoriumsInCinema)
+            foreach (var item in auditoriumsInCinema)
             {
                 var x = await _auditoriumService.DeleteAuditorium(item.Id);
                 if (!x.IsSuccessful)
                 {
                     CreateCinemaResultModel errorModel = new CreateCinemaResultModel
                     {
-                        ErrorMessage = Messages.CINEMA_DELETION_ERROR, 
-                        IsSuccessful = false, 
+                        ErrorMessage = Messages.CINEMA_DELETION_ERROR,
+                        IsSuccessful = false,
                         Cinema = new CinemaDomainModel
                         {
-                            Id = existingCinema.Id, 
+                            Id = existingCinema.Id,
                             Name = existingCinema.Name
                         }
                     };
@@ -272,16 +254,16 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             CreateCinemaResultModel domainModel = new CreateCinemaResultModel
             {
-                ErrorMessage = null, 
-                IsSuccessful = true, 
+                ErrorMessage = null,
+                IsSuccessful = true,
                 Cinema = new CinemaDomainModel
                 {
-                    Id = existingCinema.Id, 
+                    Id = existingCinema.Id,
                     Name = existingCinema.Name
                 }
             };
 
-            return domainModel; 
+            return domainModel;
 
         }
     }
