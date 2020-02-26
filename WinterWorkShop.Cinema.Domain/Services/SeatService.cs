@@ -45,7 +45,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
         {
             var allSeatsForProjection = await _seatsRepository.GetAllOfSpecificProjection(id);
 
-            var reservedSeatsForThisProjection = await _ticketRepository.GetAllForSpecificProjection(id);
+            var reservedSeatsForThisProjection = _ticketRepository.GetAllForSpecificProjection(id);
             
 
             if (allSeatsForProjection == null)

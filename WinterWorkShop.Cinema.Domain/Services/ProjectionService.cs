@@ -13,10 +13,13 @@ namespace WinterWorkShop.Cinema.Domain.Services
     public class ProjectionService : IProjectionService
     {
         private readonly IProjectionsRepository _projectionsRepository;
+        private readonly ITicketRepository _ticketRepository; 
 
-        public ProjectionService(IProjectionsRepository projectionsRepository)
+        public ProjectionService(IProjectionsRepository projectionsRepository,
+                                ITicketRepository ticketRepository)
         {
             _projectionsRepository = projectionsRepository;
+            _ticketRepository = ticketRepository;
         }
 
         public async Task<IEnumerable<ProjectionDomainModel>> GetAllAsync()
@@ -404,6 +407,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
         {
 
             var existingProjections = _projectionsRepository.GetProjectionById(id);
+            var ticketsInProjection = _ticketRepository.GetAllForSpecificProjection(id);
 
             if (existingProjections == null)
             {
@@ -433,7 +437,10 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 };
                 return errorModel;
             }
-
+            foreach (var ticket in ticketsInProjection)
+            {
+                _ticketRepository.Delete(ticket.Id);
+            }
             _projectionsRepository.Delete(id);
 
             _projectionsRepository.Save();
