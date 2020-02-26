@@ -16,25 +16,22 @@ namespace WinterWorkShop.Cinema.Domain.Services
         private readonly IAuditoriumsRepository _auditoriumsRepository;
         private readonly ICinemasRepository _cinemasRepository;
         private readonly ISeatsRepository _seatsRepository;
-        private readonly IProjectionService _projectionService;
         private readonly IProjectionsRepository _projectionsRepository;
-        private readonly ISeatService _seatService; 
+        private readonly ITicketRepository _ticketRepository;
 
 
 
         public AuditoriumService(IAuditoriumsRepository auditoriumsRepository, 
                                 ICinemasRepository cinemasRepository, 
                                 ISeatsRepository seatsRepository,
-                                IProjectionService projectionService,
                                 IProjectionsRepository projectionsRepository, 
-                                ISeatService seatService)
+                                ITicketRepository ticketRepository)
         {
             _auditoriumsRepository = auditoriumsRepository;
             _cinemasRepository = cinemasRepository;
             _seatsRepository = seatsRepository;
-            _projectionService = projectionService;
             _projectionsRepository = projectionsRepository;
-            _seatService = seatService;
+            _ticketRepository = ticketRepository;
         }
 
         public async Task<IEnumerable<AuditoriumDomainModel>> GetAllAsync()
@@ -241,6 +238,14 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 foreach (var seat in seatsInAuditorium)
                 {
                     _seatsRepository.Delete(seat.Id);
+                }
+                foreach (var projection in projectionsInAuditorium)
+                {
+                    var ticketsInProjection = _ticketRepository.GetAllForSpecificProjection(projection.Id).ToList();
+                    foreach(var ticket in ticketsInProjection)
+                    {
+                        _ticketRepository.Delete(ticket.Id);
+                    }
                 }
             }
 
