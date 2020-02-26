@@ -1,105 +1,50 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 
 class ProjectionDetails extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        movies: []
-    };
-  }
 
-  componentDidMount() {
-    //this.getMovie();
-  }
-
-  getProjection() {
-    // TO DO: here you need to fetch movie with projection details using ID from router
-    const requestOptions = {
-      method: 'GET'
-    };
-
-    fetch(`${serviceConfig.baseURL}/movies/261e3562-5f7b-418f-61a6-08d797a6bf42`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          return Promise.reject(response);
-      }
-      return response.json();
-      })
-      .then(data => {
-          if (data) {
-              // this.setState({ posts: data });
-          }
-      })
-      .catch(response => {
-          NotificationManager.error(response.message || response.statusText);
-          this.setState({ submitted: false });
-      });
-  }
-  
-  renderRows(rows, seats) {
-    const rowsRendered = [];
-    for (let i = 0; i < rows; i++) {
-        rowsRendered.push( <tr key={i}>
-            {this.renderSeats(seats, i)}
-        </tr>);
+    constructor(props) {
+        super(props);
+        this.state = {
+            movies: []
+        };
     }
-    return rowsRendered;
-  }
 
-  renderSeats(seats, row) {
-      let renderedSeats = [];
-      for (let i = 0; i < seats; i++) {
-          renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i}></td>);
-      }
-      return renderedSeats;
-  }
+    getProjections() {
+        const projectionTimes = ['11:45', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30'];
+        return projectionTimes.map((time) => {
+            return <Button className="mr-1 mb-2">{time}</Button>
+        })
+    }
 
-  render() {
-    const auditorium = this.renderRows(5, 26);
-      return (
-        <Container>
-          <Row className="justify-content-center">
-            <Col>
-              <Card className="mt-5 card-width">
-                <Card.Body>
-                <Card.Title><span className="card-title-font">Star Wars: Last jedi</span> <span className="float-right">Rating: 9/10</span></Card.Title>
-                    <hr/>
-                    <Card.Subtitle className="mb-2 text-muted">Year of production: 2012 <span className="float-right">Time of projection: 18.10.2020 15:25</span></Card.Subtitle>
-                    <hr/>
-                  <Card.Text>
-                  <Row className="mt-2">
-                    <Col className="justify-content-center align-content-center">
-                        <h4>Chose your seat(s)</h4>
-                        <div>
-                        <Row className="justify-content-center mb-4">
-                            <div className="text-center text-white font-weight-bold cinema-screen">
-                                CINEMA SCREEN
-                            </div>
-                        </Row>
-                        <Row className="justify-content-center">
-                            <table className="table-cinema-auditorium">
-                            <tbody>
-                            {auditorium}
-                            </tbody>
-                            </table>
-                        </Row>
-                        </div>
+    render() {
+        const projectionTimes = this.getProjections();
+        return (
+            <Container>
+                <Row className="justify-content-center">
+                    <Col>
+                        <Card className="mt-5 card-width">
+                            <Card.Body>
+                                <Card.Text>
+                                    <Row className="mt-2">
+                                        <Col className="justify-content-center align-content-center">
+                                            <div>
+                                                <Row>
+                                                    {projectionTimes}                     
+                                               </Row>
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                    <hr />
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
                     </Col>
-                  </Row>
-                  <hr/>
-                  </Card.Text>
-                  <Row className="justify-content-center font-weight-bold">
-                    Price for reserved seats:  800 RSD
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      );
+                </Row>
+            </Container>
+        );
     }
 }
 
