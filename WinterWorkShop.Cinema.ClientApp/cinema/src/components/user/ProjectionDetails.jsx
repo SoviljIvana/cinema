@@ -108,6 +108,7 @@ class ProjectionDetails extends Component {
                                     classes={'form-control'}
                                     optionClasses={'option classes'}
                                 />
+                                
                                 <FormText className="text-danger">{yearError}</FormText>
                             </FormGroup>
                             <FormGroup>
