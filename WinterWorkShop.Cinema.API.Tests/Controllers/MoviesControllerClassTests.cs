@@ -15,7 +15,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
     [TestClass]
     public class MoviesControllerClassTests
     {
-        private Mock<IMovieService> _movieService;
+       // private Mock<IMovieService> _movieService;
 
         //ja sam zakomentarisala jer sam menjala kontroler, //JelenaZubac
 
