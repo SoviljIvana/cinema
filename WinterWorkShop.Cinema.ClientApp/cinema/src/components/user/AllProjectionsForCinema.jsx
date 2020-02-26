@@ -17,7 +17,10 @@ class AllProjectionsForCinema extends Component {
     super(props);
     this.state = {
       movies: [],
-      isLoading: true
+      isLoading: true,
+      projectionTime: '',
+      movieId: '',
+      auditoriumId: '',
     };
     this.details = this.details.bind(this);
 
@@ -61,11 +64,12 @@ class AllProjectionsForCinema extends Component {
 
     return this.state.movies.map(movie => {
       return <tr key={movie.id}>
-        <Card bg="light" style={{ width: '100rem' }} key={movie.id}>
-          <Card.Header text="white" style={{ width: '100rem' }}><Button variant="link" className="text-center cursor-pointer" onClick={() => this.details(movie.id)}>{movie.title}</Button></Card.Header>
+        <br></br>
+        <Card border="primary" style={{ width: '100rem' }} key={movie.id}>
+          <Card.Header text="white" style={{ width: '99rem' }}><Button variant="link" className="text-center cursor-pointer" onClick={() => this.details(movie.id)}>{movie.title}</Button></Card.Header>
           <ListGroup className="list-group-flush">
-            <ListGroupItem text="white" style={{ width: '100rem' }}>{movie.year}</ListGroupItem>
-            <ListGroupItem bg="dark" text="white" style={{ width: '100rem' }}>{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'} />}</ListGroupItem>
+            <ListGroupItem text="white" style={{ width: '99rem' }}>{movie.year}</ListGroupItem>
+            <ListGroupItem bg="dark" text="white" style={{ width: '99rem' }}>{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'} />}</ListGroupItem>
           </ListGroup>
         </Card>
         <br />

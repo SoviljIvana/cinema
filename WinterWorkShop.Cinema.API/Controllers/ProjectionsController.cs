@@ -14,6 +14,7 @@ using WinterWorkShop.Cinema.Domain.Models;
 
 namespace WinterWorkShop.Cinema.API.Controllers
 {
+
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
@@ -62,7 +63,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             //return Ok(projectionDomainModels + "There is not projections for this movie");
             return Ok(projectionDomainModels);
-
         }
 
 
