@@ -23,7 +23,9 @@ namespace WinterWorkShop.Cinema.Repositories
         }
         public Ticket Delete(object id)
         {
-            throw new NotImplementedException();
+            Ticket ticket = _cinemaContext.Tickets.Find(id);
+            var result = _cinemaContext.Tickets.Remove(ticket).Entity;
+            return result;
         }
 
         public async Task<IEnumerable<Ticket>> GetAll()

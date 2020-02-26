@@ -11,7 +11,7 @@ namespace WinterWorkShop.Cinema.Repositories
 {
     public interface IMovieTagsRepository : IRepository<MovieTag>
     {
-
+        Task<IEnumerable<MovieTag>> GetAllForSpecificMovie(Guid id);
     }
 
     public class MovieTagsRepository : IMovieTagsRepository
@@ -25,14 +25,21 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public MovieTag Delete(object id)
         {
-            throw new NotImplementedException();
+            MovieTag movieTag = _cinemaContext.MovieTags.Find(id);
+            var result = _cinemaContext.MovieTags.Remove(movieTag).Entity;
+            return result;
         }
 
         public async Task<IEnumerable<MovieTag>> GetAll()
         {
             var data = await _cinemaContext.MovieTags.Include(m => m.Movie).Include(x => x.Tag).ToListAsync();
             return data;
+        }
 
+        public async Task<IEnumerable<MovieTag>> GetAllForSpecificMovie(Guid id)
+        {
+            var data = await _cinemaContext.MovieTags.Include(m => m.Movie).Where(m=>m.MovieId == id).ToListAsync();
+            return data;
         }
 
         public Task<MovieTag> GetByIdAsync(object id)

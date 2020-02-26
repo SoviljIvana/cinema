@@ -43,7 +43,7 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<MovieDomainModel> DeleteMovie(Guid id);
+        Task<DeleteMovieModel> DeleteMovie(Guid id);
         Task<IEnumerable<MovieDomainModel>> GetTopTenMovies();
         Task<CreateMovieResultModel> UpdateMovieStatus(MovieDomainModel updateMovie);
         Task<IEnumerable<CreateMovieResultModel>> GetAllMoviesWithThisTag(string tag);

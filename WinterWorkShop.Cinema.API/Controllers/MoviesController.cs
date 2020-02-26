@@ -238,7 +238,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            MovieDomainModel deletedMovie;
+            DeleteMovieModel deletedMovie;
             try
             {
                 deletedMovie = await _movieService.DeleteMovie(id);
@@ -265,7 +265,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
 
-            return Accepted("movies//" + deletedMovie.Id, deletedMovie);
+            return Accepted("movies//" + deletedMovie.MovieDomainModel.Id, deletedMovie);
         }
 
         [Authorize(Roles = "admin")]

@@ -16,12 +16,14 @@ namespace WinterWorkShop.Cinema.Domain.Services
         private readonly IMoviesRepository _moviesRepository;
         private readonly IProjectionsRepository _projectionsRepository;
         private readonly IMovieTagsRepository _movieTagsRepository;
-
-        public MovieService(IMoviesRepository moviesRepository, IProjectionsRepository projectionsRepository, IMovieTagsRepository movieTagsRepository)
+        private readonly ITicketRepository _ticketRepository;
+        
+        public MovieService(IMoviesRepository moviesRepository, IProjectionsRepository projectionsRepository, IMovieTagsRepository movieTagsRepository, ITicketRepository ticketRepository)
         {
             _moviesRepository = moviesRepository;
             _projectionsRepository = projectionsRepository;
             _movieTagsRepository = movieTagsRepository;
+            _ticketRepository = ticketRepository;
         }
 
         public async Task<IEnumerable<CreateMovieResultModel>> GetAllMoviesWithThisTag(string tag)
@@ -309,7 +311,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
         }
 
 
-        public async Task<MovieDomainModel> DeleteMovie(Guid id)
+        public async Task<DeleteMovieModel> DeleteMovie(Guid id)
         {
             var data = _moviesRepository.Delete(id);
 
@@ -318,19 +320,52 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
+            var projectionsForDelete = await _projectionsRepository.GetAllFromOneMovie(id);
+            foreach (var projectionForDelete in projectionsForDelete)
+            {
+                if (projectionForDelete.DateTime<DateTime.Now)
+                {
+                    _projectionsRepository.Delete(projectionForDelete.Id);
+                }
+                else
+                {
+                    return new DeleteMovieModel
+                    {
+                        //ispraviti messeges na -projection in future
+                        ErrorMessage = Messages.PROJECTION_IN_PAST,
+                        IsSuccessful = false
+                    };
+                }
+                var ticketsForDelete = await _ticketRepository.GetAllForSpecificProjection(projectionForDelete.Id);
+                foreach (var ticketForDelete in ticketsForDelete)
+                {
+                    _ticketRepository.Delete(ticketForDelete.Id);
+                }
+            }
+
+            var movieTags = await _movieTagsRepository.GetAllForSpecificMovie(id);
+            foreach (var movieTag in movieTags)
+            {
+                _movieTagsRepository.Delete(movieTag.Id);
+            }
+
             _moviesRepository.Save();
 
-            MovieDomainModel domainModel = new MovieDomainModel
+            DeleteMovieModel deleteMovieModel = new DeleteMovieModel
             {
-                Id = data.Id,
-                Title = data.Title,
-                Current = data.Current,
-                Year = data.Year,
-                Rating = data.Rating ?? 0
-
+                ErrorMessage = null,
+                IsSuccessful = true,
+                MovieDomainModel = new MovieDomainModel
+                {
+                    Id = data.Id,
+                    Title = data.Title,
+                    Current = data.Current,
+                    Year = data.Year,
+                    Rating = data.Rating ?? 0
+                }
             };
 
-            return domainModel;
+            return deleteMovieModel;
         }
 
         public async Task<IEnumerable<MovieDomainModel>> GetTopTenMovies()
