@@ -5,7 +5,6 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Row, Table } from 'react-bootstrap';
 import Spinner from '../Spinner';
-import Switch from "react-switch";
 import ReactStars from 'react-stars';
 import ListGroup from 'react-bootstrap/ListGroup';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,6 +19,8 @@ class AllProjectionsForCinema extends Component {
       movies: [],
       isLoading: true
     };
+    this.details = this.details.bind(this);
+
   }
 
   componentDidMount() {
@@ -57,21 +58,26 @@ class AllProjectionsForCinema extends Component {
   }
 
   fillTableWithDaata() {
+
     return this.state.movies.map(movie => {
-      return  <>
-       <Card bg="light" style={{ width: '100rem' }} key={movie.id}>
-        <Card.Header text="white" style={{ width: '100rem' }}>{movie.title}</Card.Header>
-        <ListGroup className="list-group-flush">
-          <ListGroupItem text="white" style={{ width: '100rem' }}>{movie.year}</ListGroupItem>
-          <ListGroupItem bg="dark" text="white" style={{ width: '100rem' }}>{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'} />}</ListGroupItem>
-        </ListGroup>
-      </Card>
-      <br />
-      </>
+      return <tr key={movie.id}>
+        <Card bg="light" style={{ width: '100rem' }} key={movie.id}>
+          <Card.Header text="white" style={{ width: '100rem' }}><Button variant="link" className="text-center cursor-pointer" onClick={() => this.details(movie.id)}>{movie.title}</Button></Card.Header>
+          <ListGroup className="list-group-flush">
+            <ListGroupItem text="white" style={{ width: '100rem' }}>{movie.year}</ListGroupItem>
+            <ListGroupItem bg="dark" text="white" style={{ width: '100rem' }}>{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'} />}</ListGroupItem>
+          </ListGroup>
+        </Card>
+        <br />
+        </tr>
 
     })
+
   }
 
+  details(id) {
+    this.props.history.push(`projectiondetails/${id}`);
+}
   render() {
     const { isLoading } = this.state;
     const rowsData = this.fillTableWithDaata();
@@ -95,4 +101,4 @@ class AllProjectionsForCinema extends Component {
   }
 }
 
-export default withRouter(AllProjectionsForCinema);
+export default AllProjectionsForCinema;
