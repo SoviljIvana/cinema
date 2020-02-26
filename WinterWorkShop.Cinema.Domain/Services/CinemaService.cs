@@ -217,7 +217,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
         public async Task<CreateCinemaResultModel> DeleteCinema(int id)
         {
             var existingCinema = await _cinemasRepository.GetByIdAsync(id);
-            var auditoriumsInCinema = _auditoriumsRepository.GetAllOfSpecificCinema(id);
+            var auditoriumsInCinema = _auditoriumService.GetAllOfSpecificCinema(id);
 
             if (existingCinema == null)
             {
@@ -228,8 +228,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 };
                 return errorModel;
             }
-
-            existingCinema.Auditoriums = auditoriumsInCinema.ToList();
 
             foreach (var item in auditoriumsInCinema)
             {
