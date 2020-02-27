@@ -51,6 +51,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
+        [Route("create_empty_cinema")]
         public async Task<ActionResult> Post([FromBody]CreateCinemaModel cinemaModel)
         {
             if (!ModelState.IsValid)
@@ -91,8 +92,9 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Created("auditoriums//" + createCinemaResultModel.Cinema.Id, createCinemaResultModel);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
-        [Route("create2")]
+        [Route("create_complete_cinema")]
         public async Task<ActionResult> PostWithAuditoriumsAndSeats([FromBody]CreateCinemaWithAuditoriumAndSeatsModel createCinemaWithAuditoriumAndSeatsModel)
         {
             if (!ModelState.IsValid)
@@ -162,7 +164,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
-        /// Delete a cinema by id
+        /// Delete a cinema by id if there is no auditorium with future projections in it
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
