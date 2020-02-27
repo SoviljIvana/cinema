@@ -21,7 +21,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
         private Mock<ITicketRepository> _mockTicketRepository;
         private Movie _movie;
         private MovieDomainModel _movieDomainModel;
-        private Movie _newMovie;
         private DeleteMovieModel _deletedMovieModelSuccess;
         private Projection _projection;
         private List<Projection> _projections;
@@ -193,11 +192,19 @@ namespace WinterWorkShop.Cinema.Tests.Services
         {
             //Arrange
             int expectedResultCount = 1;
+            Tag tag = new Tag
+            {
+                Id = 1,
+                Name = "Name",
+                Type = "Type"
+            };
             
             IEnumerable<Movie> movies = moviesModelsList;
             Task<IEnumerable<Movie>> responseTask = Task.FromResult(movies);
             _mockMoviesRepository = new Mock<IMoviesRepository>();
             _mockMoviesRepository.Setup(x => x.GetTopTenMovies()).Returns(responseTask);
+            _mockMovieTagsRepository = new Mock<IMovieTagsRepository>();
+            _mockMovieTagsRepository.Setup(x => x.GetOskarId()).Returns(tag);
 
             MovieService movieController = new MovieService(_mockMoviesRepository.Object, _mockProjectionsRepository.Object, _mockMovieTagsRepository.Object, _mockTicketRepository.Object);
             //Act
@@ -582,8 +589,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
             //Arrange
             MovieDomainModel movieDomainModel = _movieDomainModel;
             string stringToSearch = "string nostring";
-            IEnumerable<MovieDomainModel> expectedResult = null;
-            
             IEnumerable<MovieTag> movieTags = _movieTagsList;
             Task<IEnumerable<MovieTag>> responseTaskMovieTagRepository = Task.FromResult(movieTags);
             IEnumerable<Movie> movies = moviesModelsList;
@@ -610,7 +615,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
             //Arrange
             MovieDomainModel movieDomainModel = _movieDomainModel;
             string stringToSearch = "string NameTag";
-            IEnumerable<MovieDomainModel> expectedResult = null;
 
             IEnumerable<MovieTag> movieTags = _movieTagsList;
             Task<IEnumerable<MovieTag>> responseTaskMovieTagRepository = Task.FromResult(movieTags);

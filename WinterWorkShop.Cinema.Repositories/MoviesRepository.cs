@@ -96,11 +96,9 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public async Task<IEnumerable<Movie>> GetTopTenMovies()
         {
-            var data = await _cinemaContext.Movies.ToListAsync();
-            var sortedData = data.OrderByDescending(x => x.Rating).ToList();
-            var result = sortedData.Take(10).ToList();
+            var data = await _cinemaContext.Movies.Include(x=>x.MovieTags).OrderByDescending(x => x.Rating).Take(11).ToListAsync();
 
-            return result;
+            return data;
         }
 
     }

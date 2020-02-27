@@ -18,7 +18,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
         private readonly IProjectionsRepository _projectionsRepository;
         private readonly IMovieTagsRepository _movieTagsRepository;
         private readonly ITicketRepository _ticketRepository;
-        
+
         public MovieService(IMoviesRepository moviesRepository, IProjectionsRepository projectionsRepository, IMovieTagsRepository movieTagsRepository, ITicketRepository ticketRepository)
         {
             _moviesRepository = moviesRepository;
@@ -42,7 +42,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 List<MovieTag> movieTags;
                 movieTags = allMovieTags.Where(y => y.Tag.Name.Contains(stringData) || y.Tag.Type.Contains(stringData)).ToList();
-                if (movieTags.Count!=0)
+                if (movieTags.Count != 0)
                 {
                     if (listOfFilms.Count == 0)
                     {
@@ -89,11 +89,11 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 MovieDomainModel model = new MovieDomainModel
                 {
-                         Title = item.Title,
-                        Current = item.Current,
-                        Id = item.Id,
-                        Year = item.Year, 
-                        Rating = item.Rating ?? 0
+                    Title = item.Title,
+                    Current = item.Current,
+                    Id = item.Id,
+                    Year = item.Year,
+                    Rating = item.Rating ?? 0
                 };
                 result.Add(model);
             }
@@ -221,7 +221,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     }
                 }
             }
-                        
+
             var currentNewValue = !item.Current;
 
             Movie movie = new Movie()
@@ -291,7 +291,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             var projectionsForDelete = await _projectionsRepository.GetAllFromOneMovie(id);
             foreach (var projectionForDelete in projectionsForDelete)
             {
-                if (projectionForDelete.DateTime<DateTime.Now)
+                if (projectionForDelete.DateTime < DateTime.Now)
                 {
                     _projectionsRepository.Delete(projectionForDelete.Id);
                 }
@@ -335,14 +335,51 @@ namespace WinterWorkShop.Cinema.Domain.Services
         {
             var data = await _moviesRepository.GetTopTenMovies();
 
-            if(data == null)
+            if (data == null)
             {
                 return null;
             }
 
-            List<MovieDomainModel> result = new List<MovieDomainModel>();
-            MovieDomainModel model;
+            var oskarId = _movieTagsRepository.GetOskarId().Id;
+            double rating = 0;
+            List<Movie> listaMovie = new List<Movie>();
             foreach (var item in data)
+            {
+                listaMovie.Add(item);
+            }
+
+            List<MovieDomainModel> result = new List<MovieDomainModel>();
+            List<Movie> resultOrder = new List<Movie>();
+
+            MovieDomainModel model;
+            for (int i = 0; i < listaMovie.Count(); i++)
+            {
+                if (listaMovie[i].Rating == rating)
+                {
+                    var hasOskarListAnswer = listaMovie[i].MovieTags.Select(x => x.TagId.Equals(oskarId));
+
+                    if (hasOskarListAnswer.Contains(true))
+                    {
+                        var firstElement = listaMovie[i];
+                        var secondElement = listaMovie[i-1];
+                        resultOrder.Remove(secondElement);
+                        resultOrder.Add(firstElement);
+                        resultOrder.Add(secondElement);
+
+                    }
+                    resultOrder.Add(listaMovie[i]);
+
+                }
+                else
+                {
+                    resultOrder.Add(listaMovie[i]);
+                    rating = listaMovie[i].Rating ?? 0;
+                }
+            }
+
+            var finalOrder = resultOrder.Take(10);
+
+            foreach (var item in finalOrder)
             {
                 model = new MovieDomainModel
                 {
