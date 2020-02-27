@@ -213,6 +213,18 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse); 
             }
+
+            if (!deletedAuditorium.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.AUDITORIUM_DELETION_ERROR,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+
             return Accepted("auditoriums//" + deletedAuditorium.Auditorium.Id, deletedAuditorium);
 
         }

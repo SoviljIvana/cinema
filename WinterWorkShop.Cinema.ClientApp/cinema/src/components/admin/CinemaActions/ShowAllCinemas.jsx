@@ -62,14 +62,14 @@ class ShowAllCinemas extends Component {
                 return response.statusText;
             })
             .then(result => {
-                NotificationManager.success('Successfuly removed cinema with id:', id);
+                NotificationManager.success('Successfuly removed cinema with ID: ' + id);
                 const newState = this.state.cinemas.filter(cinema => {
                     return cinema.id !== id;
                 })
                 this.setState({cinemas: newState});
             })
             .catch(response => {
-                NotificationManager.error(response.message || response.statusText);
+                NotificationManager.error("Unable to remove cinema");
                 this.setState({ submitted: false });
             });
     }

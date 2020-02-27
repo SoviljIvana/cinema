@@ -62,14 +62,14 @@ class ShowAllAuditoriums extends Component {
             return response.statusText;
         })
         .then(result => {
-            NotificationManager.success('Successfuly removed auditorium with id:', id);
+            NotificationManager.success('Successfuly removed auditorium with ID: '+ id);
             const newState = this.state.auditoriums.filter(auditorium => {
                 return auditorium.id !== id;
             })
             this.setState({auditoriums: newState});
         })
         .catch(response => {
-            NotificationManager.error(response.message || response.statusText);
+            NotificationManager.error("Unable to remove auditorium.");
             this.setState({ submitted: false });
         });
     }
