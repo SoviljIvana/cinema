@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WinterWorkShop.Cinema.Data;
+using WinterWorkShop.Cinema.Data.Entities;
 using WinterWorkShop.Cinema.Domain.Common;
 using WinterWorkShop.Cinema.Domain.Interfaces;
 using WinterWorkShop.Cinema.Domain.Models;
@@ -26,9 +27,9 @@ namespace WinterWorkShop.Cinema.Domain.Services
             _ticketRepository = ticketRepository;
         }
 
-        public async Task<IEnumerable<CreateMovieResultModel>> GetAllMoviesWithThisTag(string tag)
+        public async Task<IEnumerable<MovieDomainModel>> GetAllMoviesWithThisTag(string tag)
         {
-            List<CreateMovieResultModel> result = new List<CreateMovieResultModel>();
+            List<MovieDomainModel> result = new List<MovieDomainModel>();
 
             List<string> listOfString = tag.Split(' ').ToList();
 
@@ -39,126 +40,64 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             foreach (var stringData in listOfString)
             {
-                var movieTags = allMovieTags.Where(y => y.Tag.Name.Contains(stringData) || y.Tag.Type.Contains(stringData)).ToList();
-                
-                if (listOfFilms.Count == 0)
+                List<MovieTag> movieTags;
+                movieTags = allMovieTags.Where(y => y.Tag.Name.Contains(stringData) || y.Tag.Type.Contains(stringData)).ToList();
+                if (movieTags.Count!=0)
                 {
-                    foreach (var movieTag in movieTags)
+                    if (listOfFilms.Count == 0)
                     {
-                        var movie = allMovies.SingleOrDefault(g => g.Id.Equals(movieTag.MovieId));
-                        listOfFilms.Add(movie);
-                    }
-                    if (listOfFilms == null)
-                    {
-                        result.Add(new CreateMovieResultModel
+                        foreach (var movieTag in movieTags)
                         {
-                            IsSuccessful = false,
-                            ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST
-                        });
-                        return result;
+                            var movie = allMovies.SingleOrDefault(g => g.Id.Equals(movieTag.MovieId));
+                            listOfFilms.Add(movie);
+                        }
+                    }
+                    else
+                    {
+                        var listOfFilmsForCheck = new List<Movie>();
+                        listOfFilmsForCheck = listOfFilms;
+
+                        for (int j = 0; j < listOfFilmsForCheck.Count; j++)
+                        {
+                            int numberOfNotMatching = 0;
+                            for (int i = 0; i < movieTags.Count; i++)
+                            {
+                                if (!movieTags[i].MovieId.Equals(listOfFilmsForCheck[j].Id))
+                                {
+                                    numberOfNotMatching = numberOfNotMatching + 1;
+                                }
+                                if (numberOfNotMatching == movieTags.Count)
+                                {
+                                    listOfFilms.Remove(listOfFilmsForCheck[j]);
+                                }
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    var listOfFilmsForCheck = new List<Movie>();
-                    listOfFilmsForCheck = listOfFilms;
-
-                    for (int j = 0; j <listOfFilmsForCheck.Count; j++)
-                    {
-                        int numberOfNotMatching = 0;
-                        for (int i = 0; i < movieTags.Count; i++)
-                        {
-                            if (!movieTags[i].MovieId.Equals(listOfFilmsForCheck[j].Id))
-                            {
-                                numberOfNotMatching = numberOfNotMatching + 1;
-                            }
-                            if (numberOfNotMatching == movieTags.Count)
-                            {
-                                listOfFilms.Remove(listOfFilmsForCheck[j]);
-                            }
-                        }
-
-                        if (listOfFilms == null)
-                        {
-                            result.Add(new CreateMovieResultModel
-                            {
-                                IsSuccessful = false,
-                                ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST
-                            });
-                            return result;
-                        }
-                    }
+                    return null;
                 }
-            }
-
-            if (listOfFilms == null)
-            {
-                result.Add(new CreateMovieResultModel
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST
-                });
-                return result;
             }
             var n = listOfFilms.Count();
 
-
             if (listOfFilms.Count() == 0)
             {
-                result.Add(new CreateMovieResultModel
-                {
-                    IsSuccessful = true,
-                    ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST,
-                    Movie = new MovieDomainModel
-                    {
-                        Title = "Movie not found"
-                    }
-                });
-                return result;
+                return null;
             }
-
             foreach (var item in listOfFilms)
             {
-                CreateMovieResultModel model = new CreateMovieResultModel
+                MovieDomainModel model = new MovieDomainModel
                 {
-                    IsSuccessful = true,
-                    ErrorMessage = Messages.MOVIE_SEARCH_SUCCESSFUL,
-                    Movie = new MovieDomainModel
-                    {
                          Title = item.Title,
                         Current = item.Current,
                         Id = item.Id,
                         Year = item.Year, 
                         Rating = item.Rating ?? 0
-                    }
                 };
                 result.Add(model);
             }
             return result;
-
-        }
-
-
-
-        public async Task<MovieDomainModel> GetMovieByIdAsync(Guid id)
-        {
-            var data = await _moviesRepository.GetByIdAsync(id);
-
-            if (data == null)
-            {
-                return null;
-            }
-           
-            MovieDomainModel domainModel = new MovieDomainModel
-            {
-                Id = data.Id,
-                Current = data.Current,
-                Rating = data.Rating ?? 0,
-                Title = data.Title,
-                Year = data.Year
-            };
-
-            return domainModel;
         }
 
         public async Task<MovieDomainModel> AddMovie(MovieDomainModel newMovie)
@@ -191,87 +130,32 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return domainModel;
         }
 
-        public async Task<MovieDomainModel> UpdateMovie(MovieDomainModel updateMovie)
-        {
-
-            var item = await _moviesRepository.GetByIdAsync(updateMovie.Id);
-
-            if (item == null)
-            {
-                return null;
-            }
-
-            if (item.Projections != null)
-            {
-                List<Projection> checkProjection = item.Projections.ToList();
-
-                var dateTimeNow = DateTime.Now;
-                foreach (var projection in checkProjection)
-                {
-                    if (projection.DateTime > dateTimeNow)
-                    {
-                        return null;
-                    }
-                }
-            }
-
-            Movie movie = new Movie()
-            {
-                Id = updateMovie.Id,
-                Title = updateMovie.Title,
-                Current = updateMovie.Current,
-                Year = updateMovie.Year,
-                Rating = updateMovie.Rating
-            };
-
-            var data = _moviesRepository.Update(movie);
-
-            if (data == null)
-            {
-                return null;
-            }
-            _moviesRepository.Save();
-
-            MovieDomainModel domainModel = new MovieDomainModel()
-            {
-                Id = data.Id,
-                Title = data.Title,
-                Current = data.Current,
-                Year = data.Year,
-                Rating = data.Rating ?? 0
-            };
-
-            return domainModel;
-        }
-
-        public async Task<CreateMovieResultModel> UpdateMovieStatus(MovieDomainModel updateMovie)
+        public async Task<CreateMovieResultModel> UpdateMovie(MovieDomainModel updateMovie)
         {
             var item = await _moviesRepository.GetByIdAsync(updateMovie.Id);
 
-            if (item == null)
-            {
-                return null;
-            }
-
-            //current 
-            var projections = _projectionsRepository.GetAllFromOneMovie(updateMovie.Id).Result;
+            var projections = await _projectionsRepository.GetAllFromOneMovie(updateMovie.Id);
 
             if (projections != null)
             {
-                
-                foreach (var projection in projections)
+                if (item.Current.Equals(true) && updateMovie.Current.Equals(false))
                 {
-                    if (projection.DateTime > DateTime.Now)
+                    List<Projection> checkProjection = projections.ToList();
+
+                    var dateTimeNow = DateTime.Now;
+                    foreach (var projection in checkProjection)
                     {
-                        return new CreateMovieResultModel
+                        if (projection.DateTime > dateTimeNow)
                         {
-                            IsSuccessful = false,
-                            ErrorMessage = Messages.MOVIE_CURRENT_UPDATE_ERROR
-                        };
+                            return new CreateMovieResultModel
+                            {
+                                IsSuccessful = false,
+                                ErrorMessage = Messages.MOVIE_CURRENT_TO_NOT_CURRENT_UPDATE_ERROR
+                            };
+                        }
                     }
                 }
             }
-
             Movie movie = new Movie()
             {
                 Id = updateMovie.Id,
@@ -293,6 +177,75 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
             _moviesRepository.Save();
 
+            CreateMovieResultModel createMovieResultModel = new CreateMovieResultModel
+            {
+                ErrorMessage = null,
+                IsSuccessful = true,
+                Movie = new MovieDomainModel()
+                {
+                    Id = data.Id,
+                    Title = data.Title,
+                    Current = data.Current,
+                    Year = data.Year,
+                    Rating = data.Rating ?? 0
+                },
+
+            };
+            return createMovieResultModel;
+        }
+
+        public async Task<CreateMovieResultModel> UpdateMovieStatus(Guid id)
+        {
+            var item = await _moviesRepository.GetByIdAsync(id);
+
+            if (item == null)
+            {
+                return null;
+            }
+            //ako je current=true i ima projekciju, ne moze biti false
+            var projections = await _projectionsRepository.GetAllFromOneMovie(id);
+            if (item.Current)
+            {
+                if (projections != null)
+                {
+                    foreach (var projection in projections)
+                    {
+                        if (projection.DateTime > DateTime.Now)
+                        {
+                            return new CreateMovieResultModel
+                            {
+                                IsSuccessful = false,
+                                ErrorMessage = Messages.MOVIE_CURRENT_TO_NOT_CURRENT_UPDATE_ERROR
+                            };
+                        }
+                    }
+                }
+            }
+                        
+            var currentNewValue = !item.Current;
+
+            Movie movie = new Movie()
+            {
+                Id = item.Id,
+                Title = item.Title,
+                Current = currentNewValue,
+                Year = item.Year,
+                Rating = item.Rating
+            };
+
+            var data = _moviesRepository.Update(movie);
+
+            if (data == null)
+            {
+                return new CreateMovieResultModel
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = Messages.MOVIE_CURRENT_UPDATE_ERROR
+                };
+            }
+
+            _moviesRepository.Save();
+
             CreateMovieResultModel domainModel = new CreateMovieResultModel()
             {
                 IsSuccessful = true,
@@ -300,16 +253,32 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 Movie = new MovieDomainModel
                 {
                     Id = data.Id,
-                    Title = data.Title,
-                    Current = data.Current,
-                    Year = data.Year,
-                    Rating = data.Rating ?? 0
+                    Current = data.Current
                 }
+            };
+            return domainModel;
+        }
+
+        public async Task<MovieDomainModel> GetMovieByIdAsync(Guid id)
+        {
+            var data = await _moviesRepository.GetByIdAsync(id);
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            MovieDomainModel domainModel = new MovieDomainModel
+            {
+                Id = data.Id,
+                Current = data.Current,
+                Rating = data.Rating ?? 0,
+                Title = data.Title,
+                Year = data.Year
             };
 
             return domainModel;
         }
-
 
         public async Task<DeleteMovieModel> DeleteMovie(Guid id)
         {
@@ -319,7 +288,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 return null;
             }
-
             var projectionsForDelete = await _projectionsRepository.GetAllFromOneMovie(id);
             foreach (var projectionForDelete in projectionsForDelete)
             {
@@ -329,12 +297,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 }
                 else
                 {
-                    return new DeleteMovieModel
-                    {
-                        //ispraviti messeges na -projection in future
-                        ErrorMessage = Messages.PROJECTION_IN_PAST,
-                        IsSuccessful = false
-                    };
+                    return new DeleteMovieModel();
                 }
                 var ticketsForDelete = await _ticketRepository.GetAllForSpecificProjection(projectionForDelete.Id);
                 foreach (var ticketForDelete in ticketsForDelete)

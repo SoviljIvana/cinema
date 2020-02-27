@@ -57,25 +57,22 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Route("search/{searchData}")]
         public async Task<ActionResult<IEnumerable<MovieDomainModel>>> SearchByTag(string searchData)
         {
-            IEnumerable<CreateMovieResultModel> projectionDomainModels;
-            List<CreateMovieResultModel> list = new List<CreateMovieResultModel>();
+            IEnumerable<MovieDomainModel> movieDomainModels;
 
-            projectionDomainModels = await _movieService.GetAllMoviesWithThisTag(searchData);
+            movieDomainModels = await _movieService.GetAllMoviesWithThisTag(searchData);
 
-            list = projectionDomainModels.ToList();
-
-            if (!list[0].IsSuccessful)
+            if (movieDomainModels == null)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel()
                 {
-                    ErrorMessage = list[0].ErrorMessage,
+                    ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST,
                     StatusCode = System.Net.HttpStatusCode.BadRequest
                 };
 
-                return BadRequest(errorResponse);
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
 
-            return Ok(projectionDomainModels);
+            return Ok(movieDomainModels);
         }
 
 
@@ -88,12 +85,30 @@ namespace WinterWorkShop.Cinema.API.Controllers
         public async Task<ActionResult<IEnumerable<Movie>>> GetCurrent()
         {
             IEnumerable<MovieDomainModel> movieDomainModels;
+            try
+            {
+                movieDomainModels = await _movieService.GetCurrentMovies();
+            }
+            catch (DbUpdateException e)
+            {
 
-            movieDomainModels = await _movieService.GetCurrentMovies();
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
 
             if (movieDomainModels == null)
             {
-                movieDomainModels = new List<MovieDomainModel>();
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
 
             return Ok(movieDomainModels);
@@ -200,7 +215,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                     StatusCode = System.Net.HttpStatusCode.BadRequest
                 };
 
-                return BadRequest(errorResponse);
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
 
             movieToUpdate.Title = movieModel.Title;
@@ -208,7 +223,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             movieToUpdate.Year = movieModel.Year;
             movieToUpdate.Rating = movieModel.Rating;
 
-            MovieDomainModel movieDomainModel;
+            CreateMovieResultModel movieDomainModel;
             try
             {
                 movieDomainModel = await _movieService.UpdateMovie(movieToUpdate);
@@ -223,8 +238,18 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return BadRequest(errorResponse);
             }
+            if (!movieDomainModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = movieDomainModel.ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
 
-            return Accepted("movies//" + movieDomainModel.Id, movieDomainModel);
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+
+            return Accepted("movies//" + movieDomainModel.Movie.Id, movieDomainModel);
 
         }
 
@@ -264,6 +289,15 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
+            if (deletedMovie.MovieDomainModel == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.PROJECTION_IN_FUTURE,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
 
             return Accepted("movies//" + deletedMovie.MovieDomainModel.Id, deletedMovie);
         }
@@ -286,7 +320,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         [HttpPut]
         [Route("currentstatus/{id}")]
-        public async Task<ActionResult> UpdateMovieCurrentStatus(Guid id, CreateUpdateCurrentStatusModel movieModel)
+        public async Task<ActionResult> UpdateMovieCurrentStatus(Guid id)
         {
             MovieDomainModel movieToUpdate;
 
@@ -303,13 +337,10 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 return BadRequest(errorResponse);
             }
 
-
-            movieToUpdate.Current = movieModel.Current;
-
             CreateMovieResultModel createMovieResultModel;
             try
             {
-                createMovieResultModel = await _movieService.UpdateMovieStatus(movieToUpdate);
+                createMovieResultModel = await _movieService.UpdateMovieStatus(id);
             }
             catch (DbUpdateException e)
             {
