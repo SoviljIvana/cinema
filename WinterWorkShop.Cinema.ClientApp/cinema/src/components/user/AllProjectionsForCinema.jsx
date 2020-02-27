@@ -38,7 +38,6 @@ class AllProjectionsForCinema extends Component {
         'Authorization': 'Bearer ' + localStorage.getItem('jwt')
       }
     };
-
     this.setState({ isLoading: true });
     fetch(`${serviceConfig.baseURL}/api/Movies/current`, requestOptions)
       .then(response => {
@@ -60,7 +59,6 @@ class AllProjectionsForCinema extends Component {
   }
 
   fillTableWithDaata() {
-
     return this.state.movies.map(movie => {
       return <tr key={movie.id}>
         <br></br>
@@ -72,7 +70,7 @@ class AllProjectionsForCinema extends Component {
           </ListGroup>
         </Card>
         <br />
-        </tr>
+      </tr>
 
     })
 
@@ -80,7 +78,7 @@ class AllProjectionsForCinema extends Component {
 
   details(id) {
     this.props.history.push(`projectiondetails/${id}`);
-}
+  }
 
   render() {
     const { isLoading } = this.state;

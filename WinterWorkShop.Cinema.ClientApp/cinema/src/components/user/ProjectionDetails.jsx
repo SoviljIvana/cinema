@@ -111,14 +111,16 @@ class ProjectionDetails extends Component {
         }
     }
 
+    navigateToProjectionDetails() {
+        this.props.history.push('projectiondetails/1')
+      }
+    
     fillTableWithDaata() {
         return this.state.projections.map(projection => {
-            return <tr key={projection.movieId}>
-                <td >{projection.projectionTime}</td>
-            </tr>
+            return <Button key={projection.movieId} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{projection.projectionTime}</Button>
         })
     }
-
+   
     render() {
         const { isLoading, title, year, rating, titleError, yearError } = this.state;
         const rowsData = this.fillTableWithDaata();
@@ -131,6 +133,7 @@ class ProjectionDetails extends Component {
             <tbody>
                 {rowsData}
             </tbody>
+          
         </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
