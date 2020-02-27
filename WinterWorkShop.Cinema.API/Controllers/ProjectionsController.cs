@@ -46,8 +46,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(projectionDomainModels);
         }
 
-
-   
         /// <summary>
         /// Adds a new projection
         /// </summary>
@@ -107,6 +105,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Created("projections//" + createProjectionResultModel.Projection.Id, createProjectionResultModel.Projection);
         }
 
+        /// <summary>
+        /// Searches for a projections without filter 
+        /// </summary>
+        /// <param name="searchData"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("FilterByText/{searchData}")]
         public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByAll(string searchData)
@@ -132,6 +135,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(projectionDomainModels);
         }
 
+        /// <summary>
+        /// Searches for a projection filtered by movie name
+        /// </summary>
+        /// <param name="searchData"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("moviename/{searchData}")]
         public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByMovieName(string searchData)
@@ -157,6 +165,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(projectionDomainModels);
         }
 
+        /// <summary>
+        /// Searches for a projection filtered by cinema
+        /// </summary>
+        /// <param name="searchData"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("cinemaname/{searchData}")]
         public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByCinemaName(string searchData)
@@ -182,6 +195,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(projectionDomainModels);
         }
 
+        /// <summary>
+        /// Searches for a projection filtered by auditorium
+        /// </summary>
+        /// <param name="searchData"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("auditname/{searchData}")]
         public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByAuditoriumName(string searchData)
@@ -206,6 +224,13 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Ok(projectionDomainModels);
         }
+
+        /// <summary>
+        /// Searches for a projection filtered by start and end date
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("dates/{startDate},{endDate}")]
         public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByDates(DateTime startDate, DateTime endDate)
@@ -231,6 +256,12 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(projectionDomainModels);
         }
 
+        /// <summary>
+        /// Deletes a specific projection if it has no projections in the future
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult> Delete(Guid id)
