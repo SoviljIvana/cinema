@@ -20,7 +20,7 @@
         public const string AUDITORIUM_SAME_NAME = "Cannot create new auditorium, auditorium with same name alredy exist.";
         public const string AUDITORIUM_UNVALID_CINEMAID = "Cannot create new auditorium, auditorium with given cinemaId does not exist.";
         public const string AUDITORIUM_DOES_NOT_EXIST = "Auditorium does not exist.";
-        public const string AUDITORIUM_DELETION_ERROR = "Unable to find auditorium, please try again. ";
+        public const string AUDITORIUM_DELETION_ERROR = "Unable to delete auditorium, please make sure there are no upcoming projections and then try again. ";
         public const string AUDITORIUM_NOT_FOUND = "Unable to find auditorium. ";
 
         #endregion
