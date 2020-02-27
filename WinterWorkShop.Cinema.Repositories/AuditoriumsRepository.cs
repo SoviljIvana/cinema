@@ -36,8 +36,6 @@ namespace WinterWorkShop.Cinema.Repositories
             Auditorium existingAuditorium = _cinemaContext.Auditoriums.Find(id);
             var result = _cinemaContext.Auditoriums.Remove(existingAuditorium);
 
-            _cinemaContext.SaveChanges();
-
             return result.Entity;
         }
 

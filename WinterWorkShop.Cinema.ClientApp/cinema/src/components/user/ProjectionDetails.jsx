@@ -1,106 +1,125 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { FormGroup, FormControl, Button, Container, Row, Col, FormText, FormLabel, Alert } from 'react-bootstrap';
+import { YearPicker } from 'react-dropdown-date';
+import Switch from "react-switch";
+import ReactStars from 'react-stars';
 
-class ProjectionDetails extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        movies: []
-    };
-  }
-
-  componentDidMount() {
-    //this.getMovie();
-  }
-
-  getProjection() {
-    // TO DO: here you need to fetch movie with projection details using ID from router
-    const requestOptions = {
-      method: 'GET'
-    };
-
-    fetch(`${serviceConfig.baseURL}/movies/261e3562-5f7b-418f-61a6-08d797a6bf42`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          return Promise.reject(response);
-      }
-      return response.json();
-      })
-      .then(data => {
-          if (data) {
-              // this.setState({ posts: data });
-          }
-      })
-      .catch(response => {
-          NotificationManager.error(response.message || response.statusText);
-          this.setState({ submitted: false });
-      });
-  }
-  
-  renderRows(rows, seats) {
-    const rowsRendered = [];
-    for (let i = 0; i < rows; i++) {
-        rowsRendered.push( <tr key={i}>
-            {this.renderSeats(seats, i)}
-        </tr>);
-    }
-    return rowsRendered;
-  }
-
-  renderSeats(seats, row) {
-      let renderedSeats = [];
-      for (let i = 0; i < seats; i++) {
-          renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i}></td>);
-      }
-      return renderedSeats;
-  }
-
-  render() {
-    const auditorium = this.renderRows(5, 26);
-      return (
-        <Container>
-          <Row className="justify-content-center">
-            <Col>
-              <Card className="mt-5 card-width">
-                <Card.Body>
-                <Card.Title><span className="card-title-font">Star Wars: Last jedi</span> <span className="float-right">Rating: 9/10</span></Card.Title>
-                    <hr/>
-                    <Card.Subtitle className="mb-2 text-muted">Year of production: 2012 <span className="float-right">Time of projection: 18.10.2020 15:25</span></Card.Subtitle>
-                    <hr/>
-                  <Card.Text>
-                  <Row className="mt-2">
-                    <Col className="justify-content-center align-content-center">
-                        <h4>Chose your seat(s)</h4>
-                        <div>
-                        <Row className="justify-content-center mb-4">
-                            <div className="text-center text-white font-weight-bold cinema-screen">
-                                CINEMA SCREEN
-                            </div>
-                        </Row>
-                        <Row className="justify-content-center">
-                            <table className="table-cinema-auditorium">
-                            <tbody>
-                            {auditorium}
-                            </tbody>
-                            </table>
-                        </Row>
-                        </div>
-                    </Col>
-                  </Row>
-                  <hr/>
-                  </Card.Text>
-                  <Row className="justify-content-center font-weight-bold">
-                    Price for reserved seats:  800 RSD
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      );
-    }
+const ratingChanged = (newRating) => {
+    console.log(newRating)
 }
 
+class ProjectionDetails extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            title: '',
+            year: 0,
+            rating: '',
+            id: '',
+            projectionTime: '',
+            movieId: '',
+            auditoriumId: '',
+            current: false,
+            titleError: '',
+            yearError: '',
+            submitted: false,
+            canSubmit: true
+        };
+
+    }
+
+    componentDidMount() {
+        const { id, movieId } = this.props.match.params;
+        this.getMovie(id);
+        this.getProjections(movieId);
+    }
+
+    getProjections() {
+        const projectionTimes = ['11:45', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30'];
+        return projectionTimes.map((time) => {
+            return <Button className="mr-1 mb-2">{time}</Button>
+        })
+    }
+
+    getMovie(movieId) {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
+        };
+
+        fetch(`${serviceConfig.baseURL}/api/movies/` + movieId, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({
+                        title: data.title,
+                        year: data.year,
+                        rating: Math.round(data.rating) + '',
+                        current: data.current + '',
+                        id: data.id
+                    });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
+    }
+
+    render() {
+        const { title, year,  rating,  titleError, yearError, projectionTime } = this.state;
+        const projectionTimes = this.getProjections();
+        return (
+            <Container>
+                <Row className="justify-content-center">
+                    <Col>
+                            <br></br>
+                            <FormGroup>
+                                <FormControl
+                                    id="title"
+                                    type="text"
+                                    placeholder="Movie Title"
+                                    value={title}
+                                />
+                                <FormText className="text-danger">{titleError}</FormText>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormControl
+                                    defaultValue={'Select Movie Year'}
+                                    start={1895}
+                                    end={2120}
+                                    reverse
+                                    required={true}
+                                    disabled={false}
+                                    value={year}
+                                    id={'year'}
+                                    name={'year'}
+                                    classes={'form-control'}
+                                    optionClasses={'option classes'}
+                                />
+                                <FormText className="text-danger">{yearError}</FormText>
+                            </FormGroup>
+                            <FormGroup>
+                                <td className="text-center cursor-pointer">{<ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'} />}</td>
+                            </FormGroup>
+                            <FormGroup>
+                                {projectionTimes}
+                            </FormGroup>
+                    </Col>
+                </Row>
+            </Container>
+        );
+    }
+}
 export default ProjectionDetails;

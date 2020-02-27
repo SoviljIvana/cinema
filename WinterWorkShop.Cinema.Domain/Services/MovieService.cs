@@ -299,7 +299,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 {
                     return new DeleteMovieModel();
                 }
-                var ticketsForDelete = await _ticketRepository.GetAllForSpecificProjection(projectionForDelete.Id);
+                var ticketsForDelete = _ticketRepository.GetAllForSpecificProjection(projectionForDelete.Id);
                 foreach (var ticketForDelete in ticketsForDelete)
                 {
                     _ticketRepository.Delete(ticketForDelete.Id);

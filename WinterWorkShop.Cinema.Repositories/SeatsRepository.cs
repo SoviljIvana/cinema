@@ -77,6 +77,5 @@ namespace WinterWorkShop.Cinema.Repositories
             var seats = _cinemaContext.Seats.Where(x => x.AuditoriumId.Equals((int)id)).ToList();
             return seats;
         }
-
     }
 }

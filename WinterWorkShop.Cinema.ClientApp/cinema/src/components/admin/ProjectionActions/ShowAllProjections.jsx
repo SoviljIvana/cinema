@@ -54,10 +54,8 @@ class ShowAllProjections extends Component {
     fillTableWithDaata() {
         return this.state.projections.map(projection => {
             return <tr key={projection.id}>
-                        <td width="18%">{projection.id}</td>
-                        <td width="18%">{projection.movieId}</td>
+              
                         <td width="18%">{projection.movieTitle}</td>
-                        <td width="18%">{projection.auditoriumId}</td>
                         <td width="18%">{projection.projectionTime}</td>
                         <td width="5%" className="text-center cursor-pointer" onClick={() => this.editProjection(projection.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
                         <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeProjection(projection.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
@@ -76,10 +74,7 @@ class ShowAllProjections extends Component {
         const table = (<Table striped bordered hover size="sm" variant="dark">
                             <thead>
                             <tr>
-                                <th>Id</th>
-                                <th>Movie Id</th>
                                 <th>Movie Title</th>
-                                <th>Auditorium Id</th>
                                 <th>Projection Time</th>
                                 <th></th>
                                 <th></th>
