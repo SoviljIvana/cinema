@@ -12,6 +12,7 @@ namespace WinterWorkShop.Cinema.Repositories
     public interface IMovieTagsRepository : IRepository<MovieTag>
     {
         Task<IEnumerable<MovieTag>> GetAllForSpecificMovie(Guid id);
+        Tag GetOskarId();
     }
 
     public class MovieTagsRepository : IMovieTagsRepository
@@ -45,6 +46,11 @@ namespace WinterWorkShop.Cinema.Repositories
         public Task<MovieTag> GetByIdAsync(object id)
         {
             throw new NotImplementedException();
+        }
+        public Tag GetOskarId()
+        {
+            var oskarTag = _cinemaContext.Tags.SingleOrDefault(x => x.Name.Equals("oskar"));
+            return oskarTag;
         }
 
         public MovieTag Insert(MovieTag obj)
