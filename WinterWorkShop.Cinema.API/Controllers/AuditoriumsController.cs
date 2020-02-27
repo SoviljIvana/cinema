@@ -114,7 +114,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
-        /// Updates a movie
+        /// Updates an auditorium
         /// </summary>
         /// <param name="id"></param>
         /// <param name="auditoriumModel"></param>
@@ -176,8 +176,12 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Accepted("auditoriums//" + auditoriumDomainModel.Id, auditoriumDomainModel);
 
         }
-
-
+        /// <summary>
+        /// Deletes an auditorium if there are no future projections in it
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult> Delete(int id)

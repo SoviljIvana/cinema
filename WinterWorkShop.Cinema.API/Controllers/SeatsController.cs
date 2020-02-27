@@ -43,7 +43,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Ok(seatDomainModels);
         }
-
+        /// <summary>
+        /// Returns all seats for a specific projection
+        /// </summary>
+        /// <param name="projectionId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("allForProjection/{projectionId}")]
         public async Task<ActionResult<IEnumerable<SeatDomainModel>>> GetAllSeatsForSpecificProjection(Guid projectionId)
