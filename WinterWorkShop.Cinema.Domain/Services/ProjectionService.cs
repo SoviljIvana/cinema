@@ -68,6 +68,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     Id = item.Id,
                     MovieId = item.MovieId,
                     AuditoriumId = item.AuditoriumId,
+                    ProjectionTimeString = item.DateTime.ToString("hh:mm tt"),
                     ProjectionTime = item.DateTime,
                     MovieTitle = item.Movie.Title,
                     AditoriumName = item.Auditorium.Name
