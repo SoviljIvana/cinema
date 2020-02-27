@@ -5,6 +5,7 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
 
 class EditCinema extends React.Component {
+    
     constructor(props) {
         super(props);
         this.state = {

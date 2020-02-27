@@ -12,7 +12,6 @@ const ratingChanged = (newRating) => {
     console.log(newRating)
 }
 
-
 class ShowAllMovies extends Component {
 
     constructor(props) {

@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { FormGroup, FormControl, Button, Container, Row, Col, FormText, FormLabel, Alert } from 'react-bootstrap';
-import { YearPicker } from 'react-dropdown-date';
-import Switch from "react-switch";
+import { FormGroup, FormControl, Button, Container, Row, Col, FormText, FormLabel, Alert, Table } from 'react-bootstrap';
+import Spinner from '../Spinner';
 import ReactStars from 'react-stars';
-
-const ratingChanged = (newRating) => {
-    console.log(newRating)
-}
 
 class ProjectionDetails extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            projections: [],
+            isLoading: true,
+            id: '',
             title: '',
             year: 0,
             rating: '',
-            id: '',
             projectionTime: '',
             movieId: '',
             auditoriumId: '',
@@ -28,20 +25,45 @@ class ProjectionDetails extends Component {
             submitted: false,
             canSubmit: true
         };
-
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
-        const { id, movieId } = this.props.match.params;
+        const { id } = this.props.match.params;
+        this.getProjections(id);
         this.getMovie(id);
-        this.getProjections(movieId);
     }
 
-    getProjections() {
-        const projectionTimes = ['11:45', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30', '12:25', '14:52', '17:30'];
-        return projectionTimes.map((time) => {
-            return <Button className="mr-1 mb-2">{time}</Button>
-        })
+    getProjections(movieId) {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
+        };
+
+        this.setState({ isLoading: true });
+        fetch(`${serviceConfig.baseURL}/api/Movies/allForSpecificMovie/` + movieId, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({
+                        projections: data,
+
+                        isLoading: false
+                    });
+                }
+            })
+            .catch(response => {
+                this.setState({ isLoading: false });
+                NotificationManager.error(response.message || response.statusText);
+            });
     }
 
     getMovie(movieId) {
@@ -77,48 +99,79 @@ class ProjectionDetails extends Component {
             });
     }
 
+    handleSubmit(e) {
+        e.preventDefault();
+        this.setState({ submitted: true });
+        const { title, year, rating } = this.state;
+        if (title && year && rating) {
+            this.updateMovie();
+        } else {
+            NotificationManager.error('Please fill in data');
+            this.setState({ submitted: false });
+        }
+    }
+
+    fillTableWithDaata() {
+        return this.state.projections.map(projection => {
+            return <tr key={projection.movieId}>
+                <td >{projection.projectionTime}</td>
+            </tr>
+        })
+    }
+
     render() {
-        const { title, year,  rating,  titleError, yearError, projectionTime } = this.state;
-        const projectionTimes = this.getProjections();
+        const { isLoading, title, year, rating, titleError, yearError } = this.state;
+        const rowsData = this.fillTableWithDaata();
+        const table = (<Table striped bordered hover size="sm" variant="link">
+            <thead>
+                <tr>
+                    <th>Projection Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {rowsData}
+            </tbody>
+        </Table>);
+        const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
-            <Container>
+            <React.Fragment>
                 <Row className="justify-content-center">
                     <Col>
-                            <br></br>
-                            <FormGroup>
-                                <FormControl
-                                    id="title"
-                                    type="text"
-                                    placeholder="Movie Title"
-                                    value={title}
-                                />
-                                <FormText className="text-danger">{titleError}</FormText>
-                            </FormGroup>
-                            <FormGroup>
-                                <FormControl
-                                    defaultValue={'Select Movie Year'}
-                                    start={1895}
-                                    end={2120}
-                                    reverse
-                                    required={true}
-                                    disabled={false}
-                                    value={year}
-                                    id={'year'}
-                                    name={'year'}
-                                    classes={'form-control'}
-                                    optionClasses={'option classes'}
-                                />
-                                <FormText className="text-danger">{yearError}</FormText>
-                            </FormGroup>
-                            <FormGroup>
-                                <td className="text-center cursor-pointer">{<ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'} />}</td>
-                            </FormGroup>
-                            <FormGroup>
-                                {projectionTimes}
-                            </FormGroup>
+                        <br></br>
+                        <FormGroup>
+                            <FormControl 
+                                id="title"
+                                type="text"
+                                placeholder="Movie Title"
+                                value={title}
+                            />
+                            <FormText className="text-danger">{titleError}</FormText>
+                        </FormGroup>
+                        <FormGroup>
+                            <FormControl 
+                                defaultValue={'Select Movie Year'}
+                                start={1895}
+                                end={2120}
+                                reverse
+                                required={true}
+                                disabled={false}
+                                value={year}
+                                id={'year'}
+                                name={'year'}
+                                classes={'form-control'}
+                                optionClasses={'option classes'}
+                            />
+                            <FormText className="text-danger">{yearError}</FormText>
+                        </FormGroup>
+                        <FormGroup>
+                         <ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'}/> 
+                        </FormGroup>
+                        <FormGroup >
+                            {showTable}
+                        </FormGroup>
                     </Col>
                 </Row>
-            </Container>
+            </React.Fragment>
         );
     }
 }
