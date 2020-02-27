@@ -23,12 +23,15 @@ namespace WinterWorkShop.Cinema.API.Controllers
     {
         private readonly IMovieService _movieService;
         private readonly ILogger<MoviesController> _logger;
+        private readonly IProjectionService _projectionService;
 
 
-        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService)
+
+        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService )
         {
             _logger = logger;
             _movieService = movieService;
+            _projectionService = projectionService;
         }
 
         /// <summary>
@@ -52,6 +55,23 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(movie);
         }
 
+
+        [HttpGet]
+        [Route("allForSpecificMovie/{id}")]
+        public async Task<ActionResult<IEnumerable<ProjectionDomainModel>>> GetAsyncForSpecificMovie(Guid id)
+        {
+            IEnumerable<ProjectionDomainModel> projectionDomainModels;
+
+            projectionDomainModels = await _projectionService.GetAllAsyncForSpecificMovie(id);
+
+            if (projectionDomainModels == null)
+            {
+                projectionDomainModels = new List<ProjectionDomainModel>();
+            }
+
+            //return Ok(projectionDomainModels + "There is not projections for this movie");
+            return Ok(projectionDomainModels);
+        }
 
         [HttpGet]
         [Route("search/{searchData}")]

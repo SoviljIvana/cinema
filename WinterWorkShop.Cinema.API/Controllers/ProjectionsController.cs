@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WinterWorkShop.Cinema.API.Models;
-using WinterWorkShop.Cinema.Data;
 using WinterWorkShop.Cinema.Domain.Common;
 using WinterWorkShop.Cinema.Domain.Interfaces;
 using WinterWorkShop.Cinema.Domain.Models;
@@ -44,28 +43,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 projectionDomainModels = new List<ProjectionDomainModel>();
             }
 
-            return Ok(projectionDomainModels);
-        }
-
-        /// <summary>
-        /// Returns all projections for a specific movie by movieID
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("allForSpecificMovie/{id}")]
-        public async Task<ActionResult<IEnumerable<ProjectionDomainModel>>> GetAsyncForSpecificMovie(Guid id)
-        {
-            IEnumerable<ProjectionDomainModel> projectionDomainModels;
-
-            projectionDomainModels = await _projectionService.GetAllAsyncForSpecificMovie(id);
-
-            if (projectionDomainModels == null)
-            {
-                projectionDomainModels = new List<ProjectionDomainModel>();
-            }
-
-            //return Ok(projectionDomainModels + "There is not projections for this movie");
             return Ok(projectionDomainModels);
         }
 

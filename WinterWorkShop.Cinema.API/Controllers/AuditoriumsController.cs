@@ -143,6 +143,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return BadRequest(errorResponse);
             }
+
             if(auditoriumModel.cinemaId!=0)
                 auditoriumToUpdate.CinemaId = auditoriumModel.cinemaId;
 

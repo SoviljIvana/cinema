@@ -57,7 +57,6 @@ class AllProjectionsForCinema extends Component {
         NotificationManager.error(response.message || response.statusText);
         this.setState({ submitted: false });
       });
-
   }
 
   fillTableWithDaata() {
@@ -82,6 +81,7 @@ class AllProjectionsForCinema extends Component {
   details(id) {
     this.props.history.push(`projectiondetails/${id}`);
 }
+
   render() {
     const { isLoading } = this.state;
     const rowsData = this.fillTableWithDaata();
