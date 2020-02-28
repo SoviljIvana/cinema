@@ -22,6 +22,7 @@
         public const string AUDITORIUM_DOES_NOT_EXIST = "Auditorium does not exist.";
         public const string AUDITORIUM_DELETION_ERROR = "Unable to delete auditorium, please make sure there are no upcoming projections and then try again. ";
         public const string AUDITORIUM_NOT_FOUND = "Unable to find auditorium. ";
+        public const string AUDITORIUM_UPDATE_ERROR = "Unable to update auditorium, please make sure there no upcoming projections and then try again. ";
 
         #endregion
 
