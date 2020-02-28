@@ -117,7 +117,7 @@ class ProjectionDetails extends Component {
     
     fillTableWithDaata() {
         return this.state.projections.map(projection => {
-            return <Button key={projection.movieId} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{projection.projectionTime}</Button>
+            return <Button key={projection.movieId} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{projection.projectionTimeString}</Button>
         })
     }
    
