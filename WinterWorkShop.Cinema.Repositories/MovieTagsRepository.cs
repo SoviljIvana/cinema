@@ -55,7 +55,9 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public MovieTag Insert(MovieTag obj)
         {
-            throw new NotImplementedException();
+
+            var data = _cinemaContext.MovieTags.Add(obj).Entity;
+            return data;
         }
 
         public void Save()

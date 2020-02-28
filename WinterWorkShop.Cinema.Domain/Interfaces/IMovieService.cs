@@ -29,7 +29,7 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
         /// </summary>
         /// <param name="newMovie"></param>
         /// <returns></returns>
-        Task<MovieDomainModel> AddMovie(MovieDomainModel newMovie);
+        Task<MovieDomainModel> AddMovie(MovieDomainModel newMovie, MovieCreateTagDomainModel movieCreateTagDomainModel);
 
         /// <summary>
         /// Update a movie to DB
