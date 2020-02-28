@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WinterWorkShop.Cinema.Data;
 using WinterWorkShop.Cinema.Domain.Common;
 using WinterWorkShop.Cinema.Domain.Interfaces;
 using WinterWorkShop.Cinema.Domain.Models;
@@ -13,13 +14,15 @@ namespace WinterWorkShop.Cinema.Domain.Services
     public class ProjectionService : IProjectionService
     {
         private readonly IProjectionsRepository _projectionsRepository;
-        private readonly ITicketRepository _ticketRepository; 
+        private readonly ITicketRepository _ticketRepository;
+        private readonly ISeatsRepository _seatsRepository;
 
         public ProjectionService(IProjectionsRepository projectionsRepository,
-                                ITicketRepository ticketRepository)
+                                ITicketRepository ticketRepository, ISeatsRepository seatsRepository)
         {
             _projectionsRepository = projectionsRepository;
             _ticketRepository = ticketRepository;
+            _seatsRepository = seatsRepository;
         }
 
         public async Task<IEnumerable<ProjectionDomainModel>> GetAllAsync()
@@ -72,6 +75,21 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     MovieTitle = item.Movie.Title,
                     AditoriumName = item.Auditorium.Name
                 };
+                List < Seat > listaSeat = new List<Seat>();
+                var seatsForThisAuditorium = await _seatsRepository.GetAllOfSpecificAuditoriumForProjection(model.AuditoriumId);
+                var row = 0;
+                var seatPerRow = 0;
+                foreach (var seatInAuditorium in seatsForThisAuditorium)
+                {
+                    listaSeat.Add(seatInAuditorium);
+                }
+                foreach (var seat in listaSeat)
+                {
+                    row = seat.Row;
+                    seatPerRow = seat.Number;
+                }
+                model.NumOFRows = row;
+                model.NumOFSeatsPerRow = seatPerRow;
                 result.Add(model);
             }
 

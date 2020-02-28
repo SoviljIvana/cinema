@@ -13,6 +13,7 @@ class ProjectionDetails extends Component {
             projections: [],
             isLoading: true,
             id: '',
+
             title: '',
             year: 0,
             rating: '',
@@ -32,6 +33,7 @@ class ProjectionDetails extends Component {
         const { id } = this.props.match.params;
         this.getProjections(id);
         this.getMovie(id);
+        this.getSeats(id);
     }
 
     getProjections(movieId) {
@@ -45,6 +47,38 @@ class ProjectionDetails extends Component {
 
         this.setState({ isLoading: true });
         fetch(`${serviceConfig.baseURL}/api/Movies/allForSpecificMovie/` + movieId, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({
+                        projections: data,
+
+                        isLoading: false
+                    });
+                }
+            })
+            .catch(response => {
+                this.setState({ isLoading: false });
+                NotificationManager.error(response.message || response.statusText);
+            });
+    }
+
+
+    getSeats(id) {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
+        };
+        this.setState({ isLoading: true });
+        fetch(`${serviceConfig.baseURL}/api/Seats/allForProjection/` + id, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);
@@ -111,19 +145,55 @@ class ProjectionDetails extends Component {
         }
     }
 
-    navigateToProjectionDetails() {
-        this.props.history.push('projectiondetails/1')
-      }
-    
-    fillTableWithDaata() {
+    fillTableWithDaata1() {
         return this.state.projections.map(projection => {
-            return <Button key={projection.movieId} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{projection.projectionTimeString}</Button>
+            return <Button key={projection.id}  className="mr-1 mb-2">
+                {
+                    <Row className="justify-content-center">
+                        <table className="table-cinema-auditorium">
+                            <tbody>
+                                {this.renderRows(projection.numOFRows, projection.numOFSeatsPerRow)}
+                            </tbody>
+                        </table>
+                    </Row>
+                }
+            </Button>
         })
     }
-   
+
+    fillTableWithDaata() {
+        return this.state.projections.map(projection => {
+            return <Button key={projection.movieId}  className="mr-1 mb-2">
+                {
+                    projection.projectionTimeString
+                }
+              
+            </Button>
+        })
+    }
+
+    renderRows(rows, seats) {
+        const rowsRendered = [];
+        for (let i = 0; i < rows; i++) {
+            rowsRendered.push(<tr key={i}>
+                {this.renderSeats(seats, i)}
+            </tr>);
+        }
+        return rowsRendered;
+    }
+
+    renderSeats(seats, row) {
+        let renderedSeats = [];
+        for (let i = 0; i < seats; i++) {
+            renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i}></td>);
+        }
+        return renderedSeats;
+    }
+
     render() {
         const { isLoading, title, year, rating, titleError, yearError } = this.state;
         const rowsData = this.fillTableWithDaata();
+        const rowsData1 = this.fillTableWithDaata1();
         const table = (<Table striped bordered hover size="sm" variant="link">
             <thead>
                 <tr>
@@ -133,7 +203,9 @@ class ProjectionDetails extends Component {
             <tbody>
                 {rowsData}
             </tbody>
-          
+            <tbody>
+                {rowsData1}
+            </tbody>
         </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
@@ -142,7 +214,7 @@ class ProjectionDetails extends Component {
                     <Col>
                         <br></br>
                         <FormGroup>
-                            <FormControl 
+                            <FormControl
                                 id="title"
                                 type="text"
                                 placeholder="Movie Title"
@@ -151,7 +223,7 @@ class ProjectionDetails extends Component {
                             <FormText className="text-danger">{titleError}</FormText>
                         </FormGroup>
                         <FormGroup>
-                            <FormControl 
+                            <FormControl
                                 defaultValue={'Select Movie Year'}
                                 start={1895}
                                 end={2120}
@@ -167,11 +239,12 @@ class ProjectionDetails extends Component {
                             <FormText className="text-danger">{yearError}</FormText>
                         </FormGroup>
                         <FormGroup>
-                         <ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'}/> 
+                            <ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'} />
                         </FormGroup>
                         <FormGroup >
                             {showTable}
                         </FormGroup>
+                        <hr />
                     </Col>
                 </Row>
             </React.Fragment>
