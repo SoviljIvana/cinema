@@ -140,5 +140,23 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 Message = Messages.TICKET_NOT_FOUND
             };
         }
+
+        public async Task<TicketDomainModel> DeleteTicket(Guid id) 
+        {
+            var ticketsForSeat = _ticketRepository.GetAllForSpecificSeat(id);
+
+            if (ticketsForSeat == null) 
+            {
+                return null; 
+            }
+
+            foreach (var item in ticketsForSeat)
+            {
+                _ticketRepository.Delete(item.Id);
+            }
+
+
+            return null; 
+        }
     }
 }
