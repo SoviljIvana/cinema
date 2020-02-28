@@ -23,12 +23,12 @@ namespace WinterWorkShop.Cinema.API.Models
 
         public bool Current { get; set; }
 
-        public List<string> ListOfGenre { get; set; }
-        public List<string> ListOfActor { get; set; }
+        public List<string> ListOfGenres { get; set; }
+        public List<string> ListOfActors { get; set; }
         public string Creator { get; set; }
         public string Language { get; set; }
         public int Duration { get; set; }
         public string State { get; set; }
-        public string Aword { get; set; }
+        public string Award { get; set; }
     }
 }

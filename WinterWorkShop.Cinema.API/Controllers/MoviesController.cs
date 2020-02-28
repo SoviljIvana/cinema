@@ -182,20 +182,20 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 tagsForMovieToAdd = new List<string>()
             };
 
-            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Aword);
+            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Award);
             movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Creator);
             movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Language);
             movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.State);
-            if (movieModel.ListOfActor!=null)
+            if (movieModel.ListOfActors!=null)
             {
-                foreach (var actor in movieModel.ListOfActor)
+                foreach (var actor in movieModel.ListOfActors)
                 {
                     movieCreateTagDomainModel.tagsForMovieToAdd.Add(actor);
                 }
             }
-            if (movieModel.ListOfGenre != null)
+            if (movieModel.ListOfGenres != null)
             {
-                foreach (var genre in movieModel.ListOfGenre)
+                foreach (var genre in movieModel.ListOfGenres)
                 {
                     movieCreateTagDomainModel.tagsForMovieToAdd.Add(genre);
                 }
