@@ -176,11 +176,36 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 Year = movieModel.Year
             };
 
+            MovieCreateTagDomainModel movieCreateTagDomainModel = new MovieCreateTagDomainModel
+            {
+                Duration = movieModel.Duration,
+                tagsForMovieToAdd = new List<string>()
+            };
+
+            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Aword);
+            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Creator);
+            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Language);
+            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.State);
+            if (movieModel.ListOfActor!=null)
+            {
+                foreach (var actor in movieModel.ListOfActor)
+                {
+                    movieCreateTagDomainModel.tagsForMovieToAdd.Add(actor);
+                }
+            }
+            if (movieModel.ListOfGenre != null)
+            {
+                foreach (var genre in movieModel.ListOfGenre)
+                {
+                    movieCreateTagDomainModel.tagsForMovieToAdd.Add(genre);
+                }
+            }
+            
             MovieDomainModel createMovie;
 
             try
             {
-                createMovie = await _movieService.AddMovie(domainModel);
+                createMovie = await _movieService.AddMovie(domainModel, movieCreateTagDomainModel);
             }
             catch (DbUpdateException e)
             {

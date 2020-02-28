@@ -17,6 +17,7 @@ namespace WinterWorkShop.Cinema.Repositories
         Task<IEnumerable<Tag>> GetAllActores();
         Task<IEnumerable<Tag>> GetAllCreators();
         Task<IEnumerable<Tag>> GetAllLanguage();
+        Tag GetByIdName(string name);
 
     }
     public class TagRepository : ITagRepository
@@ -75,11 +76,15 @@ namespace WinterWorkShop.Cinema.Repositories
         {
             throw new NotImplementedException();
         }
+        public  Tag GetByIdName(string name)
+        {
+            var data =  _cinemaContext.Tags.SingleOrDefault(x => x.Name.Equals(name));
+            return data;
+        }
 
         public Tag Insert(Tag obj)
         {
-            var data = _cinemaContext.Tags.Add(obj).Entity;
-            return data;
+            return _cinemaContext.Tags.Add(obj).Entity;
         }
 
         public void Save()
