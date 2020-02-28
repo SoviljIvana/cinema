@@ -158,7 +158,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
            
 
 
-            AuditoriumDomainModel auditoriumDomainModel;
+            CreateAuditoriumResultModel auditoriumDomainModel;
             try
             {
                 auditoriumDomainModel = await _auditoriumService.UpdateAuditorium(auditoriumToUpdate);
@@ -174,7 +174,18 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 return BadRequest(errorResponse);
             }
 
-            return Accepted("auditoriums//" + auditoriumDomainModel.Id, auditoriumDomainModel);
+            if (!auditoriumDomainModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.AUDITORIUM_UPDATE_ERROR,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+
+            return Accepted("auditoriums//" + auditoriumDomainModel.Auditorium.Id, auditoriumDomainModel);
 
         }
         /// <summary>

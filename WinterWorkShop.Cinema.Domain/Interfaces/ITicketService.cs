@@ -11,6 +11,7 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
         Task<IEnumerable<TicketDomainModel>> GetAllTickets();
         Task<CreateTicketResultModel> CreateNewTicket(TicketDomainModel ticketDomainModel);
         Task<PaymentResponse> ConfirmPayment(List<TicketDomainModel> ticketDomainModels);
+        Task<TicketDomainModel> DeleteTicket(Guid id);
 
     }
 }
