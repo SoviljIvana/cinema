@@ -16,19 +16,22 @@ using WinterWorkShop.Cinema.Repositories;
 
 namespace WinterWorkShop.Cinema.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieService _movieService;
-
         private readonly ILogger<MoviesController> _logger;
+        private readonly IProjectionService _projectionService;
 
-        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService)
+
+
+        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService )
         {
             _logger = logger;
             _movieService = movieService;
+            _projectionService = projectionService;
         }
 
         /// <summary>
@@ -52,17 +55,96 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(movie);
         }
 
+
+        [HttpGet]
+        [Route("allForSpecificMovie/{id}")]
+        public async Task<ActionResult<IEnumerable<ProjectionDomainModel>>> GetAsyncForSpecificMovie(Guid id)
+        {
+            IEnumerable<ProjectionDomainModel> projectionDomainModels;
+
+            projectionDomainModels = await _projectionService.GetAllAsyncForSpecificMovie(id);
+
+            if (projectionDomainModels == null)
+            {
+                projectionDomainModels = new List<ProjectionDomainModel>();
+            }
+
+            //return Ok(projectionDomainModels + "There is not projections for this movie");
+            return Ok(projectionDomainModels);
+        }
+
+        [HttpGet]
+        [Route("search/{searchData}")]
+        public async Task<ActionResult<IEnumerable<MovieDomainModel>>> SearchByTag(string searchData)
+        {
+            IEnumerable<MovieDomainModel> movieDomainModels;
+
+            movieDomainModels = await _movieService.GetAllMoviesWithThisTag(searchData);
+
+            if (movieDomainModels == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = Messages.MOVIE_WITH_THIS_DESCRIPTION_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+
+            return Ok(movieDomainModels);
+        }
+
+
         /// <summary>
         /// Gets all current movies
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("current")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<Movie>>> GetCurrent()
+        {
+            IEnumerable<MovieDomainModel> movieDomainModels;
+            try
+            {
+                movieDomainModels = await _movieService.GetCurrentMovies();
+            }
+            catch (DbUpdateException e)
+            {
+
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            if (movieDomainModels == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+
+            return Ok(movieDomainModels);
+        }
+
+        /// <summary>
+        /// Gets all movies
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("allMovies")]
+        public async Task<ActionResult<IEnumerable<Movie>>> GetCurrentAndNotCurrent()
         {
             IEnumerable<MovieDomainModel> movieDomainModels;
 
-            movieDomainModels = _movieService.GetAllMovies(true);
+            movieDomainModels = await _movieService.GetCurrentAndNotCurrentMovies();
 
             if (movieDomainModels == null)
             {
@@ -79,7 +161,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody]MovieModel movieModel)
+        public async Task<ActionResult> Post([FromBody]CreateMovieModel movieModel)
         {
             if (!ModelState.IsValid)
             {
@@ -134,7 +216,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Authorize(Roles = "admin")]
         [HttpPut]
         [Route("{id}")]
-        public async Task<ActionResult> Put(Guid id, [FromBody]MovieModel movieModel)
+        public async Task<ActionResult> Put(Guid id, [FromBody]CreateMovieModel movieModel)
         {
             if (!ModelState.IsValid)
             {
@@ -153,7 +235,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                     StatusCode = System.Net.HttpStatusCode.BadRequest
                 };
 
-                return BadRequest(errorResponse);
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
 
             movieToUpdate.Title = movieModel.Title;
@@ -161,7 +243,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             movieToUpdate.Year = movieModel.Year;
             movieToUpdate.Rating = movieModel.Rating;
 
-            MovieDomainModel movieDomainModel;
+            CreateMovieResultModel movieDomainModel;
             try
             {
                 movieDomainModel = await _movieService.UpdateMovie(movieToUpdate);
@@ -176,8 +258,18 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return BadRequest(errorResponse);
             }
+            if (!movieDomainModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = movieDomainModel.ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
 
-            return Accepted("movies//" + movieDomainModel.Id, movieDomainModel);
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+
+            return Accepted("movies//" + movieDomainModel.Movie.Id, movieDomainModel);
 
         }
 
@@ -191,7 +283,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            MovieDomainModel deletedMovie;
+            DeleteMovieModel deletedMovie;
             try
             {
                 deletedMovie = await _movieService.DeleteMovie(id);
@@ -217,8 +309,83 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
                 return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
+            if (deletedMovie.MovieDomainModel == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.PROJECTION_IN_FUTURE,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
 
-            return Accepted("movies//" + deletedMovie.Id, deletedMovie);
+            return Accepted("movies//" + deletedMovie.MovieDomainModel.Id, deletedMovie);
         }
+
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        [Route("top")]
+        public async Task<ActionResult<IEnumerable<MovieDomainModel>>> GetTopList() 
+        {
+           var movies = await _movieService.GetTopTenMovies(); 
+
+            if (movies == null)
+            {
+                movies = new List<MovieDomainModel>();
+            }
+
+            return Ok(movies);
+
+        }
+
+        [HttpPut]
+        [Route("currentstatus/{id}")]
+        public async Task<ActionResult> UpdateMovieCurrentStatus(Guid id)
+        {
+            MovieDomainModel movieToUpdate;
+
+            movieToUpdate = await _movieService.GetMovieByIdAsync(id);
+
+            if (movieToUpdate == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            CreateMovieResultModel createMovieResultModel;
+            try
+            {
+                createMovieResultModel = await _movieService.UpdateMovieStatus(id);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            if (!createMovieResultModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = createMovieResultModel.ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Accepted("movies//" + createMovieResultModel.Movie.Id, createMovieResultModel.Movie);
+        }
+
     }
 }

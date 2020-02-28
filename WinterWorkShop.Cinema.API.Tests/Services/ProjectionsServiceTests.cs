@@ -22,6 +22,8 @@ namespace WinterWorkShop.Cinema.Tests.Services
         private Mock<IProjectionsRepository> _mockProjectionsRepository;
         private Projection _projection;
         private ProjectionDomainModel _projectionDomainModel;
+        private Mock<ITicketRepository> _mockTicketsRepository; 
+
 
         [TestInitialize]
         public void TestInitialize()
@@ -54,6 +56,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
 
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
             _mockProjectionsRepository.Setup(x => x.GetAll()).Returns(responseTask);
+            _mockTicketsRepository = new Mock<ITicketRepository>();
         }
 
         [TestMethod]
@@ -61,7 +64,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
         {
             //Arrange
             int expectedResultCount = 1;
-            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object);
+            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object, _mockTicketsRepository.Object);
 
             //Act
             var resultAction = projectionsController.GetAllAsync().ConfigureAwait(false).GetAwaiter().GetResult();
@@ -83,7 +86,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
 
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
             _mockProjectionsRepository.Setup(x => x.GetAll()).Returns(responseTask);
-            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object);
+            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object, _mockTicketsRepository.Object);
 
             //Act
             var resultAction = projectionsController.GetAllAsync().ConfigureAwait(false).GetAwaiter().GetResult();
@@ -105,7 +108,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
 
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
             _mockProjectionsRepository.Setup(x => x.GetByAuditoriumId(It.IsAny<int>())).Returns(projectionsModelsList);
-            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object);
+            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object, _mockTicketsRepository.Object);
 
             //Act
             var resultAction = projectionsController.CreateProjection(_projectionDomainModel).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -132,7 +135,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
             _mockProjectionsRepository.Setup(x => x.GetByAuditoriumId(It.IsAny<int>())).Returns(projectionsModelsList);
             _mockProjectionsRepository.Setup(x => x.Insert(It.IsAny<Projection>())).Returns(_projection);
-            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object);
+            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object, _mockTicketsRepository.Object);
 
             //Act
             var resultAction = projectionsController.CreateProjection(_projectionDomainModel).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -158,7 +161,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _mockProjectionsRepository.Setup(x => x.GetByAuditoriumId(It.IsAny<int>())).Returns(projectionsModelsList);
             _mockProjectionsRepository.Setup(x => x.Insert(It.IsAny<Projection>())).Returns(_projection);
             _mockProjectionsRepository.Setup(x => x.Save());
-            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object);
+            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object, _mockTicketsRepository.Object);
 
             //Act
             var resultAction = projectionsController.CreateProjection(_projectionDomainModel).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -180,7 +183,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
             _mockProjectionsRepository.Setup(x => x.Insert(It.IsAny<Projection>())).Throws(new DbUpdateException());
             _mockProjectionsRepository.Setup(x => x.Save());
-            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object);
+            ProjectionService projectionsController = new ProjectionService(_mockProjectionsRepository.Object, _mockTicketsRepository.Object);
 
             //Act
             var resultAction = projectionsController.CreateProjection(_projectionDomainModel).ConfigureAwait(false).GetAwaiter().GetResult();

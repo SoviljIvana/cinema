@@ -16,7 +16,7 @@ class ShowAllAuditoriums extends Component {
       this.editAuditorium = this.editAuditorium.bind(this);
       this.removeAuditorium = this.removeAuditorium.bind(this);
     }
-
+    
     componentDidMount() {
       this.getAuditoriums();
     }
@@ -48,7 +48,30 @@ class ShowAllAuditoriums extends Component {
     }
 
     removeAuditorium(id) {
-        // to be implemented
+      const requestOptions = {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+    };
+
+    fetch(`${serviceConfig.baseURL}/api/auditoriums/${id}`, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response.statusText;
+        })
+        .then(result => {
+            NotificationManager.success('Successfuly removed auditorium with ID: '+ id);
+            const newState = this.state.auditoriums.filter(auditorium => {
+                return auditorium.id !== id;
+            })
+            this.setState({auditoriums: newState});
+        })
+        .catch(response => {
+            NotificationManager.error("Unable to remove auditorium.");
+            this.setState({ submitted: false });
+        });
     }
 
     fillTableWithDaata() {
@@ -64,8 +87,7 @@ class ShowAllAuditoriums extends Component {
     }
 
     editAuditorium(id) {
-        // to be implemented
-        this.props.history.push(`editAuditorium/${id}`);
+        this.props.history.push(`editauditorium/${id}`);
     }
 
     render() {
@@ -98,5 +120,4 @@ class ShowAllAuditoriums extends Component {
         );
       }
 }
-
 export default ShowAllAuditoriums;

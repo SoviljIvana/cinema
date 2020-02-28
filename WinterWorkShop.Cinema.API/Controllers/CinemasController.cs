@@ -44,9 +44,14 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(cinemaDomainModels);
         }
 
-        //Add a new cinema
+        /// <summary>
+        /// Adds a new cinema
+        /// </summary>
+        /// <param name="cinemaModel"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
         [HttpPost]
-        [Route("create")]
+        [Route("create_empty_cinema")]
         public async Task<ActionResult> Post([FromBody]CreateCinemaModel cinemaModel)
         {
             if (!ModelState.IsValid)
@@ -58,11 +63,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 Name = cinemaModel.Name
             };
 
-            CinemaDomainModel createCinema;
+            CreateCinemaResultModel createCinemaResultModel;
 
             try
             {
-                createCinema = await _cinemaService.AddCinema(domainModel);
+                createCinemaResultModel = await _cinemaService.AddCinema(domainModel);
             }
             catch (DbUpdateException e)
             {
@@ -73,7 +78,72 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 };
                 return BadRequest(errorResponse);
             }
-            return Created("cinema//" + createCinema.Id, createCinema);
+            if (!createCinemaResultModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = createCinemaResultModel.ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Created("auditoriums//" + createCinemaResultModel.Cinema.Id, createCinemaResultModel);
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        [Route("create_complete_cinema")]
+        public async Task<ActionResult> PostWithAuditoriumsAndSeats([FromBody]CreateCinemaWithAuditoriumAndSeatsModel createCinemaWithAuditoriumAndSeatsModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            CreateCinemaDomainModel domainModel = new CreateCinemaDomainModel
+            {
+                CinemaName = createCinemaWithAuditoriumAndSeatsModel.CinemaName,
+                listOfAuditoriums = new List<AuditoriumDomainModel>()
+            };
+            var listofAuditoriums = createCinemaWithAuditoriumAndSeatsModel.listOfAuditoriums;
+            foreach (var item in listofAuditoriums)
+            {
+                domainModel.listOfAuditoriums.Add(new AuditoriumDomainModel
+                {
+                    Name = item.name,
+                    SeatRows = item.seatRows,
+                    NumberOfSeats = item.numberOfSeats
+                });
+            }
+
+            CreateCinemaResultModel createCinemaResultModel;
+
+            try
+            {
+                createCinemaResultModel = await _cinemaService.AddCinemaWithAuditoriumsAndSeats(domainModel);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return BadRequest(errorResponse);
+            }
+            if (!createCinemaResultModel.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = createCinemaResultModel.ErrorMessage,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+
+            return Created("cinemas//" + createCinemaResultModel.Cinema.Id, createCinemaResultModel);
         }
 
         //Gets cinema by id
@@ -94,15 +164,16 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
-        /// Delete a cinema by id
+        /// Delete a cinema by id if there is no auditorium with future projections in it
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize(Roles = "admin")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            CinemaDomainModel deletedCinema;
+            CreateCinemaResultModel deletedCinema;
             try
             {
                 deletedCinema = await _cinemaService.DeleteCinema(id);
@@ -118,18 +189,29 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 return BadRequest(errorResponse);
             }
 
-            if (deletedCinema == null)
+            if (deletedCinema.Cinema == null)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
-                    ErrorMessage = Messages.CINEMA_DOES_NOT_EXIST,
+                    ErrorMessage = Messages.CINEMA_NOT_FOUND,
                     StatusCode = System.Net.HttpStatusCode.InternalServerError
                 };
 
                 return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
 
-            return Accepted("cinemas//" + deletedCinema.Id, deletedCinema);
+            if (!deletedCinema.IsSuccessful)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.AUDITORIUM_DELETION_ERROR,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+
+            return Accepted("cinemas//" + deletedCinema.Cinema.Id, deletedCinema);
         }
 
         /// <summary>
@@ -138,6 +220,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <param name="id"></param>
         /// <param name="cinemaModel"></param>
         /// <returns></returns>
+        [Authorize(Roles = "admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody]CreateCinemaModel cinemaModel)

@@ -9,9 +9,12 @@ using WinterWorkShop.Cinema.Data;
 
 namespace WinterWorkShop.Cinema.Repositories
 {
-    public interface IMoviesRepository : IRepository<Movie> 
+    public interface IMoviesRepository : IRepository<Movie>
     {
-        IEnumerable<Movie> GetCurrentMovies();
+        Task<IEnumerable<Movie>> GetCurrentAndNotCurrentMovies();
+        Task<IEnumerable<Movie>> GetTopTenMovies();
+        Task<IEnumerable<Movie>> GetCurrent();
+        Task<IEnumerable<Movie>> GetAllWithMovieTags();
     }
 
     public class MoviesRepository : IMoviesRepository
@@ -42,6 +45,12 @@ namespace WinterWorkShop.Cinema.Repositories
             return await _cinemaContext.Movies.ToListAsync();
         }
 
+        public async Task<IEnumerable<Movie>> GetAllWithMovieTags()
+        {
+            var data = await _cinemaContext.Movies.Include(s => s.MovieTags).ToListAsync();
+            return data;
+        }
+
         public async Task<Movie> GetByIdAsync(object id)
         {
             var data = await _cinemaContext.Movies.FindAsync(id);
@@ -49,10 +58,18 @@ namespace WinterWorkShop.Cinema.Repositories
             return data;
         }
 
-        public IEnumerable<Movie> GetCurrentMovies()
+        public async Task<IEnumerable<Movie>> GetCurrent()
         {
-            var data = _cinemaContext.Movies
-                .Where(x => x.Current);            
+            var data = await _cinemaContext.Movies
+                .Where(x => x.Current).ToListAsync();
+
+            return data;
+        }
+
+
+        public async Task<IEnumerable<Movie>> GetCurrentAndNotCurrentMovies()
+        {
+            var data = await _cinemaContext.Movies.ToListAsync();
 
             return data;
         }
@@ -76,5 +93,13 @@ namespace WinterWorkShop.Cinema.Repositories
 
             return updatedEntry;
         }
+
+        public async Task<IEnumerable<Movie>> GetTopTenMovies()
+        {
+            var data = await _cinemaContext.Movies.Include(x=>x.MovieTags).OrderByDescending(x => x.Rating).Take(11).ToListAsync();
+
+            return data;
+        }
+
     }
 }

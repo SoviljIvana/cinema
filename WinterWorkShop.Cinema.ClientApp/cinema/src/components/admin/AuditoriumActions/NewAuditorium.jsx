@@ -1,16 +1,26 @@
 import React from 'react';
+
 import { withRouter } from 'react-router-dom';
+
 import { FormGroup, FormControl, Button, Container, Row, Col, FormText, } from 'react-bootstrap';
+
 import { NotificationManager } from 'react-notifications';
+
 import { serviceConfig } from '../../../appSettings';
-import {Typeahead} from 'react-bootstrap-typeahead';
+
+import { Typeahead } from 'react-bootstrap-typeahead';
+
+
 
 class NewAuditorium extends React.Component {
+
     constructor(props) {
+
         super(props);
+
         this.state = {
             cinemaId: 0,
-            auditName: '',
+            name: '',
             seatRows: 0,
             numberOfSeats: 0,
             cinemas: [],
@@ -20,15 +30,18 @@ class NewAuditorium extends React.Component {
             numOfSeatsError: '',
             submitted: false,
             canSubmit: true
+
         };
+
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+
     }
 
     componentDidMount() {
         this.getCinemas();
     }
-    
+
     handleChange(e) {
         const { id, value } = e.target;
         this.setState({ [id]: value });
@@ -37,10 +50,9 @@ class NewAuditorium extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-
         this.setState({ submitted: true });
-        const { numberOfSeats, cinemaId, seatRows, auditName } = this.state;
-        if (auditName && numberOfSeats && cinemaId && seatRows) {
+        const { numberOfSeats, cinemaId, seatRows, name } = this.state;
+        if (name && numberOfSeats && cinemaId && seatRows) {
             this.addAuditorium();
         } else {
             NotificationManager.error('Please fill form with data.');
@@ -48,58 +60,77 @@ class NewAuditorium extends React.Component {
         }
     }
 
+
+
     validate(id, value) {
-        if (id === 'auditName') {
-            if(value === ''){
-                this.setState({auditNameError: 'Fill in auditorium name',
-                                canSubmit: false})
+        if (id === 'name') {
+            if (value === '') {
+                this.setState({
+                    auditNameError: 'Fill in auditorium name',
+                    canSubmit: false
+                })
             } else {
-                this.setState({auditNameError: '',
-                                canSubmit: true});
+                this.setState({
+                    auditNameError: '',
+                    canSubmit: true
+                });
             }
+
         } else if (id === 'numberOfSeats') {
             const seatsNum = +value;
             if (seatsNum > 20 || seatsNum < 1) {
-                this.setState({numOfSeatsError: 'Seats number can be in between 1 and 20',
-                                canSubmit: false})
+                this.setState({
+                    numOfSeatsError: 'Seats number can be in between 1 and 20',
+                    canSubmit: false
+                })
             } else {
-                this.setState({numOfSeatsError: '',
-                                canSubmit: true});
+                this.setState({
+                    numOfSeatsError: '',
+                    canSubmit: true
+                });
             }
         } else if (id === 'seatRows') {
             const seatsNum = +value;
             if (seatsNum > 20 || seatsNum < 1) {
-                this.setState({seatRowsError: 'Seats number can be in between 1 and 20',
-                                canSubmit: false})
+                this.setState({
+                    seatRowsError: 'Seats number can be in between 1 and 20',
+                    canSubmit: false
+                })
             } else {
-                this.setState({seatRowsError: '',
-                                canSubmit: true});
+                this.setState({
+                    seatRowsError: '',
+                    canSubmit: true
+                });
             }
         } else if (id === 'cinemaId') {
             if (!value) {
-                this.setState({cinemaIdError: 'Please chose cineam from dropdown',
-                                canSubmit: false})
+                this.setState({
+                    cinemaIdError: 'Please chose cineam from dropdown',
+                    canSubmit: false
+                })
             } else {
-                this.setState({cinemaIdError: '',
-                                canSubmit: true});
+                this.setState({
+                    cinemaIdError: '',
+                    canSubmit: true
+                });
             }
         }
     }
-    
-    addAuditorium() {
-        const { cinemaId, numberOfSeats, seatRows, auditName } = this.state;
 
+    addAuditorium() {
+        const { cinemaId, numberOfSeats, seatRows, name } = this.state;
         const data = {
             cinemaId: cinemaId,
             numberOfSeats: +numberOfSeats,
             seatRows: +seatRows,
-            auditName: auditName
+            name: name
         };
-
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
             body: JSON.stringify(data)
         };
 
@@ -114,6 +145,7 @@ class NewAuditorium extends React.Component {
                 NotificationManager.success('Successfuly added new auditorium!');
                 this.props.history.push('AllAuditoriums');
             })
+
             .catch(response => {
                 NotificationManager.error(response.message || response.statusText);
                 this.setState({ submitted: false });
@@ -122,42 +154,43 @@ class NewAuditorium extends React.Component {
 
     getCinemas() {
         const requestOptions = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
         };
-  
         fetch(`${serviceConfig.baseURL}/api/Cinemas/all`, requestOptions)
-          .then(response => {
-            if (!response.ok) {
-              return Promise.reject(response);
-          }
-          return response.json();
-          })
-          .then(data => {
-            if (data) {
-              this.setState({ cinemas: data });
-              }
-          })
-          .catch(response => {
-              NotificationManager.error(response.message || response.statusText);
-              this.setState({ submitted: false });
-          });
-      }
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({ cinemas: data });
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
+    }
 
     onCinemaChange(cinema) {
-        if(cinema[0]){
-            this.setState({cinemaId: cinema[0].id});
+        if (cinema[0]) {
+            this.setState({ cinemaId: cinema[0].id });
             this.validate('cinemaId', cinema[0]);
         } else {
             this.validate('cinemaId', null);
         }
     }
-
+    
     renderRows(rows, seats) {
         const rowsRendered = [];
         for (let i = 0; i < rows; i++) {
-            rowsRendered.push( <tr key={i}>
+            rowsRendered.push(<tr key={i}>
                 {this.renderSeats(seats, i)}
             </tr>);
         }
@@ -171,10 +204,10 @@ class NewAuditorium extends React.Component {
         }
         return renderedSeats;
     }
-      
+
     render() {
-        const { cinemas, numberOfSeats, submitted, seatRows, auditName, auditNameError, numOfSeatsError,
-                seatRowsError, cinemaIdError, canSubmit } = this.state;
+        const { cinemas, numberOfSeats, submitted, seatRows, name, auditNameError, numOfSeatsError,
+            seatRowsError, cinemaIdError, canSubmit } = this.state;
         const auditorium = this.renderRows(seatRows, numberOfSeats);
         return (
             <Container>
@@ -182,14 +215,15 @@ class NewAuditorium extends React.Component {
                     <Col>
                         <h1 className="form-header">Add Auditorium</h1>
                         <form onSubmit={this.handleSubmit}>
-                        <FormGroup>
+                            <FormGroup>
                                 <FormControl
-                                    id="auditName"
+                                    id="name"
                                     type="text"
                                     placeholder="Auditorium Name"
-                                    value={auditName}
+                                    value={name}
                                     onChange={this.handleChange}
                                 />
+
                                 <FormText className="text-danger">{auditNameError}</FormText>
                             </FormGroup>
                             <FormGroup>
@@ -198,9 +232,9 @@ class NewAuditorium extends React.Component {
                                     options={cinemas}
                                     placeholder="Choose a cinema..."
                                     id="browser"
-                                    onChange={e => {this.onCinemaChange(e)}}
-                                    />
-                                    <FormText className="text-danger">{cinemaIdError}</FormText>
+                                    onChange={e => { this.onCinemaChange(e) }}
+                                />
+                                <FormText className="text-danger">{cinemaIdError}</FormText>
                             </FormGroup>
                             <FormGroup>
                                 <FormControl
@@ -231,18 +265,18 @@ class NewAuditorium extends React.Component {
                     <Col className="justify-content-center align-content-center">
                         <h1>Auditorium Preview</h1>
                         <div>
-                        <Row className="justify-content-center mb-4">
-                            <div className="text-center text-white font-weight-bold cinema-screen">
-                                CINEMA SCREEN
+                            <Row className="justify-content-center mb-4">
+                                <div className="text-center text-white font-weight-bold cinema-screen">
+                                    CINEMA SCREEN
                             </div>
-                        </Row>
-                        <Row className="justify-content-center">
-                            <table className="table-cinema-auditorium">
-                            <tbody>
-                            {auditorium}
-                            </tbody>
-                            </table>
-                        </Row>
+                            </Row>
+                            <Row className="justify-content-center">
+                                <table className="table-cinema-auditorium">
+                                    <tbody>
+                                        {auditorium}
+                                    </tbody>
+                                </table>
+                            </Row>
                         </div>
                     </Col>
                 </Row>
@@ -250,5 +284,4 @@ class NewAuditorium extends React.Component {
         );
     }
 }
-
 export default withRouter(NewAuditorium);

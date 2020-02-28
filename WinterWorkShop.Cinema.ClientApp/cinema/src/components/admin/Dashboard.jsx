@@ -8,20 +8,25 @@ import { faPlus, faList, faFilm, faVideo, faTicketAlt, faBinoculars } from '@for
 import NewMovie from './MovieActions/NewMovie';
 import EditMovie from './MovieActions/EditMovie';
 import ShowAllMovies from './MovieActions/ShowAllMovies';
+import ShowCurrentMovies from './MovieActions/ShowCurrentMovies';
+import TopTenMovies from './MovieActions/TopTenMovies';
 import NewCinema from './CinemaActions/NewCinema';
+import EditCinema from './CinemaActions/EditCinema';
 import ShowAllCinemas from './CinemaActions/ShowAllCinemas';
 import NewAuditorium from './AuditoriumActions/NewAuditorium';
+import EditAuditorium from './AuditoriumActions/EditAuditorium';
 import ShowAllAuditoriums from './AuditoriumActions/ShowAllAuditoriums';
 import ShowAllProjections from './ProjectionActions/ShowAllProjections';
 import NewProjection from './ProjectionActions/NewProjection';
 
+
 // higher order component
 import { PrivateRouteAdmin } from '../hoc/privateRouteAdmin';
+
 
 class Dashboard extends Component {
     render() {
         return (
-            
             <Row className="justify-content-center no-gutters">
                 <Col lg={2} className="dashboard-navigation">
                     <Row className="justify-content-center mt-2">
@@ -32,6 +37,12 @@ class Dashboard extends Component {
                     </Row>
                     <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/NewMovie'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Movie</NavLink>
+                    </Row>
+                    <Row className="justify-content-center mt-2">
+                        <NavLink activeClassName="active-link" to='/dashboard/TopTenMovies'><FontAwesomeIcon className='text-primary mr-1' />Top 10 Movies</NavLink>
+                    </Row>
+                    <Row className="justify-content-center mt-2">
+                        <NavLink activeClassName="active-link" to='/dashboard/ShowCurrentMovies'><FontAwesomeIcon className='text-primary mr-1' />Current Movies</NavLink>
                     </Row>
                     <Row className="justify-content-center">
                         <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faBinoculars}/>Auditorium</span>
@@ -65,17 +76,20 @@ class Dashboard extends Component {
                     <Switch>
                         <PrivateRouteAdmin path="/dashboard/NewMovie" component={NewMovie} />
                         <PrivateRouteAdmin path="/dashboard/AllMovies" component={ShowAllMovies} />
+                        <PrivateRouteAdmin path="/dashboard/ShowCurrentMovies" component={ShowCurrentMovies} />
+                        <PrivateRouteAdmin path="/dashboard/TopTenMovies" component={TopTenMovies} />
                         <PrivateRouteAdmin path="/dashboard/EditMovie/:id" component={EditMovie} />
                         <PrivateRouteAdmin path="/dashboard/NewCinema" component={NewCinema} />
+                        <PrivateRouteAdmin path="/dashboard/EditCinema/:id" component={EditCinema} />
                         <PrivateRouteAdmin path="/dashboard/AllCinemas" component={ShowAllCinemas} />
                         <PrivateRouteAdmin path="/dashboard/NewAuditorium" component={NewAuditorium} />
+                        <PrivateRouteAdmin path="/dashboard/EditAuditorium/:id" component={EditAuditorium} />
                         <PrivateRouteAdmin path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
                         <PrivateRouteAdmin path="/dashboard/AllProjections" component={ShowAllProjections} />
                         <PrivateRouteAdmin path="/dashboard/NewProjection" component={NewProjection} />
                     </Switch>
                 </Col>
             </Row>
-            
         );
       }
 }
