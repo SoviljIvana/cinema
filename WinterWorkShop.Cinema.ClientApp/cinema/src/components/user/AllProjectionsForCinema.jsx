@@ -16,6 +16,7 @@ class AllProjectionsForCinema extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      projections: [],
       movies: [],
       isLoading: true,
       projectionTime: '',
@@ -23,7 +24,6 @@ class AllProjectionsForCinema extends Component {
       auditoriumId: '',
     };
     this.details = this.details.bind(this);
-
   }
 
   componentDidMount() {
@@ -58,6 +58,7 @@ class AllProjectionsForCinema extends Component {
       });
   }
 
+  
   fillTableWithDaata() {
     return this.state.movies.map(movie => {
       return <tr key={movie.id}>
@@ -66,14 +67,12 @@ class AllProjectionsForCinema extends Component {
           <Card.Header text="white" style={{ width: '99rem' }}><Button variant="link" className="text-center cursor-pointer" onClick={() => this.details(movie.id)}>{movie.title}</Button></Card.Header>
           <ListGroup className="list-group-flush">
             <ListGroupItem text="white" style={{ width: '99rem' }}>{movie.year}</ListGroupItem>
-            <ListGroupItem bg="dark" text="white" style={{ width: '99rem' }}>{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'} />}</ListGroupItem>
+            <ListGroupItem bg="dark" text="white" style={{ width: '99rem' }}>{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'}/>}</ListGroupItem>
           </ListGroup>
         </Card>
         <br />
       </tr>
-
     })
-
   }
 
   details(id) {
