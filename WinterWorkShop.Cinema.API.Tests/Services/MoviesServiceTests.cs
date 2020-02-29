@@ -13,7 +13,7 @@ using WinterWorkShop.Cinema.Repositories;
 namespace WinterWorkShop.Cinema.Tests.Services
 {
     [TestClass]
-    public class MovieServiceTests
+    public class MoviesServiceTests
     {
         private Mock<IMoviesRepository> _mockMoviesRepository;
         private Mock<IProjectionsRepository> _mockProjectionsRepository;
@@ -97,6 +97,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _movieDomainModels = new List<MovieDomainModel>();
             _movieDomainModels.Add(_movieDomainModel);
 
+            _mockMovieTagsRepository = new Mock<IMovieTagsRepository>();
             _mockTagRepository = new Mock<ITagRepository>();
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
             _mockMovieTagsRepository = new Mock<IMovieTagsRepository>();

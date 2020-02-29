@@ -118,35 +118,40 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
-            var durationIntToString = movieCreateTagDomainModel.Duration.ToString();
-            Tag durationTag = new Tag
+            if (movieCreateTagDomainModel.Duration > 0)
             {
-                Name = durationIntToString,
-                Type = "duration",
-            };
-
-            var newTagAdded = _tagRepository.Insert(durationTag);
-
-            MovieTag movieTag = new MovieTag()
-            {
-                MovieId = data.Id,
-                Tag = newTagAdded
-            };
-
-            _movieTagsRepository.Insert(movieTag);
-
-
-            foreach (var item in movieCreateTagDomainModel.tagsForMovieToAdd)
-            {
-                var findTag = _tagRepository.GetByIdName(item);
-                if (findTag != null)
+                var durationIntToString = movieCreateTagDomainModel.Duration.ToString();
+                Tag durationTag = new Tag
                 {
-                    MovieTag moviTagToAdd = new MovieTag
+                    Name = durationIntToString,
+                    Type = "duration",
+                };
+
+                var newTagAdded = _tagRepository.Insert(durationTag);
+
+                MovieTag movieTag = new MovieTag()
+                {
+                    MovieId = data.Id,
+                    Tag = newTagAdded
+                };
+
+                _movieTagsRepository.Insert(movieTag);
+            }
+
+            if (movieCreateTagDomainModel.tagsForMovieToAdd!= null && movieCreateTagDomainModel.tagsForMovieToAdd.Count>0)
+            {
+                foreach (var item in movieCreateTagDomainModel.tagsForMovieToAdd)
+                {
+                    var findTag = _tagRepository.GetByIdName(item);
+                    if (findTag != null)
                     {
-                        MovieId = data.Id,
-                        TagId = findTag.Id
-                    };
-                    _movieTagsRepository.Insert(moviTagToAdd);
+                        MovieTag moviTagToAdd = new MovieTag
+                        {
+                            MovieId = data.Id,
+                            TagId = findTag.Id
+                        };
+                        _movieTagsRepository.Insert(moviTagToAdd);
+                    }
                 }
             }
 

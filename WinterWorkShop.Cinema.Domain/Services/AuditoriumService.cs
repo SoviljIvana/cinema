@@ -17,29 +17,48 @@ namespace WinterWorkShop.Cinema.Domain.Services
         private readonly ICinemasRepository _cinemasRepository;
         private readonly ISeatsRepository _seatsRepository;
         private readonly IProjectionsRepository _projectionsRepository;
-        private readonly ITicketRepository _ticketRepository;
         private readonly ITicketService _ticketService;
-
-
-
-        public AuditoriumService(IAuditoriumsRepository auditoriumsRepository, 
-                                ICinemasRepository cinemasRepository, 
+        public AuditoriumService(IAuditoriumsRepository auditoriumsRepository,
+                                ICinemasRepository cinemasRepository,
                                 ISeatsRepository seatsRepository,
-                                IProjectionsRepository projectionsRepository, 
-                                ITicketRepository ticketRepository,
+                                IProjectionsRepository projectionsRepository,
                                 ITicketService ticketService)
         {
             _auditoriumsRepository = auditoriumsRepository;
             _cinemasRepository = cinemasRepository;
             _seatsRepository = seatsRepository;
             _projectionsRepository = projectionsRepository;
-            _ticketRepository = ticketRepository;
             _ticketService = ticketService;
         }
 
         public async Task<IEnumerable<AuditoriumDomainModel>> GetAllAsync()
         {
             var data = await _auditoriumsRepository.GetAll();
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<AuditoriumDomainModel> result = new List<AuditoriumDomainModel>();
+            AuditoriumDomainModel model;
+            foreach (var item in data)
+            {
+                model = new AuditoriumDomainModel
+                {
+                    Id = item.Id,
+                    CinemaId = item.CinemaId,
+                    Name = item.Name
+                };
+                result.Add(model);
+            }
+
+            return result;
+        }
+
+        public IEnumerable<AuditoriumDomainModel> GetAllOfSpecificCinema(int id)
+        {
+            var data = _auditoriumsRepository.GetAllOfSpecificCinema(id);
 
             if (data == null)
             {
@@ -130,16 +149,18 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     SeatsList = new List<SeatDomainModel>()
                 }
             };
-
-            foreach (var item in insertedAuditorium.Seats)
+            if (insertedAuditorium.Seats != null)
             {
-                resultModel.Auditorium.SeatsList.Add(new SeatDomainModel
+                foreach (var item in insertedAuditorium.Seats)
                 {
-                    AuditoriumId = insertedAuditorium.Id,
-                    Id = item.Id,
-                    Number = item.Number,
-                    Row = item.Row
-                });
+                    resultModel.Auditorium.SeatsList.Add(new SeatDomainModel
+                    {
+                        AuditoriumId = insertedAuditorium.Id,
+                        Id = item.Id,
+                        Number = item.Number,
+                        Row = item.Row
+                    });
+                }
             }
 
             return resultModel;
@@ -162,28 +183,32 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             return domainModel;
         }
-  
-        public async Task<CreateAuditoriumResultModel> UpdateAuditorium(AuditoriumDomainModel auditoriumToUpdate)
+
+        public async Task<AuditoriumResultModel> UpdateAuditorium(AuditoriumDomainModel auditoriumToUpdate)
         {
             var projectionsInAuditorium = _projectionsRepository.GetAllOfSpecificAuditorium(auditoriumToUpdate.Id);
-            var seatsInAuditorium = _seatsRepository.GetAllOfSpecificAuditorium(auditoriumToUpdate.Id);
-
-            foreach (var item in projectionsInAuditorium)
+            if (projectionsInAuditorium != null)
             {
-                if (item.DateTime > DateTime.Now)
+                foreach (var item in projectionsInAuditorium)
                 {
-                    CreateAuditoriumResultModel result = new CreateAuditoriumResultModel
+                    if (item.DateTime > DateTime.Now)
                     {
-                        IsSuccessful = false,
-                        ErrorMessage = Messages.AUDITORIUM_UPDATE_ERROR
-                    };
-                    return result;
+                        return new AuditoriumResultModel
+                        {
+                            IsSuccessful = false,
+                            ErrorMessage = Messages.AUDITORIUM_UPDATE_ERROR_PROJECTION_IN_FUTURE
+                        };
+                    }
                 }
             }
-            foreach (var item in seatsInAuditorium)
+            var seatsInAuditorium = _seatsRepository.GetAllOfSpecificAuditorium(auditoriumToUpdate.Id);
+            if (seatsInAuditorium != null)
             {
-                await _ticketService.DeleteTicket(item.Id);
-                _seatsRepository.Delete(item.Id);
+                foreach (var item in seatsInAuditorium)
+                {
+                    await _ticketService.DeleteTicket(item.Id);
+                    _seatsRepository.Delete(item.Id);
+                }
             }
 
             Auditorium auditorium = new Auditorium()
@@ -191,8 +216,9 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 Id = auditoriumToUpdate.Id,
                 Name = auditoriumToUpdate.Name,
                 CinemaId = auditoriumToUpdate.CinemaId,
+                Seats = new List<Seat>()
             };
-            auditorium.Seats = new List<Seat>();
+
             for (int i = 1; i <= auditoriumToUpdate.SeatRows; i++)
             {
                 for (int j = 1; j <= auditoriumToUpdate.NumberOfSeats; j++)
@@ -204,17 +230,21 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     };
                     auditorium.Seats.Add(newSeat);
                 }
-            }          
+            }
 
             var data = _auditoriumsRepository.Update(auditorium);
 
             if (data == null)
             {
-                return null;
+                return new AuditoriumResultModel
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = Messages.AUDITORIUM_UPDATE_ERROR
+                };
             }
             _auditoriumsRepository.Save();
 
-            CreateAuditoriumResultModel domainModel = new CreateAuditoriumResultModel
+            AuditoriumResultModel domainModel = new AuditoriumResultModel
             {
                 ErrorMessage = null,
                 IsSuccessful = true,
@@ -232,68 +262,46 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         }
 
-        public async Task<CreateAuditoriumResultModel> DeleteAuditorium(int id)
+        public async Task<AuditoriumResultModel> DeleteAuditorium(int id)
         {
             var existingAuditorium = await _auditoriumsRepository.GetByIdAsync(id);
-            var projectionsInAuditorium = _projectionsRepository.GetAllOfSpecificAuditorium(id);
-            var seatsInAuditorium = _seatsRepository.GetAllOfSpecificAuditorium(id);
-
             if (existingAuditorium == null)
             {
-                CreateAuditoriumResultModel errorModel = new CreateAuditoriumResultModel
+                return new AuditoriumResultModel
                 {
                     ErrorMessage = Messages.AUDITORIUM_DOES_NOT_EXIST,
                     IsSuccessful = false
                 };
-                return errorModel;
             }
-
-            existingAuditorium.Projections = projectionsInAuditorium.ToList();
-            existingAuditorium.Seats = seatsInAuditorium.ToList();
-
-            if (existingAuditorium != null)
+            var projectionsInAuditorium = _projectionsRepository.GetAllOfSpecificAuditorium(id);
+            if (projectionsInAuditorium != null)
             {
                 foreach (var projection in projectionsInAuditorium)
                 {
                     if (projection.DateTime > DateTime.Now)
                     {
+                        return new AuditoriumResultModel
                         {
-                            CreateAuditoriumResultModel errorModel = new CreateAuditoriumResultModel
-                            {
-                                ErrorMessage = Messages.PROJECTION_IN_FUTURE,
-                                IsSuccessful = false,
-                                Auditorium = new AuditoriumDomainModel
-                                {
-                                    CinemaId = existingAuditorium.CinemaId,
-                                    Id = existingAuditorium.Id,
-                                    Name = existingAuditorium.Name,
-                                    NumberOfSeats = existingAuditorium.Seats.Select(x => x.Number).Count(),
-                                    SeatRows = existingAuditorium.Seats.Select(x => x.Row).Count()
-                                }
-                            };
-                            return errorModel;
-                        }
+                            ErrorMessage = Messages.PROJECTION_IN_FUTURE,
+                            IsSuccessful = false
+                        };
                     }
                     _projectionsRepository.Delete(projection.Id);
+                    await _ticketService.DeleteTicketFromProjection(projection.Id);
                 }
+            }
+            var seatsInAuditorium = _seatsRepository.GetAllOfSpecificAuditorium(id);
+            if (seatsInAuditorium!= null)
+            {
                 foreach (var seat in seatsInAuditorium)
                 {
                     _seatsRepository.Delete(seat.Id);
                 }
-                foreach (var projection in projectionsInAuditorium)
-                {
-                    var ticketsInProjection = _ticketRepository.GetAllForSpecificProjection(projection.Id).ToList();
-                    foreach(var ticket in ticketsInProjection)
-                    {
-                        _ticketRepository.Delete(ticket.Id);
-                    }
-                }
             }
-
             var data = _auditoriumsRepository.Delete(id);
             _auditoriumsRepository.Save();
 
-            CreateAuditoriumResultModel domainModel = new CreateAuditoriumResultModel
+            AuditoriumResultModel domainModel = new AuditoriumResultModel
             {
                 ErrorMessage = null,
                 IsSuccessful = true,
@@ -301,37 +309,10 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 {
                     CinemaId = existingAuditorium.CinemaId,
                     Id = existingAuditorium.Id,
-                    Name = existingAuditorium.Name,
-                    NumberOfSeats = existingAuditorium.Seats.Select(x => x.Number).Count(),
-                    SeatRows = existingAuditorium.Seats.Select(x => x.Row).Count(),
+                    Name = existingAuditorium.Name
                 }
             };
             return domainModel;
         }
-        public IEnumerable<AuditoriumDomainModel> GetAllOfSpecificCinema(int id)
-        {
-            var data = _auditoriumsRepository.GetAllOfSpecificCinema(id);
-
-            if (data == null)
-            {
-                return null;
-            }
-
-            List<AuditoriumDomainModel> result = new List<AuditoriumDomainModel>();
-            AuditoriumDomainModel model;
-            foreach (var item in data)
-            {
-                model = new AuditoriumDomainModel
-                {
-                    Id = item.Id,
-                    CinemaId = item.CinemaId,
-                    Name = item.Name
-                };
-                result.Add(model);
-            }
-
-            return result;
-        }
-
     }
 }

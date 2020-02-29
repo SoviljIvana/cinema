@@ -158,5 +158,21 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             return null; 
         }
+
+        public async Task<TicketDomainModel> DeleteTicketFromProjection(Guid id)
+        {
+            var ticketsForProjection = _ticketRepository.GetAllForSpecificProjection(id);
+
+            if (ticketsForProjection == null)
+            {
+                return null;
+            }
+
+            foreach (var item in ticketsForProjection)
+            {
+                _ticketRepository.Delete(item.Id);
+            }
+            return null;
+        }
     }
 }
