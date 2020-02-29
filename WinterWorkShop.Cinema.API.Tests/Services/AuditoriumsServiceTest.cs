@@ -119,13 +119,12 @@ namespace WinterWorkShop.Cinema.Tests.Services
         public void AuditoriumsService_GetAllOfSpecificCinema_ReturnNull()
         {
             //Arrange
-            var cinemaId = 1;
             IEnumerable<Auditorium> auditoriums = null;
             _mockAuditoriumsRepository = new Mock<IAuditoriumsRepository>();
             _mockAuditoriumsRepository.Setup(x => x.GetAllOfSpecificCinema(It.IsAny<int>())).Returns(auditoriums);
             AuditoriumService auditoriumController = new AuditoriumService(_mockAuditoriumsRepository.Object, _mockCinemasRepository.Object, _mockSeatsRepository.Object, _mockProjectionRepository.Object, _mockTicketService.Object);
             //Act
-            var resultAction = auditoriumController.GetAllOfSpecificCinema(cinemaId);
+            var resultAction = auditoriumController.GetAllOfSpecificCinema(It.IsAny<int>());
             var result = (List<AuditoriumDomainModel>)resultAction;
             //Assert
             Assert.IsNull(result);
@@ -135,14 +134,13 @@ namespace WinterWorkShop.Cinema.Tests.Services
         public void AuditoriumsService_GetAllOfSpecificCinema_ReturnListOfAuditoriumDomainModel()
         {
             //Arrange
-            var cinemaId = 1;
             int expectedResultCount = 1;
             IEnumerable<Auditorium> auditoriums = _listOFAuditoriums;
             _mockAuditoriumsRepository = new Mock<IAuditoriumsRepository>();
             _mockAuditoriumsRepository.Setup(x => x.GetAllOfSpecificCinema(It.IsAny<int>())).Returns(auditoriums);
             AuditoriumService auditoriumController = new AuditoriumService(_mockAuditoriumsRepository.Object, _mockCinemasRepository.Object, _mockSeatsRepository.Object, _mockProjectionRepository.Object, _mockTicketService.Object);
             //Act
-            var resultAction = auditoriumController.GetAllOfSpecificCinema(cinemaId);
+            var resultAction = auditoriumController.GetAllOfSpecificCinema(It.IsAny<int>());
             var result = (List<AuditoriumDomainModel>)resultAction;
             //Assert
             Assert.IsNotNull(result);
@@ -150,10 +148,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
             Assert.AreEqual(_auditorium.Id, result[0].Id);
             Assert.IsInstanceOfType(result[0], typeof(AuditoriumDomainModel));
         }
-
-        //CreateAuditorium
-        //CreateAuditoriumResultModel
-        //AuditoriumDomainModel domainModel, int numberOfRows, int numberOfSeats
         [TestMethod]
         public void AuditoriumsService_CreateAuditorium_ReturnCreateAuditoriumResultModel_InvalidCinemaId()
         {
@@ -163,7 +157,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
                 ErrorMessage = "Cannot create new auditorium, auditorium with given cinemaId does not exist.",
                 IsSuccessful = false
             };
-            var cinemaId = 1;
             AuditoriumDomainModel auditoriumDomainModel = _auditoriumDomainModel;
             var numberOfSeatsPerRow = 2;
             var numberOfRows = 2;
@@ -191,7 +184,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
             };
             IEnumerable<Auditorium> auditoriums = _listOFAuditoriums;
             AuditoriumDomainModel auditoriumDomainModel = _auditoriumDomainModel;
-            var cinemaId = 1;
             var numberOfSeatsPerRow = 2;
             var numberOfRows = 2;
             Data.Cinema cinema = _cinema ;
@@ -223,7 +215,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
             AuditoriumDomainModel auditoriumDomainModel = _auditoriumDomainModel;
             Auditorium auditoriumNull = null;
             Auditorium auditorium = _auditorium;
-            var cinemaId = 1;
             var numberOfSeatsPerRow = 2;
             var numberOfRows = 2;
             Data.Cinema cinema = _cinema;
@@ -248,18 +239,10 @@ namespace WinterWorkShop.Cinema.Tests.Services
         [TestMethod]
         public void AuditoriumsService_CreateAuditorium_ReturnCreateAuditoriumResultModel_Successful()
         {
-            //Arrange
-            //CreateAuditoriumResultModel expectedResultModel = new CreateAuditoriumResultModel()
-            //{
-            //    ErrorMessage = null,
-            //    IsSuccessful = false,
-            //    Auditorium = 
-            //};
             IEnumerable<Auditorium> auditoriums = _listOFAuditoriums;
             AuditoriumDomainModel auditoriumDomainModel = _auditoriumDomainModel;
             Auditorium auditorium = _auditorium;
             Auditorium newAuditorium = _newAuditorium;
-            var cinemaId = 1;
             var numberOfSeatsPerRow = 1;
             var numberOfRows = 1;
             Data.Cinema cinema = _cinema;
@@ -283,19 +266,17 @@ namespace WinterWorkShop.Cinema.Tests.Services
             Assert.AreEqual(1, resultAction.Auditorium.Id);
         }
 
-        //GetAuditoriumByIdAsync
         [TestMethod]
         public void AuditoriumsService_GetAuditoriumByIdAsync_ReturnNull()
         {
             //Arrange
             Auditorium auditorium = null;
-            var auditoriumId = 1;
             Task<Auditorium> responseTask = Task.FromResult(auditorium);
             _mockAuditoriumsRepository = new Mock<IAuditoriumsRepository>();
-            _mockAuditoriumsRepository.Setup(x => x.GetByIdAsync(auditoriumId)).Returns(responseTask);
+            _mockAuditoriumsRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>())).Returns(responseTask);
             AuditoriumService auditoriumController = new AuditoriumService(_mockAuditoriumsRepository.Object, _mockCinemasRepository.Object, _mockSeatsRepository.Object, _mockProjectionRepository.Object, _mockTicketService.Object);
             //Act
-            var resultAction = auditoriumController.GetAuditoriumByIdAsync(auditoriumId).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultAction = auditoriumController.GetAuditoriumByIdAsync(It.IsAny<int>()).ConfigureAwait(false).GetAwaiter().GetResult();
             //Assert
             Assert.IsNull(resultAction);
         }
@@ -304,13 +285,12 @@ namespace WinterWorkShop.Cinema.Tests.Services
         {
             //Arrange
             Auditorium auditorium = _auditorium;
-            var auditoriumId = 1;
             Task<Auditorium> responseTask = Task.FromResult(auditorium);
             _mockAuditoriumsRepository = new Mock<IAuditoriumsRepository>();
-            _mockAuditoriumsRepository.Setup(x => x.GetByIdAsync(auditoriumId)).Returns(responseTask);
+            _mockAuditoriumsRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>())).Returns(responseTask);
             AuditoriumService auditoriumController = new AuditoriumService(_mockAuditoriumsRepository.Object, _mockCinemasRepository.Object, _mockSeatsRepository.Object, _mockProjectionRepository.Object, _mockTicketService.Object);
             //Act
-            var resultAction = auditoriumController.GetAuditoriumByIdAsync(auditoriumId).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultAction = auditoriumController.GetAuditoriumByIdAsync(It.IsAny<int>()).ConfigureAwait(false).GetAwaiter().GetResult();
             //Assert
             Assert.IsNotNull(resultAction);
             Assert.IsInstanceOfType(resultAction, typeof(AuditoriumDomainModel));
@@ -392,7 +372,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
             Assert.AreEqual(auditoriumDomainModel.Name, resultAction.Auditorium.Name);
         }
 
-        //DeleteAuditorium
         [TestMethod]
         public void AuditoriumService_DeleteAuditorium_AuditoriumResultModel_AUDITORIUM_DOES_NOT_EXIST()
         {
