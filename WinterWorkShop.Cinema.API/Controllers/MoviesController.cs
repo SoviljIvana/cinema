@@ -140,7 +140,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("allMovies")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetCurrentAndNotCurrent()
+        public async Task<ActionResult<IEnumerable<MovieDomainModel>>> GetCurrentAndNotCurrent()
         {
             IEnumerable<MovieDomainModel> movieDomainModels;
 
@@ -148,7 +148,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             if (movieDomainModels == null)
             {
-                movieDomainModels = new List<MovieDomainModel>();
+                return NotFound(Messages.MOVIE_GET_ALL_MOVIES_ERROR);
             }
 
             return Ok(movieDomainModels);
