@@ -74,29 +74,5 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             Assert.AreEqual(expectedStatusCode, ((OkObjectResult)result).StatusCode);
         }
-
-        //[TestMethod]
-        //public void PostAsync_Create_createCinemaResultModel_IsSuccessful_True_Cinema()
-        //{
-        //    //Arrange
-        //    int expectedStatusCode = 201;
-
-        //    CreateCinemaModel createCinemaModel = new CreateCinemaModel()
-        //    {
-        //        Name = "NewName"
-        //    };
-
-        //    CreateCinemaResultModel createCinemaResultModel = new CreateCinemaResultModel
-        //    {
-        //        Cinema = new CinemaDomainModel
-        //        {
-        //            Id = 1,
-        //            Name = createCinemaModel.Name
-        //        },
-        //        IsSuccessful = true, 
-        //    };
-
-        //}
-
     }
 }
