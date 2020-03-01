@@ -154,11 +154,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 auditoriumToUpdate.SeatRows = auditoriumModel.seatRows;
 
             auditoriumToUpdate.Name = auditoriumModel.name;
-            
-           
 
-
-            CreateAuditoriumResultModel auditoriumDomainModel;
+            AuditoriumResultModel auditoriumDomainModel;
             try
             {
                 auditoriumDomainModel = await _auditoriumService.UpdateAuditorium(auditoriumToUpdate);
@@ -198,7 +195,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            CreateAuditoriumResultModel deletedAuditorium; 
+            AuditoriumResultModel deletedAuditorium; 
             try
             {
                 deletedAuditorium = await _auditoriumService.DeleteAuditorium(id); 

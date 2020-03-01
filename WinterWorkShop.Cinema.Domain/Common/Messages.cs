@@ -17,12 +17,13 @@
         public const string AUDITORIUM_PROPERTIE_SEATNUMBER_NOT_VALID = "The auditorium number of seats number must be between 1-20.";
         public const string AUDITORIUM_CREATION_ERROR = "Error occured while creating new auditorium, please try again.";
         public const string AUDITORIUM_SEATS_CREATION_ERROR = "Error occured while creating seats for auditorium, please try again.";
-        public const string AUDITORIUM_SAME_NAME = "Cannot create new auditorium, auditorium with same name alredy exist.";
+        public const string AUDITORIUM_SAME_NAME = "Cannot create new auditorium, auditorium with same name already exist.";
         public const string AUDITORIUM_UNVALID_CINEMAID = "Cannot create new auditorium, auditorium with given cinemaId does not exist.";
         public const string AUDITORIUM_DOES_NOT_EXIST = "Auditorium does not exist.";
         public const string AUDITORIUM_DELETION_ERROR = "Unable to delete auditorium, please make sure there are no upcoming projections and then try again. ";
         public const string AUDITORIUM_NOT_FOUND = "Unable to find auditorium. ";
-        public const string AUDITORIUM_UPDATE_ERROR = "Unable to update auditorium, please make sure there no upcoming projections and then try again. ";
+        public const string AUDITORIUM_UPDATE_ERROR_PROJECTION_IN_FUTURE = "Unable to update auditorium, please make sure there no upcoming projections and then try again. ";
+        public const string AUDITORIUM_UPDATE_ERROR = "Error happened when auditorium was updating. ";
 
         #endregion
 
