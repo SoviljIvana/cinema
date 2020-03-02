@@ -17,8 +17,12 @@ namespace WinterWorkShop.Cinema.Tests.Services
     public class CinemaServiceTests
     {
         private Mock<ICinemasRepository> _mockCinemasRepository;
-
         private Mock<IAuditoriumService> _mockAuditoriumService;
+        private Mock<IAuditoriumsRepository> _mockAuditoriumsRepository;
+        private Mock<IProjectionsRepository> _mockProjectionsRepository;
+        private Mock<ITicketService> _mockTicketService;
+        private Mock<ISeatsRepository> _mockSeatsRepository;
+
         private Data.Cinema _cinema;
         private List<Data.Cinema> _listOfCinemas;
         private CinemaDomainModel _newCinema;
@@ -42,6 +46,11 @@ namespace WinterWorkShop.Cinema.Tests.Services
 
             _mockCinemasRepository = new Mock<ICinemasRepository>();
             _mockAuditoriumService = new Mock<IAuditoriumService>();
+            _mockAuditoriumsRepository = new Mock<IAuditoriumsRepository>();
+            _mockProjectionsRepository = new Mock<IProjectionsRepository>();
+            _mockSeatsRepository = new Mock<ISeatsRepository>();
+            _mockTicketService = new Mock<ITicketService>();
+
         }
 
         [TestMethod]
@@ -52,7 +61,13 @@ namespace WinterWorkShop.Cinema.Tests.Services
             Task<IEnumerable<Data.Cinema>> responseTask = Task.FromResult(cinemas);
             _mockCinemasRepository = new Mock<ICinemasRepository>();
             _mockCinemasRepository.Setup(x => x.GetAll()).Returns(responseTask);
-            CinemaService cinemaController = new CinemaService(_mockCinemasRepository.Object, _mockAuditoriumService.Object);
+            CinemaService cinemaController = new CinemaService(_mockCinemasRepository.Object, 
+                                                                _mockAuditoriumService.Object, 
+                                                                _mockAuditoriumsRepository.Object,
+                                                                _mockProjectionsRepository.Object,
+                                                                _mockTicketService.Object,
+                                                                _mockSeatsRepository.Object);
+
             //Act
             var resultAction = cinemaController.GetAllAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             //Assert
@@ -67,7 +82,12 @@ namespace WinterWorkShop.Cinema.Tests.Services
             Task<IEnumerable<Data.Cinema>> responseTask = Task.FromResult(cinemas);
 
             _mockCinemasRepository.Setup(x => x.GetAll()).Returns(responseTask);
-            CinemaService cinemaController = new CinemaService(_mockCinemasRepository.Object, _mockAuditoriumService.Object);
+            CinemaService cinemaController = new CinemaService(_mockCinemasRepository.Object,
+                                                                _mockAuditoriumService.Object,
+                                                                _mockAuditoriumsRepository.Object,
+                                                                _mockProjectionsRepository.Object,
+                                                                _mockTicketService.Object,
+                                                                _mockSeatsRepository.Object);
             //Act
             var resultAction = cinemaController.GetAllAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             var result = (List<CinemaDomainModel>)resultAction;
@@ -85,7 +105,12 @@ namespace WinterWorkShop.Cinema.Tests.Services
             Data.Cinema cinema = _cinema;
             CinemaDomainModel newCinema = _newCinema;
             _mockCinemasRepository.Setup(x => x.Insert(It.IsAny<Data.Cinema>())).Returns(cinema);
-            CinemaService cinemaController = new CinemaService(_mockCinemasRepository.Object, _mockAuditoriumService.Object);
+            CinemaService cinemaController = new CinemaService(_mockCinemasRepository.Object,
+                                                                _mockAuditoriumService.Object,
+                                                                _mockAuditoriumsRepository.Object,
+                                                                _mockProjectionsRepository.Object,
+                                                                _mockTicketService.Object,
+                                                                _mockSeatsRepository.Object);
             //Act
             var resultAction = cinemaController.AddCinema(newCinema).ConfigureAwait(false)
                 .GetAwaiter().GetResult();
