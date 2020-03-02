@@ -29,7 +29,6 @@ namespace WinterWorkShop.Cinema.Tests.Services
         private AuditoriumDomainModel _auditoriumDomainModel;
         private List<Auditorium> _listOFAuditoriums;
         private List<Projection> _listOfProjections;
-        private CreateAuditoriumResultModel _createAuditoriumResultModel;
 
 
         [TestInitialize]
