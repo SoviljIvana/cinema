@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
+import ReactDOM from 'react-dom';
 import { serviceConfig } from '../../appSettings';
 import { FormGroup, FormControl, Button, Container, Row, Col, FormText, FormLabel, Alert, Table } from 'react-bootstrap';
 import Spinner from '../Spinner';
 import ReactStars from 'react-stars';
-
+import './App.css';
 class ProjectionDetails extends Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             projections: [],
             isLoading: true,
@@ -22,16 +24,21 @@ class ProjectionDetails extends Component {
             titleError: '',
             yearError: '',
             submitted: false,
-            canSubmit: true
+            canSubmit: true,
+            black: true,
+            button: true,
+            auditoriumId: '',
+            row: '',
+            number: '',
         };
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     componentDidMount() {
         const { id } = this.props.match.params;
         this.getProjections(id);
         this.getMovie(id);
-        this.getSeats(id);
     }
 
     getProjections(movieId) {
@@ -55,7 +62,6 @@ class ProjectionDetails extends Component {
                 if (data) {
                     this.setState({
                         projections: data,
-
                         isLoading: false
                     });
                 }
@@ -66,37 +72,6 @@ class ProjectionDetails extends Component {
             });
     }
 
-
-    getSeats(id) {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-            }
-        };
-        this.setState({ isLoading: true });
-        fetch(`${serviceConfig.baseURL}/api/Seats/allForProjection/` + id, requestOptions)
-            .then(response => {
-                if (!response.ok) {
-                    return Promise.reject(response);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data) {
-                    this.setState({
-                        projections: data,
-
-                        isLoading: false
-                    });
-                }
-            })
-            .catch(response => {
-                this.setState({ isLoading: false });
-                NotificationManager.error(response.message || response.statusText);
-            });
-    }
 
     getMovie(movieId) {
         const requestOptions = {
@@ -147,16 +122,17 @@ class ProjectionDetails extends Component {
 
         return this.state.projections.map(projection => {
             return <tr key={projection.id, projection.movieId} className="mr-1 mb-2">
-            <br></br>
+                <br></br>
                 {
                     <card className="table-cinema-auditorium" >
-                     <h3> Time: <button > <header>{projection.projectionTimeString}</header></button> </h3>
+                        <h3> Time: <button > <header>{projection.projectionTimeString}</header></button> </h3>
                         <br></br>
                         <div>
-                        <h3 className="form-header">Auditorium name:{projection.auditoriumName} </h3>
+                            <h3 className="form-header">Auditorium name:{projection.auditoriumName} </h3>
+
                         </div>
                         <tbody>
-                            {this.renderRows(projection.numOFRows, projection.numOFSeatsPerRow)}
+                            {this.renderRows(projection.numOFRows, projection.numOFSeatsPerRow, projection.id)}
                         </tbody>
                         <br></br>
                         <br></br>
@@ -168,26 +144,30 @@ class ProjectionDetails extends Component {
         })
     }
 
+    handleClick() {
+        this.setState({
+            button: !this.state.button
+        })
+    }
+
     renderRows(rows, seats) {
         const rowsRendered = [];
-        for (let i = 0; i < rows; i++) {
-            rowsRendered.push(<tr key={i}>
-                {this.renderSeats(seats, i)}
-            </tr>);
+        for (let i = 1; i < rows; i++) {
+            rowsRendered.push(<tr key={i}> {this.renderSeats(seats, i)}</tr>);
         }
         return rowsRendered;
     }
 
     renderSeats(seats, row) {
         let renderedSeats = [];
-        for (let i = 0; i < seats; i++) {
-            renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i}></td>);
+        for (let i = 1; i < seats; i++) {
+            renderedSeats.push(<button key={'row: ' + row + ', seat: ' + i} className={this.state.button ? "buttonTrue" : "buttonFalse"} onClick={this.handleClick}>{row}{i}</button>);
         }
         return renderedSeats;
     }
 
     render() {
-        const { isLoading, title, year, rating, titleError, yearError } = this.state;
+        const { isLoading, title, year, rating } = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm" variant="link">
             <tbody>
@@ -205,7 +185,7 @@ class ProjectionDetails extends Component {
                         <h3>Rating: <FormGroup> <ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'} /></FormGroup>
                         </h3>
                         <FormGroup >
-                        <br></br>
+                            <br></br>
                             {showTable}
                         </FormGroup>
                         <hr />
