@@ -45,7 +45,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     AuditoriumId = item.AuditoriumId,
                     ProjectionTime = item.DateTime,
                     MovieTitle = item.Movie.Title,
-                    AditoriumName = item.Auditorium.Name
+                    AuditoriumName = item.Auditorium.Name
                 };
                 result.Add(model);
             }
@@ -73,7 +73,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     AuditoriumId = item.AuditoriumId,
                     ProjectionTimeString = item.DateTime.ToString("hh:mm tt"),
                     MovieTitle = item.Movie.Title,
-                    AditoriumName = item.Auditorium.Name
+                    AuditoriumName = item.Auditorium.Name
                 };
                 List < Seat > listaSeat = new List<Seat>();
                 var seatsForThisAuditorium = await _seatsRepository.GetAllOfSpecificAuditoriumForProjection(model.AuditoriumId);
@@ -448,7 +448,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         AuditoriumId = existingProjections.AuditoriumId,
                         Id = existingProjections.Id,
                         MovieId = existingProjections.MovieId,
-                        AditoriumName = existingProjections.Auditorium.Name, 
+                        AuditoriumName = existingProjections.Auditorium.Name, 
                         MovieTitle = existingProjections.Movie.Title, 
                         ProjectionTime = existingProjections.DateTime
                     }
@@ -469,7 +469,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 IsSuccessful = true,
                 Projection = new ProjectionDomainModel
                 {
-                    AditoriumName = existingProjections.Auditorium.Name,
+                    AuditoriumName = existingProjections.Auditorium.Name,
                     AuditoriumId = existingProjections.AuditoriumId,
                     Id = existingProjections.Id,
                     MovieId = existingProjections.MovieId,

@@ -65,7 +65,7 @@ class NewCinema extends React.Component {
       body: JSON.stringify(data)
     };
 
-    fetch(`${serviceConfig.baseURL}/api/cinemas`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/cinemas/create_empty_cinema`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);

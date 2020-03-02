@@ -13,11 +13,9 @@ class ProjectionDetails extends Component {
             projections: [],
             isLoading: true,
             id: '',
-
             title: '',
             year: 0,
             rating: '',
-            projectionTime: '',
             movieId: '',
             auditoriumId: '',
             current: false,
@@ -145,30 +143,28 @@ class ProjectionDetails extends Component {
         }
     }
 
-    fillTableWithDaata1() {
-        return this.state.projections.map(projection => {
-            return <Button key={projection.id}  className="mr-1 mb-2">
-                {
-                    <Row className="justify-content-center">
-                        <table className="table-cinema-auditorium">
-                            <tbody>
-                                {this.renderRows(projection.numOFRows, projection.numOFSeatsPerRow)}
-                            </tbody>
-                        </table>
-                    </Row>
-                }
-            </Button>
-        })
-    }
-
     fillTableWithDaata() {
+
         return this.state.projections.map(projection => {
-            return <Button key={projection.movieId}  className="mr-1 mb-2">
+            return <tr key={projection.id, projection.movieId} className="mr-1 mb-2">
+            <br></br>
                 {
-                    projection.projectionTimeString
+                    <card className="table-cinema-auditorium" >
+                     <h3> Time: <button > <header>{projection.projectionTimeString}</header></button> </h3>
+                        <br></br>
+                        <div>
+                        <h3 className="form-header">Auditorium name:{projection.auditoriumName} </h3>
+                        </div>
+                        <tbody>
+                            {this.renderRows(projection.numOFRows, projection.numOFSeatsPerRow)}
+                        </tbody>
+                        <br></br>
+                        <br></br>
+                    </card>
                 }
-              
-            </Button>
+                <br>
+                </br>
+            </tr>
         })
     }
 
@@ -193,18 +189,9 @@ class ProjectionDetails extends Component {
     render() {
         const { isLoading, title, year, rating, titleError, yearError } = this.state;
         const rowsData = this.fillTableWithDaata();
-        const rowsData1 = this.fillTableWithDaata1();
         const table = (<Table striped bordered hover size="sm" variant="link">
-            <thead>
-                <tr>
-                    <th>Projection Time</th>
-                </tr>
-            </thead>
             <tbody>
                 {rowsData}
-            </tbody>
-            <tbody>
-                {rowsData1}
             </tbody>
         </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
@@ -213,35 +200,12 @@ class ProjectionDetails extends Component {
                 <Row className="justify-content-center">
                     <Col>
                         <br></br>
-                        <FormGroup>
-                            <FormControl
-                                id="title"
-                                type="text"
-                                placeholder="Movie Title"
-                                value={title}
-                            />
-                            <FormText className="text-danger">{titleError}</FormText>
-                        </FormGroup>
-                        <FormGroup>
-                            <FormControl
-                                defaultValue={'Select Movie Year'}
-                                start={1895}
-                                end={2120}
-                                reverse
-                                required={true}
-                                disabled={false}
-                                value={year}
-                                id={'year'}
-                                name={'year'}
-                                classes={'form-control'}
-                                optionClasses={'option classes'}
-                            />
-                            <FormText className="text-danger">{yearError}</FormText>
-                        </FormGroup>
-                        <FormGroup>
-                            <ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'} />
-                        </FormGroup>
+                        <h1>Title: {title} </h1>
+                        <h2>Year: {year} </h2>
+                        <h3>Rating: <FormGroup> <ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'} /></FormGroup>
+                        </h3>
                         <FormGroup >
+                        <br></br>
                             {showTable}
                         </FormGroup>
                         <hr />

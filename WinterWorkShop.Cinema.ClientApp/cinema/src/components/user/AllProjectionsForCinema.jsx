@@ -22,6 +22,7 @@ class AllProjectionsForCinema extends Component {
       projectionTime: '',
       movieId: '',
       auditoriumId: '',
+      auditoriumName: ''
     };
     this.details = this.details.bind(this);
   }
