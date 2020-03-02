@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
+import ReactDOM from 'react-dom';
 import { serviceConfig } from '../../appSettings';
 import { FormGroup, FormControl, Button, Container, Row, Col, FormText, FormLabel, Alert, Table } from 'react-bootstrap';
 import Spinner from '../Spinner';
 import ReactStars from 'react-stars';
-
+import './App.css';
 class ProjectionDetails extends Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             projections: [],
             isLoading: true,
@@ -16,16 +18,21 @@ class ProjectionDetails extends Component {
             title: '',
             year: 0,
             rating: '',
-            projectionTime: '',
             movieId: '',
             auditoriumId: '',
             current: false,
             titleError: '',
             yearError: '',
             submitted: false,
-            canSubmit: true
+            canSubmit: true,
+            black: true,
+            button: true,
+            auditoriumId: '',
+            row: '',
+            number: '',
         };
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     componentDidMount() {
@@ -55,7 +62,6 @@ class ProjectionDetails extends Component {
                 if (data) {
                     this.setState({
                         projections: data,
-
                         isLoading: false
                     });
                 }
@@ -65,6 +71,7 @@ class ProjectionDetails extends Component {
                 NotificationManager.error(response.message || response.statusText);
             });
     }
+
 
     getMovie(movieId) {
         const requestOptions = {
@@ -111,29 +118,61 @@ class ProjectionDetails extends Component {
         }
     }
 
-    navigateToProjectionDetails() {
-        this.props.history.push('projectiondetails/1')
-      }
-    
     fillTableWithDaata() {
+
         return this.state.projections.map(projection => {
-            return <Button key={projection.movieId} onClick={() => this.navigateToProjectionDetails()} className="mr-1 mb-2">{projection.projectionTimeString}</Button>
+            return <tr key={projection.id, projection.movieId} className="mr-1 mb-2">
+                <br></br>
+                {
+                    <card className="table-cinema-auditorium" >
+                        <h3> Time: <button > <header>{projection.projectionTimeString}</header></button> </h3>
+                        <br></br>
+                        <div>
+                            <h3 className="form-header">Auditorium name:{projection.auditoriumName} </h3>
+
+                        </div>
+                        <tbody>
+                            {this.renderRows(projection.numOFRows, projection.numOFSeatsPerRow, projection.id)}
+                        </tbody>
+                        <br></br>
+                        <br></br>
+                    </card>
+                }
+                <br>
+                </br>
+            </tr>
         })
     }
-   
+
+    handleClick() {
+        this.setState({
+            button: !this.state.button
+        })
+    }
+
+    renderRows(rows, seats) {
+        const rowsRendered = [];
+        for (let i = 1; i < rows; i++) {
+            rowsRendered.push(<tr key={i}> {this.renderSeats(seats, i)}</tr>);
+        }
+        return rowsRendered;
+    }
+
+    renderSeats(seats, row) {
+        let renderedSeats = [];
+        for (let i = 1; i < seats; i++) {
+            renderedSeats.push(<button key={'row: ' + row + ', seat: ' + i} className={this.state.button ? "buttonTrue" : "buttonFalse"} onClick={this.handleClick}>{row}{i}</button>);
+        }
+        return renderedSeats;
+    }
+
     render() {
-        const { isLoading, title, year, rating, titleError, yearError } = this.state;
+        const { isLoading, title, year, rating } = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm" variant="link">
-            <thead>
-                <tr>
-                    <th>Projection Time</th>
-                </tr>
-            </thead>
             <tbody>
                 {rowsData}
             </tbody>
-          
         </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
@@ -141,37 +180,15 @@ class ProjectionDetails extends Component {
                 <Row className="justify-content-center">
                     <Col>
                         <br></br>
-                        <FormGroup>
-                            <FormControl 
-                                id="title"
-                                type="text"
-                                placeholder="Movie Title"
-                                value={title}
-                            />
-                            <FormText className="text-danger">{titleError}</FormText>
-                        </FormGroup>
-                        <FormGroup>
-                            <FormControl 
-                                defaultValue={'Select Movie Year'}
-                                start={1895}
-                                end={2120}
-                                reverse
-                                required={true}
-                                disabled={false}
-                                value={year}
-                                id={'year'}
-                                name={'year'}
-                                classes={'form-control'}
-                                optionClasses={'option classes'}
-                            />
-                            <FormText className="text-danger">{yearError}</FormText>
-                        </FormGroup>
-                        <FormGroup>
-                         <ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'}/> 
-                        </FormGroup>
+                        <h1>Title: {title} </h1>
+                        <h2>Year: {year} </h2>
+                        <h3>Rating: <FormGroup> <ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'} /></FormGroup>
+                        </h3>
                         <FormGroup >
+                            <br></br>
                             {showTable}
                         </FormGroup>
+                        <hr />
                     </Col>
                 </Row>
             </React.Fragment>

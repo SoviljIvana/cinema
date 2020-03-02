@@ -6,9 +6,11 @@ import { serviceConfig } from '../../../appSettings';
 import { YearPicker } from 'react-dropdown-date';
 import Switch from "react-switch";
 import ReactStars from 'react-stars';
+
 const ratingChanged = (newRating) => {
     console.log(newRating)
 }
+
 class EditMovie extends React.Component {
     constructor(props) {
         super(props);

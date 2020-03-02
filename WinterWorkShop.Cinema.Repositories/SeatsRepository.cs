@@ -12,7 +12,8 @@ namespace WinterWorkShop.Cinema.Repositories
     public interface ISeatsRepository : IRepository<Seat> 
     {
         Task<IEnumerable<Seat>> GetAllOfSpecificProjection(object id);
-        IEnumerable<Seat> GetAllOfSpecificAuditorium(object id); 
+        IEnumerable<Seat> GetAllOfSpecificAuditorium(object id);
+        Task<IEnumerable<Seat>> GetAllOfSpecificAuditoriumForProjection(int id);
     }
     public class SeatsRepository : ISeatsRepository
     {
@@ -43,6 +44,14 @@ namespace WinterWorkShop.Cinema.Repositories
 
             var findProjection = await _cinemaContext.Projections.FindAsync(id);
             var seats = await _cinemaContext.Seats.Where(x => x.AuditoriumId.Equals(findProjection.AuditoriumId)).ToListAsync();
+
+            return seats;
+        }
+
+        public async Task<IEnumerable<Seat>> GetAllOfSpecificAuditoriumForProjection(int id)
+        {
+            var seats = await _cinemaContext.Seats.Where(x => x.AuditoriumId == id).ToListAsync();
+            
 
             return seats;
         }

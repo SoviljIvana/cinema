@@ -18,13 +18,15 @@ namespace WinterWorkShop.Cinema.Domain.Services
         private readonly IProjectionsRepository _projectionsRepository;
         private readonly IMovieTagsRepository _movieTagsRepository;
         private readonly ITicketRepository _ticketRepository;
+        private readonly ITagRepository _tagRepository;
 
-        public MovieService(IMoviesRepository moviesRepository, IProjectionsRepository projectionsRepository, IMovieTagsRepository movieTagsRepository, ITicketRepository ticketRepository)
+        public MovieService(IMoviesRepository moviesRepository, IProjectionsRepository projectionsRepository, IMovieTagsRepository movieTagsRepository, ITicketRepository ticketRepository, ITagRepository tagRepository)
         {
             _moviesRepository = moviesRepository;
             _projectionsRepository = projectionsRepository;
             _movieTagsRepository = movieTagsRepository;
             _ticketRepository = ticketRepository;
+            _tagRepository = tagRepository;
         }
 
         public async Task<IEnumerable<MovieDomainModel>> GetAllMoviesWithThisTag(string tag)
@@ -100,7 +102,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        public async Task<MovieDomainModel> AddMovie(MovieDomainModel newMovie)
+        public async Task<MovieDomainModel> AddMovie(MovieDomainModel newMovie, MovieCreateTagDomainModel movieCreateTagDomainModel)
         {
             Movie movieToCreate = new Movie()
             {
@@ -114,6 +116,43 @@ namespace WinterWorkShop.Cinema.Domain.Services
             if (data == null)
             {
                 return null;
+            }
+
+            if (movieCreateTagDomainModel.Duration > 0)
+            {
+                var durationIntToString = movieCreateTagDomainModel.Duration.ToString();
+                Tag durationTag = new Tag
+                {
+                    Name = durationIntToString,
+                    Type = "duration",
+                };
+
+                var newTagAdded = _tagRepository.Insert(durationTag);
+
+                MovieTag movieTag = new MovieTag()
+                {
+                    MovieId = data.Id,
+                    Tag = newTagAdded
+                };
+
+                _movieTagsRepository.Insert(movieTag);
+            }
+
+            if (movieCreateTagDomainModel.tagsForMovieToAdd!= null && movieCreateTagDomainModel.tagsForMovieToAdd.Count>0)
+            {
+                foreach (var item in movieCreateTagDomainModel.tagsForMovieToAdd)
+                {
+                    var findTag = _tagRepository.GetByIdName(item);
+                    if (findTag != null)
+                    {
+                        MovieTag moviTagToAdd = new MovieTag
+                        {
+                            MovieId = data.Id,
+                            TagId = findTag.Id
+                        };
+                        _movieTagsRepository.Insert(moviTagToAdd);
+                    }
+                }
             }
 
             _moviesRepository.Save();

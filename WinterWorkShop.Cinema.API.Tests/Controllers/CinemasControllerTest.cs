@@ -17,20 +17,29 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
     [TestClass]
     public class CinemasControllerTest
     {
+        public CinemaDomainModel _cinemaDomainModel; 
         private Mock<ICinemaService> _cinemaService;
+        private List<CinemaDomainModel> _cinemaDomainModelsList;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            _cinemaDomainModel = new CinemaDomainModel()
+            {
+                Id = 1,
+                Name = "NewName"
+            };
+            _cinemaDomainModelsList = new List<CinemaDomainModel>();
+            _cinemaDomainModelsList.Add(_cinemaDomainModel);
+            _cinemaService = new Mock<ICinemaService>();
+        }
 
         [TestMethod]
         public void GetAsync_Return_All_Cinemas()
         {
             //Arrange
-            List<CinemaDomainModel> cinemaDomainModelsList = new List<CinemaDomainModel>();
-            CinemaDomainModel cinemaDomainModel = new CinemaDomainModel
-            {
-                Id = 1,
-                Name = "NewName"
-            };
-            cinemaDomainModelsList.Add(cinemaDomainModel);
-            IEnumerable<CinemaDomainModel> cinemaDomainModels = cinemaDomainModelsList;
+            CinemaDomainModel cinemaDomainModel = _cinemaDomainModel;
+            IEnumerable<CinemaDomainModel> cinemaDomainModels = _cinemaDomainModelsList;
             Task<IEnumerable<CinemaDomainModel>> responseTask = Task.FromResult(cinemaDomainModels);
             int expectedResultCount = 1;
             int expectedStatusCode = 200;
@@ -47,7 +56,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             //Assert
             Assert.IsNotNull(cinemaDomainModelResultList);
             Assert.AreEqual(expectedResultCount, cinemaDomainModelResultList.Count);
-            Assert.AreEqual(cinemaDomainModel.Id, cinemaDomainModelsList[0].Id);
+            Assert.AreEqual(cinemaDomainModel.Id, cinemaDomainModelResultList[0].Id);
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             Assert.AreEqual(expectedStatusCode, ((OkObjectResult)result).StatusCode);
         }
@@ -57,46 +66,19 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             IEnumerable<CinemaDomainModel> cinemaDomainModels = null;
             Task<IEnumerable<CinemaDomainModel>> responseTask = Task.FromResult(cinemaDomainModels);
 
-            int expectedResultCount = 0;
-            int expectedStatusCode = 200;
+            int expectedStatusCode = 404;
 
             _cinemaService = new Mock<ICinemaService>();
             _cinemaService.Setup(x => x.GetAllAsync()).Returns(responseTask);
             CinemasController cinemasController = new CinemasController(_cinemaService.Object);
             //ACT
-            var result = cinemasController.GetAsync().ConfigureAwait(false).GetAwaiter().GetResult().Result;
-            var resultList = ((OkObjectResult)result).Value;
-            var cinemaDomainModelResultList = (List<CinemaDomainModel>)resultList;
-
+            var resultAction = cinemasController.GetAsync().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((NotFoundObjectResult)resultAction).Value;
+                
             //Assert
-            Assert.IsNotNull(cinemaDomainModelResultList);
-            Assert.AreEqual(expectedResultCount, cinemaDomainModelResultList.Count);
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)result).StatusCode);
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((NotFoundObjectResult)resultAction).StatusCode);
         }
-
-        //[TestMethod]
-        //public void PostAsync_Create_createCinemaResultModel_IsSuccessful_True_Cinema()
-        //{
-        //    //Arrange
-        //    int expectedStatusCode = 201;
-
-        //    CreateCinemaModel createCinemaModel = new CreateCinemaModel()
-        //    {
-        //        Name = "NewName"
-        //    };
-
-        //    CreateCinemaResultModel createCinemaResultModel = new CreateCinemaResultModel
-        //    {
-        //        Cinema = new CinemaDomainModel
-        //        {
-        //            Id = 1,
-        //            Name = createCinemaModel.Name
-        //        },
-        //        IsSuccessful = true, 
-        //    };
-
-        //}
-
     }
 }

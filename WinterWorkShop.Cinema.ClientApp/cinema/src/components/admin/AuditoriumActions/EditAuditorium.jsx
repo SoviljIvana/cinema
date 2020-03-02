@@ -10,8 +10,12 @@ class EditAuditorium extends React.Component {
         super(props);
         this.state = {
             name: '',
+            seatRows: 0,
+            numberOfSeats: 0,
             id: '',            
             auditNameError: '',
+            seatRowsError: '',
+            numOfSeatsError: '',
             submitted: false,
             canSubmit: true
         };
@@ -28,8 +32,20 @@ class EditAuditorium extends React.Component {
         const { id, value } = e.target;
         this.setState({ [id]: value });
         this.validate(id, value);
-    }
+    }    
 
+    handleSubmit(e) {
+
+        e.preventDefault();
+        this.setState({ submitted: true });
+        const { name, numberOfSeats, seatRows } = this.state;
+        if (name && numberOfSeats && seatRows) {
+            this.updateAuditorium();
+        } else {
+            NotificationManager.error('Please fill in data');
+            this.setState({ submitted: false });
+        }
+    }
     validate(id, value) {
         if (id === 'name') {
             if (value === '') {
@@ -43,22 +59,34 @@ class EditAuditorium extends React.Component {
                     canSubmit: true
                 });
             }
-        }
+        }else if (id === 'numberOfSeats') {
+            const seatsNum = +value;
+            if (seatsNum > 20 || seatsNum < 1) {
+                this.setState({
+                    numOfSeatsError: 'Seats number can be in between 1 and 20',
+                    canSubmit: false
+                })
+            } else {
+                this.setState({
+                    numOfSeatsError: '',
+                    canSubmit: true
+                });
+            }
+        } else if (id === 'seatRows') {
+            const seatsNum = +value;
+            if (seatsNum > 20 || seatsNum < 1) {
+                this.setState({
+                    seatRowsError: 'Seats number can be in between 1 and 20',
+                    canSubmit: false
+                })
+            } else {
+                this.setState({
+                    seatRowsError: '',
+                    canSubmit: true
+                });
+            }
+        } 
     }
-
-    handleSubmit(e) {
-
-        e.preventDefault();
-        this.setState({ submitted: true });
-        const { name } = this.state;
-        if (name) {
-            this.updateAuditorium();
-        } else {
-            NotificationManager.error('Please fill in data');
-            this.setState({ submitted: false });
-        }
-    }
-
     getAuditorium(auditoriumId) {
         const requestOptions = {
             method: 'GET',
@@ -79,6 +107,8 @@ class EditAuditorium extends React.Component {
                 if (data) {
                     this.setState({
                         name: data.name,
+                        seatRows: data.seatRows + '', 
+                        numberOfSeats: data.numberOfSeats + '',
                         id: data.id
                     });
                 }
@@ -90,10 +120,12 @@ class EditAuditorium extends React.Component {
     }
 
     updateAuditorium() {
-        const { name, id } = this.state;
+        const { name, numberOfSeats, seatRows, id } = this.state;
 
         const data = {
-            Name: name        
+            Name: name,
+            NumberOfSeats: +numberOfSeats, 
+            SeatRows: +seatRows       
         };
 
         const requestOptions = {
@@ -105,6 +137,8 @@ class EditAuditorium extends React.Component {
             body: JSON.stringify(data)
         };
 
+        console.log(JSON.stringify("REQ_OPT:" + requestOptions.body));
+        
         fetch(`${serviceConfig.baseURL}/api/auditoriums/${id}`, requestOptions)
             .then(response => {
                 if (!response.ok) {
@@ -112,25 +146,54 @@ class EditAuditorium extends React.Component {
                 }
                 return response.statusText;
             })
+            .then(data => {
+                if(data){
+                    this.setState({
+                        name : data.name,
+                        seatRows: data.seatRows,
+                        numberOfSeats: data.numberOfSeats,
+                        id: data.id
+                    });
+                }
+            })
             .then(result => {
                 this.props.history.goBack();
                 NotificationManager.success('Successfuly edited auditorium!');
             })
             .catch(response => {
-                NotificationManager.error(response.message || response.statusText);
+                NotificationManager.error("Unable to update auditorium. ");
                 this.setState({ submitted: false });
             });
     }
 
+    renderRows(rows, seats) {
+        const rowsRendered = [];
+        for (let i = 0; i < rows; i++) {
+            rowsRendered.push(<tr key={i}>
+                {this.renderSeats(seats, i)}
+            </tr>);
+        }
+        return rowsRendered;
+    }
+
+    renderSeats(seats, row) {
+        let renderedSeats = [];
+        for (let i = 0; i < seats; i++) {
+            renderedSeats.push(<td key={'row: ' + row + ', seat: ' + i}></td>);
+        }
+        return renderedSeats;
+    }
+
     render() {
-        const { name, submitted, auditNameError, canSubmit } = this.state;
+        const {numberOfSeats, submitted, seatRows, name, auditNameError, numOfSeatsError,
+            seatRowsError, canSubmit } = this.state;
+        const auditorium = this.renderRows(seatRows, numberOfSeats);
         return (
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Edit Existing Auditorium</h1>
+                        <h1 className="form-header">Edit Auditorium</h1>
                         <form onSubmit={this.handleSubmit}>
-                               <form onSubmit={this.handleSubmit}></form>
                             <FormGroup>
                                 <FormControl
                                     id="name"
@@ -139,10 +202,51 @@ class EditAuditorium extends React.Component {
                                     value={name}
                                     onChange={this.handleChange}
                                 />
+
                                 <FormText className="text-danger">{auditNameError}</FormText>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormControl
+                                    id="seatRows"
+                                    type="number"
+                                    placeholder="Number Of Rows"
+                                    value={seatRows}
+                                    onChange={this.handleChange}
+                                />
+                                <FormText className="text-danger">{seatRowsError}</FormText>
+                            </FormGroup>
+                            <FormGroup>
+                                <FormControl
+                                    id="numberOfSeats"
+                                    type="number"
+                                    placeholder="Number Of Seats"
+                                    value={numberOfSeats}
+                                    onChange={this.handleChange}
+                                    max="36"
+                                />
+                                <FormText className="text-danger">{numOfSeatsError}</FormText>
                             </FormGroup>
                             <Button type="submit" disabled={submitted || !canSubmit} block>Edit Auditorium</Button>
                         </form>
+                    </Col>
+                </Row>
+                <Row className="mt-2">
+                    <Col className="justify-content-center align-content-center">
+                        <h1>Auditorium Preview</h1>
+                        <div>
+                            <Row className="justify-content-center mb-4">
+                                <div className="text-center text-white font-weight-bold cinema-screen">
+                                    CINEMA SCREEN
+                            </div>
+                            </Row>
+                            <Row className="justify-content-center">
+                                <table className="table-cinema-auditorium">
+                                    <tbody>
+                                        {auditorium}
+                                    </tbody>
+                                </table>
+                            </Row>
+                        </div>
                     </Col>
                 </Row>
             </Container>
