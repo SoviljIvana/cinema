@@ -24,12 +24,13 @@ namespace WinterWorkShop.Cinema.API.Controllers
         private readonly IMovieService _movieService;
         private readonly ILogger<MoviesController> _logger;
         private readonly IProjectionService _projectionService;
-
-        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService )
+        private readonly ISeatService _seatService;
+        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService, ISeatService seatService)
         {
             _logger = logger;
             _movieService = movieService;
             _projectionService = projectionService;
+            _seatService = seatService;
         }
 
         /// <summary>
@@ -395,6 +396,25 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Accepted("movies//" + createMovieResultModel.Movie.Id, createMovieResultModel.Movie);
         }
+        /// <summary>
+        /// Returns all seats for a specific projection
+        /// </summary>
+        /// <param name="projectionId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("allForProjection/{projectionId}")]
+        public async Task<ActionResult<IEnumerable<SeatDomainModel>>> GetAllSeatsForSpecificProjection(Guid projectionId)
+        {
+            IEnumerable<SeatDomainModel> seatDomainModels;
 
+            seatDomainModels = await _seatService.GetAllSeatsForProjection(projectionId);
+
+            if (seatDomainModels == null)
+            {
+                seatDomainModels = new List<SeatDomainModel>();
+            }
+
+            return Ok(seatDomainModels);
+        }
     }
 }

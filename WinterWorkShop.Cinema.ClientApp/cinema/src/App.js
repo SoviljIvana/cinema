@@ -9,6 +9,8 @@ import { NotificationContainer } from 'react-notifications';
 import Header from './components/Header';
 import ProjectionDetails from './components/user/ProjectionDetails';
 import AllProjectionsForCinema from './components/user/AllProjectionsForCinema';
+import AllForProjection from './components/user/AllForProjection';
+
 import Dashboard from './components/admin/Dashboard';
 
 // higher order component
@@ -23,6 +25,8 @@ function App() {
         <Redirect exact from="/" to="projectionlist" />
         <Route path="/projectiondetails/:id" component={ProjectionDetails} />
         <Route path="/projectionlist" component={AllProjectionsForCinema} />
+        <Route path="/projectiondetails/allForProjection/:id" component={AllForProjection} />
+
         <PrivateRouteAdmin path="/dashboard" component={Dashboard} />
       </Switch>
       <NotificationContainer />
