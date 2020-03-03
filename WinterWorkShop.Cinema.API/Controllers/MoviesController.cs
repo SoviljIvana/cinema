@@ -25,11 +25,21 @@ namespace WinterWorkShop.Cinema.API.Controllers
         private readonly ILogger<MoviesController> _logger;
         private readonly IProjectionService _projectionService;
 
-        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService )
+        private readonly ISeatService _seatService;
+
+        private readonly ITagService _tagService;
+
+        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService, ITagService tagService, ISeatService seatService)
+
         {
             _logger = logger;
             _movieService = movieService;
             _projectionService = projectionService;
+
+            _seatService = seatService;
+
+            _tagService = tagService;
+
         }
 
         /// <summary>
@@ -167,26 +177,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
             MovieCreateTagDomainModel movieCreateTagDomainModel = new MovieCreateTagDomainModel
             {
                 Duration = movieModel.Duration,
-                tagsForMovieToAdd = new List<string>()
+                tagsForMovieToAdd = movieModel.listOfTags
             };
-            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Award);
-            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Creator);
-            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.Language);
-            movieCreateTagDomainModel.tagsForMovieToAdd.Add(movieModel.State);
-            if (movieModel.ListOfActors!=null)
-            {
-                foreach (var actor in movieModel.ListOfActors)
-                {
-                    movieCreateTagDomainModel.tagsForMovieToAdd.Add(actor);
-                }
-            }
-            if (movieModel.ListOfGenres != null)
-            {
-                foreach (var genre in movieModel.ListOfGenres)
-                {
-                    movieCreateTagDomainModel.tagsForMovieToAdd.Add(genre);
-                }
-            }
             
             MovieDomainModel createMovie;
             try
@@ -395,6 +387,39 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Accepted("movies//" + createMovieResultModel.Movie.Id, createMovieResultModel.Movie);
         }
+        /// <summary>
+        /// Returns all seats for a specific projection
+        /// </summary>
+        /// <param name="projectionId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("allForProjection/{projectionId}")]
+        public async Task<ActionResult<IEnumerable<SeatDomainModel>>> GetAllSeatsForSpecificProjection(Guid projectionId)
+        {
+            IEnumerable<SeatDomainModel> seatDomainModels;
 
+
+            seatDomainModels = await _seatService.GetAllSeatsForProjection(projectionId);
+
+            if (seatDomainModels == null)
+            {
+                seatDomainModels = new List<SeatDomainModel>();
+            }
+
+            return Ok(seatDomainModels);
+        }
+        //trebaDaSeTestira
+        [HttpGet]
+        [Route("allTags")]
+        public async Task<ActionResult<TagDomainModel>> GetAllTagsForMovieCreate()
+        {
+            var data = await _tagService.GetAllTags();
+            if (data == null)
+            {
+                return NotFound(Messages.TAGS_NOT_FOUND);
+            }
+            return data;   
+
+        }
     }
 }
