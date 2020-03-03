@@ -24,12 +24,14 @@ namespace WinterWorkShop.Cinema.API.Controllers
         private readonly IMovieService _movieService;
         private readonly ILogger<MoviesController> _logger;
         private readonly IProjectionService _projectionService;
+        private readonly ITagService _tagService;
 
-        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService )
+        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService, ITagService tagService )
         {
             _logger = logger;
             _movieService = movieService;
             _projectionService = projectionService;
+            _tagService = tagService;
         }
 
         /// <summary>
@@ -396,5 +398,17 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Accepted("movies//" + createMovieResultModel.Movie.Id, createMovieResultModel.Movie);
         }
 
+        //trebaDaSeTestira
+        [HttpGet]
+        [Route("allTags")]
+        public async Task<ActionResult<TagDomainModel>> GetAllTagsForMovieCreate()
+        {
+            var data = await _tagService.GetAllTags();
+            if (data == null)
+            {
+                return NotFound(Messages.TAGS_NOT_FOUND);
+            }
+            return data;   
+        }
     }
 }

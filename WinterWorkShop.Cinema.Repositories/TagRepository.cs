@@ -16,7 +16,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
         Task<IEnumerable<Tag>> GetAllActores();
         Task<IEnumerable<Tag>> GetAllCreators();
-        Task<IEnumerable<Tag>> GetAllLanguage();
+        Task<IEnumerable<Tag>> GetAllLanguages();
         Tag GetByIdName(string name);
 
     }
@@ -54,7 +54,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
             return data;
         }
-        public async Task<IEnumerable<Tag>> GetAllLanguage()
+        public async Task<IEnumerable<Tag>> GetAllLanguages()
         {
             var data = await _cinemaContext.Tags.Where(x => x.Type.Equals("language")).ToListAsync();
 

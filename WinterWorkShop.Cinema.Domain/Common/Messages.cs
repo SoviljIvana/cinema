@@ -85,5 +85,12 @@
         public const string MOVIE_SEARCH_SUCCESSFUL = "Search successful. ";
 
         #endregion
+
+        #region Tag
+        public const string TAGS_NOT_FOUND = "Error occured while finding tags, please try again.";
+
+        #endregion
+
+
     }
 }
