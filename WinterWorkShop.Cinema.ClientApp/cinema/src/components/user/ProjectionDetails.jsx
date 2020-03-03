@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
-import ReactDOM from 'react-dom';
 import { serviceConfig } from '../../appSettings';
-import { FormGroup, FormControl, Button, Container, Row, Col, FormText, FormLabel, Alert, Table } from 'react-bootstrap';
+import { FormGroup, Row, Col, Table, Button } from 'react-bootstrap';
 import Spinner from '../Spinner';
 import ReactStars from 'react-stars';
 import './App.css';
+
 class ProjectionDetails extends Component {
 
     constructor(props) {
@@ -13,6 +14,7 @@ class ProjectionDetails extends Component {
 
         this.state = {
             projections: [],
+            seats: [],
             isLoading: true,
             id: '',
             title: '',
@@ -32,13 +34,14 @@ class ProjectionDetails extends Component {
             number: '',
         };
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleClick = this.handleClick.bind(this);
+        this.details = this.details.bind(this);
     }
 
     componentDidMount() {
         const { id } = this.props.match.params;
         this.getProjections(id);
         this.getMovie(id);
+
     }
 
     getProjections(movieId) {
@@ -52,6 +55,37 @@ class ProjectionDetails extends Component {
 
         this.setState({ isLoading: true });
         fetch(`${serviceConfig.baseURL}/api/Movies/allForSpecificMovie/` + movieId, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({
+                        projections: data,
+                        isLoading: false
+                    });
+                }
+            })
+            .catch(response => {
+                this.setState({ isLoading: false });
+                NotificationManager.error(response.message || response.statusText);
+            });
+    }
+
+    getSeats(projectionId) {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
+        };
+
+        this.setState({ isLoading: true });
+        fetch(`${serviceConfig.baseURL}/api/Movies/allForProjection/` + projectionId, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);
@@ -106,6 +140,13 @@ class ProjectionDetails extends Component {
             });
     }
 
+    details(id) {
+
+        this.props.history.push(`allForProjection/` + `${id}`);
+        this.getSeats(id);
+    }
+
+
     handleSubmit(e) {
         e.preventDefault();
         this.setState({ submitted: true });
@@ -118,41 +159,51 @@ class ProjectionDetails extends Component {
         }
     }
 
+
     fillTableWithDaata() {
 
         return this.state.projections.map(projection => {
-            return <tr key={projection.id, projection.movieId} className="mr-1 mb-2">
+
+            return <Button key={projection.id} className="mr-1 mb-2">
                 <br></br>
                 {
-                    <card className="table-cinema-auditorium" >
-                        <h3> Time: <button > <header>{projection.projectionTimeString}</header></button> </h3>
+                    <Button>
+                        <h3><button onClick={() => this.details(projection.id)}>
+                            <header>{projection.projectionTimeString}</header></button> </h3>
                         <br></br>
                         <div>
-                            <h3 className="form-header">Auditorium name:{projection.auditoriumName} </h3>
-
+                            <h3 className="form-header">{projection.auditoriumName} </h3>
+                        </div>
+                        <br></br>
+                        <br></br>
+                        <button>
+                            {projection.id}
+                        </button>
+                        <div>
+                            {projection.auditoriumId}
+                        </div>
+                        <div>
+                            {projection.row}
+                        </div>
+                        <div>
+                            {projection.number}
+                        </div>
+                        <div>
+                            {this.renderRows(projection.row, projection.number)}
                         </div>
                         <tbody>
                             {this.renderRows(projection.numOFRows, projection.numOFSeatsPerRow, projection.id)}
                         </tbody>
-                        <br></br>
-                        <br></br>
-                    </card>
-                }
-                <br>
-                </br>
-            </tr>
-        })
-    }
+                    </Button>
 
-    handleClick() {
-        this.setState({
-            button: !this.state.button
+                }
+            </Button>
         })
     }
 
     renderRows(rows, seats) {
         const rowsRendered = [];
-        for (let i = 1; i < rows; i++) {
+        for (let i = 0; i < rows; i++) {
             rowsRendered.push(<tr key={i}> {this.renderSeats(seats, i)}</tr>);
         }
         return rowsRendered;
@@ -160,8 +211,8 @@ class ProjectionDetails extends Component {
 
     renderSeats(seats, row) {
         let renderedSeats = [];
-        for (let i = 1; i < seats; i++) {
-            renderedSeats.push(<button key={'row: ' + row + ', seat: ' + i} className={this.state.button ? "buttonTrue" : "buttonFalse"} onClick={this.handleClick}>{row}{i}</button>);
+        for (let i = 0; i < seats; i++) {
+            renderedSeats.push(<button key={'row: ' + row + ', seat: ' + i}>{row}, {i}</button>);
         }
         return renderedSeats;
     }
@@ -173,6 +224,7 @@ class ProjectionDetails extends Component {
             <tbody>
                 {rowsData}
             </tbody>
+
         </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (

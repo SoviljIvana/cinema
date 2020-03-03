@@ -38,7 +38,9 @@ class ShowAllAuditoriums extends Component {
         })
         .then(data => {
           if (data) {
-            this.setState({ auditoriums: data, isLoading: false });
+            this.setState({ 
+                auditoriums: data,
+                 isLoading: false });
             }
         })
         .catch(response => {
