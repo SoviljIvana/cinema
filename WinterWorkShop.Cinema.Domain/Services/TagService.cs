@@ -26,47 +26,53 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             TagDomainModel listOfTags = new TagDomainModel()
             {
-                actores = new List<string>(),
-                awords = new List<string>(),
-                creators = new List<string>(),
-                genres = new List<string>(),
-                languages = new List<string>(),
-                states = new List<string>()
+                actores = new List<TagForMovieDomainModel>(),
+                awords = new List<TagForMovieDomainModel>(),
+                genres = new List<TagForMovieDomainModel>(),
+                languages = new List<TagForMovieDomainModel>(),
+                states = new List<TagForMovieDomainModel>()
             };
 
             foreach (var item in data)
             {
                 if (item.Type == "actor")
                 {
-                    listOfTags.actores.Add(item.Name);
+                    listOfTags.actores.Add(new TagForMovieDomainModel()
+                    {
+                        Name = item.Name
+                    }); 
                 }
                 if (item.Type == "aword")
                 {
-                    listOfTags.awords.Add(item.Name);
+                    listOfTags.awords.Add(new TagForMovieDomainModel()
+                    {
+                        Name = item.Name
+                    });
                 }
-                if (item.Type == "director")
-                {
-                    listOfTags.creators.Add(item.Name);
-                }
+               
                 if (item.Type == "genre")
                 {
-                    listOfTags.genres.Add(item.Name);
+                    listOfTags.genres.Add(new TagForMovieDomainModel() 
+                    { Name = item.Name 
+                    });
                 }
                 if (item.Type == "language")
                 {
-                    listOfTags.languages.Add(item.Name);
+                    listOfTags.languages.Add(new TagForMovieDomainModel()
+                    {
+                        Name = item.Name
+                    });
                 }
                 if (item.Type == "state")
                 {
-                    listOfTags.states.Add(item.Name);
+                    listOfTags.states.Add(new TagForMovieDomainModel()
+                    {
+                        Name = item.Name
+                    });
                 }
             }
 
             return listOfTags;
         }
-
-        
-
-
     }
 }
