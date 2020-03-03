@@ -26,11 +26,10 @@ namespace WinterWorkShop.Cinema.API.Controllers
         private readonly IProjectionService _projectionService;
 
         private readonly ISeatService _seatService;
-        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService, ISeatService seatService)
 
         private readonly ITagService _tagService;
 
-        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService, ITagService tagService )
+        public MoviesController(ILogger<MoviesController> logger, IMovieService movieService, IProjectionService projectionService, ITagService tagService, ISeatService seatService)
 
         {
             _logger = logger;
@@ -408,7 +407,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             }
 
             return Ok(seatDomainModels);
-
+        }
         //trebaDaSeTestira
         [HttpGet]
         [Route("allTags")]
