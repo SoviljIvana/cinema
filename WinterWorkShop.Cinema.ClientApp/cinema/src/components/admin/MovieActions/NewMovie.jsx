@@ -4,6 +4,7 @@ import { FormGroup, FormControl, Button, Container, Row, Col, FormText, } from '
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
 import { YearPicker } from 'react-dropdown-date';
+import { Multiselect } from 'multiselect-react-dropdown';
 
 class NewMovie extends React.Component {
     constructor(props) {
@@ -13,6 +14,13 @@ class NewMovie extends React.Component {
             year: 0,
             rating: '',
             current: false,
+            duration: 0,
+            genre: [],
+            actores: [],
+            awords: [],
+            languages: [],
+            states: [],
+            listOfTags:[],
             titleError: '',
             submitted: false,
             canSubmit: true
@@ -20,12 +28,47 @@ class NewMovie extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleYearChange = this.handleYearChange.bind(this);
+        this.onSelect = this.onSelect.bind(this);
+    }
+    
+    componentDidMount() {
+        this.getGenre();
+        
+
+    }
+
+    getGenre() {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
+        };
+        fetch(`${serviceConfig.baseURL}/api/Movies/allTags`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({ genre: data.genres, actores: data.actores, states: data.states, awords: data.awords, languages: data.languages});
+                }
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ submitted: false });
+            });
+
     }
     
     handleChange(e) {
         const { id, value } = e.target;
         this.setState({ [id]: value });
         this.validate(id, value);
+
     }
 
     validate(id, value) {
@@ -53,8 +96,8 @@ class NewMovie extends React.Component {
         e.preventDefault();
 
         this.setState({ submitted: true });
-        const { title, year, rating } = this.state;
-        if (title && year && rating) {
+        const { title, year, rating} = this.state;
+        if (title && year && rating ) {
             this.addMovie();
         } else {
             NotificationManager.error('Please fill in data');
@@ -68,13 +111,17 @@ class NewMovie extends React.Component {
     }
 
     addMovie() {
-        const { title, year, current, rating } = this.state;
+        const { title, year, current, rating, listOfTags, duration } = this.state;
 
         const data = {
             Title: title,
             Year: +year,
+            Duration : +duration,
             Current: current === "true",
-            Rating: +rating
+            Rating: +rating,
+            listOfTags: listOfTags
+            
+             
         };
 
         const requestOptions = {
@@ -100,9 +147,23 @@ class NewMovie extends React.Component {
                 this.setState({ submitted: false });
             });
     }
+    
+    onSelect(selectedList, selectedItem) {
+        console.log(selectedItem.name);
+        console.log(this);
+        
+        this.state['listOfTags'].push(selectedItem.name);
+        console.log(this.state['listOfTags'])
+
+    }
+     
+    onRemove(selectedList, removedItem) {
+        
+    }
+
 
     render() {
-        const { title, year, current, rating, submitted, titleError, yearError, canSubmit } = this.state;
+        const {duration, languages, awords, states, actores, genre, Name, title, year, current, rating, submitted, titleError, yearError, canSubmit } = this.state;
         return (
             <Container>
                 <Row>
@@ -139,6 +200,15 @@ class NewMovie extends React.Component {
                                 <FormText className="text-danger">{yearError}</FormText>
                             </FormGroup>
                             <FormGroup>
+                                <FormControl
+                                    id="duration"
+                                    type="number"
+                                    placeholder="duration"
+                                    value={duration}
+                                    onChange={this.handleChange}
+                                />
+                            </FormGroup>
+                            <FormGroup>
                                 <FormControl as="select" placeholder="Rating" id="rating" value={rating} onChange={this.handleChange}>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -152,6 +222,58 @@ class NewMovie extends React.Component {
                                     <option value="10">10</option>
                                 </FormControl>
                             </FormGroup>
+
+                            <FormGroup>
+                                <Multiselect
+                                options={genre}
+                                selectedValues ={genre.selectedValues}
+                                onSelect={this.onSelect}
+                                 onRemove={this.onRemove}
+                                 displayValue="name"
+                                 placeholder="Choose a genre..."
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <Multiselect
+                                options={actores}
+                                selectedValues ={actores.selectedValues}
+                                onSelect={this.onSelect}
+                                 onRemove={this.onRemove}
+                                 displayValue="name"
+                                 placeholder="Choose a actore..."
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <Multiselect
+                                options={states}
+                                selectedValues ={states.selectedValues}
+                                onSelect={this.onSelect}
+                                 onRemove={this.onRemove}
+                                 displayValue="name"
+                                 placeholder="Choose a state..."
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <Multiselect
+                                options={awords}
+                                selectedValues ={awords.selectedValues}
+                                onSelect={this.onSelect}
+                                 onRemove={this.onRemove}
+                                 displayValue="name"
+                                 placeholder="Choose a aword..."
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <Multiselect
+                                options={languages}
+                                selectedValues ={languages.selectedValues}
+                                onSelect={this.onSelect}
+                                 onRemove={this.onRemove}
+                                 displayValue="name"
+                                 placeholder="Choose a language..."
+                                />
+                            </FormGroup>
+                            
                             <FormGroup>
                                 <FormControl as="select" placeholder="Current" id="current" value={current} onChange={this.handleChange}>
                                 <option value="true">Current</option>
