@@ -426,17 +426,17 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("allForProjection/{projectionId}")]
-        public async Task<ActionResult<IEnumerable<SeatDomainModel>>> GetAllSeatsForSpecificProjection(Guid projectionId)
+        public async Task<ActionResult<IEnumerable<RowsDomainModel>>> GetAllSeatsForSpecificProjection(Guid projectionId)
         {
-            IEnumerable<SeatDomainModel> seatDomainModels;
+            IEnumerable<RowsDomainModel> seatDomainModels;
 
 
             seatDomainModels = await _seatService.GetAllSeatsForProjection(projectionId);
 
-            if (seatDomainModels == null)
-            {
-                seatDomainModels = new List<SeatDomainModel>();
-            }
+            //if (seatDomainModels == null)
+            //{
+            //    seatDomainModels = new List<SeatDomainModel>();
+            //}
 
             return Ok(seatDomainModels);
         }
