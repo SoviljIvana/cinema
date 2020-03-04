@@ -173,7 +173,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
         {
             var item = await _moviesRepository.GetByIdAsync(updateMovie.Id);
 
-            var projections = await _projectionsRepository.GetAllFromOneMovie(updateMovie.Id);
+            var projections = _projectionsRepository.GetAllFromOneMovie(updateMovie.Id);
 
             if (projections != null)
             {
@@ -242,7 +242,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
             //ako je current=true i ima projekciju, ne moze biti false
-            var projections = await _projectionsRepository.GetAllFromOneMovie(id);
+            var projections = _projectionsRepository.GetAllFromOneMovie(id);
             if (item.Current)
             {
                 if (projections != null)
@@ -327,7 +327,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 return null;
             }
-            var projectionsForDelete = await _projectionsRepository.GetAllFromOneMovie(id);
+            var projectionsForDelete = _projectionsRepository.GetAllFromOneMovie(id);
             foreach (var projectionForDelete in projectionsForDelete)
             {
                 if (projectionForDelete.DateTime < DateTime.Now)
@@ -453,8 +453,21 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     Id = item.Id,
                     Rating = item.Rating ?? 0,
                     Title = item.Title,
-                    Year = item.Year
+                    Year = item.Year,
+                    listOfProjections = new List<ProjectionDomainModel>()
                 };
+                IEnumerable<Projection> lista = new List<Projection>();
+                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+                foreach (var projection in projectionsForThisMovie)
+                {
+                    model.listOfProjections.Add(new ProjectionDomainModel() 
+                    {
+                        Id = projection.Id,
+                        ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                        AuditoriumName = projection.Auditorium.Name
+                    });
+
+                }
                 result.Add(model);
             }
 

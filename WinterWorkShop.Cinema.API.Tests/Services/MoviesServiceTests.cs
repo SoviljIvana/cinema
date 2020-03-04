@@ -356,9 +356,8 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _mockMoviesRepository = new Mock<IMoviesRepository>();
             _mockMoviesRepository.Setup(x => x.GetByIdAsync(id)).Returns(responseTask);
 
-            Task<IEnumerable<Projection>> responseTaskProjection = Task.FromResult(listaProjekcija);
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
-            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(id)).Returns(responseTaskProjection);
+            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(id)).Returns(listaProjekcija);
             MovieService movieController = new MovieService(_mockMoviesRepository.Object, _mockProjectionsRepository.Object, _mockMovieTagsRepository.Object, _mockTicketRepository.Object, _mockTagRepository.Object);
             //Act
             var resultAction = movieController.UpdateMovieStatus(id).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -388,9 +387,8 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _mockMoviesRepository = new Mock<IMoviesRepository>();
             _mockMoviesRepository.Setup(x => x.GetByIdAsync(id)).Returns(responseTask);
 
-            Task<IEnumerable<Projection>> responseTaskProjection = Task.FromResult(listaProjekcija);
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
-            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(id)).Returns(responseTaskProjection);
+            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(id)).Returns(listaProjekcija);
             _mockMoviesRepository.Setup(x => x.Update(movie)).Returns(movieNull);
 
             MovieService movieController = new MovieService(_mockMoviesRepository.Object, _mockProjectionsRepository.Object, _mockMovieTagsRepository.Object, _mockTicketRepository.Object, _mockTagRepository.Object);
@@ -422,9 +420,8 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _mockMoviesRepository = new Mock<IMoviesRepository>();
             _mockMoviesRepository.Setup(x => x.GetByIdAsync(id)).Returns(responseTask);
 
-            Task<IEnumerable<Projection>> responseTaskProjection = Task.FromResult(listaProjekcija);
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
-            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(id)).Returns(responseTaskProjection);
+            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(id)).Returns(listaProjekcija);
 
             _mockMoviesRepository.Setup(x => x.Update(It.IsAny<Movie>())).Returns(movieUpdated);
 
@@ -461,9 +458,8 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _mockMoviesRepository = new Mock<IMoviesRepository>();
             _mockMoviesRepository.Setup(x => x.GetByIdAsync(_movieDomainModel.Id)).Returns(responseTask);
 
-            Task<IEnumerable<Projection>> responseTaskProjection = Task.FromResult(listaProjekcija);
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
-            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(_movieDomainModel.Id)).Returns(responseTaskProjection);
+            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(_movieDomainModel.Id)).Returns(listaProjekcija);
             MovieService movieController = new MovieService(_mockMoviesRepository.Object, _mockProjectionsRepository.Object, _mockMovieTagsRepository.Object, _mockTicketRepository.Object, _mockTagRepository.Object);
             //Act
             var resultAction = movieController.UpdateMovie(movieDomainModel).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -493,9 +489,8 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _mockMoviesRepository = new Mock<IMoviesRepository>();
             _mockMoviesRepository.Setup(x => x.GetByIdAsync(_movieDomainModel.Id)).Returns(responseTask);
 
-            Task<IEnumerable<Projection>> responseTaskProjection = Task.FromResult(listaProjekcija);
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
-            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(_movieDomainModel.Id)).Returns(responseTaskProjection);
+            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(_movieDomainModel.Id)).Returns(listaProjekcija);
             _mockMoviesRepository.Setup(x => x.Update(movie)).Returns(movieNull);
 
             MovieService movieController = new MovieService(_mockMoviesRepository.Object, _mockProjectionsRepository.Object, _mockMovieTagsRepository.Object, _mockTicketRepository.Object, _mockTagRepository.Object);
@@ -530,9 +525,8 @@ namespace WinterWorkShop.Cinema.Tests.Services
             _mockMoviesRepository.Setup(x => x.GetByIdAsync(_movieDomainModel.Id)).Returns(responseTask);
 
 
-            Task<IEnumerable<Projection>> responseTaskProjection = Task.FromResult(listaProjekcija);
             _mockProjectionsRepository = new Mock<IProjectionsRepository>();
-            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(_movieDomainModel.Id)).Returns(responseTaskProjection);
+            _mockProjectionsRepository.Setup(y => y.GetAllFromOneMovie(_movieDomainModel.Id)).Returns(listaProjekcija);
 
             _mockMoviesRepository.Setup(x => x.Update(It.IsAny<Movie>())).Returns(movieUpdated);
 
