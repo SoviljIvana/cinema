@@ -55,7 +55,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         public async Task<IEnumerable<ProjectionDomainModel>> GetAllAsyncForSpecificMovie(Guid id)
         {
-            var data = await _projectionsRepository.GetAllFromOneMovie(id);
+            var data = _projectionsRepository.GetAllFromOneMovie(id);
             List<ProjectionDomainModel> result = new List<ProjectionDomainModel>();
 
             if (data == null)

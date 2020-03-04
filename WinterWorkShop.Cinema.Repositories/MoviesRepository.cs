@@ -60,7 +60,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public async Task<IEnumerable<Movie>> GetCurrent()
         {
-            var data = await _cinemaContext.Movies
+            var data = await _cinemaContext.Movies.Include(x=>x.Projections)
                 .Where(x => x.Current).ToListAsync();
 
             return data;
