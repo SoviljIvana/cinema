@@ -41,7 +41,7 @@ class ShowAllMovies extends Component {
         };
 
         this.setState({ isLoading: true });
-        fetch(`${serviceConfig.baseURL}/api/Movies/allMovies`, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/Movies/currentMoviesWithProjections`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);
@@ -98,6 +98,8 @@ class ShowAllMovies extends Component {
                 <td className="text-center cursor-pointer">{movie.current ? <Switch onChange={this.handleChange} checked={true} /> : <Switch onChange={this.handleChange} checked={false} />} </td>
                 <td className="text-center cursor-pointer" onClick={() => this.editMovie(movie.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit} /></td>
                 <td className="text-center cursor-pointer" onClick={() => this.removeMovie(movie.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash} /></td>
+           
+           
             </tr>
         })
     }

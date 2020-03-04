@@ -41,7 +41,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        public async Task<IEnumerable<SeatDomainModel>> GetAllSeatsForProjection(Guid id)
+        public async Task<IEnumerable<RowsDomainModel>> GetAllSeatsForProjection(Guid id)
         {
             var allSeatsForProjection = await _seatsRepository.GetAllOfSpecificProjection(id);
 
@@ -53,12 +53,14 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
+            List<RowsDomainModel> seatsForFrontListsDomain = new List<RowsDomainModel>();
+
             List<SeatDomainModel> result = new List<SeatDomainModel>();
             SeatDomainModel model;
+            int countRows = 1;
 
             foreach (var seat in allSeatsForProjection)
             {
-                
                 model = new SeatDomainModel
                 {
                     AuditoriumId = seat.AuditoriumId,
@@ -74,10 +76,29 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         model.Reserved = true;
                     }
                 }
-                result.Add(model);
-            }
 
-            return result;
+                if (countRows == seat.Row)
+                {
+                    result.Add(model);
+                }
+                else
+                {
+                    seatsForFrontListsDomain.Add(new RowsDomainModel 
+                    {
+                        SeatsInRow = result
+                    });
+                    countRows = countRows + 1;
+                    result = new List<SeatDomainModel>();
+                    result.Add(model);
+                }
+
+            }
+            seatsForFrontListsDomain.Add(new RowsDomainModel
+            {
+                SeatsInRow = result
+            });
+
+            return seatsForFrontListsDomain;
         }
 
 
