@@ -56,12 +56,20 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         public async Task<CreateTicketResultModel> CreateNewTicket(TicketDomainModel ticketDomainModel)
         {
-
+            var userIdFind = _usersRepository.GetByUserName(ticketDomainModel.UserName);
+            if (userIdFind==null)
+            {
+                return new CreateTicketResultModel
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = Messages.USER_NOT_FOUND
+                };
+            }
             Ticket newTicket = new Ticket
             {
                 ProjectionId = ticketDomainModel.ProjectionId,
                 SeatId = ticketDomainModel.SeatId,
-                UserId = ticketDomainModel.UserId,
+                UserId = userIdFind.Id,
                 Paid = false
             };
 
