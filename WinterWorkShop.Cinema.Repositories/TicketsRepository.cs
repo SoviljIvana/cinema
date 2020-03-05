@@ -48,7 +48,12 @@ namespace WinterWorkShop.Cinema.Repositories
         }
         public IEnumerable<Ticket> GetAllForSpecificUser(Guid id)
         {
-            var data = _cinemaContext.Tickets.Include(y=>y.Projection.Movie).Include(x=>x.Projection.Auditorium.Cinema).Include(a=>a.Seat).Where(x=>x.UserId.Equals(id)).OrderByDescending(x=>x.Projection.DateTime).ToList();
+            var data = _cinemaContext.Tickets
+                .Include(y=>y.Projection.Movie)
+                .Include(x=>x.Projection.Auditorium.Cinema)
+                .Include(a=>a.Seat).Where(x=>x.UserId.Equals(id))
+                .OrderByDescending(x=>x.Projection.DateTime)
+                .ToList();
             return data;
         }
 
