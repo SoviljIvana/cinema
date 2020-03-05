@@ -13,6 +13,7 @@ namespace WinterWorkShop.Cinema.Repositories
     {
         IEnumerable<Ticket> GetAllForSpecificProjection(Guid id);
         IEnumerable<Ticket> GetAllForSpecificSeat(Guid id);
+        IEnumerable<Ticket> GetAllForSpecificUser(Guid id);
     }
 
     public class TicketsRepository : ITicketRepository
@@ -43,6 +44,11 @@ namespace WinterWorkShop.Cinema.Repositories
         public IEnumerable<Ticket> GetAllForSpecificSeat(Guid id)
         {
             var data = _cinemaContext.Tickets.Include(x => x.Seat).Include(x => x.Projection).Where(x => x.SeatId == id).ToList();
+            return data;
+        }
+        public IEnumerable<Ticket> GetAllForSpecificUser(Guid id)
+        {
+            var data = _cinemaContext.Tickets.Include(y=>y.Projection.Movie).Include(x=>x.Projection.Auditorium.Cinema).Include(a=>a.Seat).Where(x=>x.UserId.Equals(id)).OrderByDescending(x=>x.Projection.DateTime).ToList();
             return data;
         }
 
