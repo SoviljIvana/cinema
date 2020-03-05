@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { FormGroup, Row, Col, Table, Button} from 'react-bootstrap';
-import Spinner from '../Spinner';
-import ReactStars from 'react-stars';
+import { FormGroup, Row, Col, Table, Button, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import './App.css';
+import $ from 'jquery';
 
 class ProjectionDetails extends Component {
 
@@ -17,7 +16,8 @@ class ProjectionDetails extends Component {
             button: true,
             count: 1
         };
-        //this.fillTableWithDaata = this.fillTableWithDaata.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+
     }
 
     componentDidMount() {
@@ -47,7 +47,7 @@ class ProjectionDetails extends Component {
                     this.setState({
                         seats: data,
                         isLoading: false
-                    });                    
+                    });
                 }
             })
             .catch(response => {
@@ -55,32 +55,33 @@ class ProjectionDetails extends Component {
                 NotificationManager.error(response.message || response.statusText);
             });
     }
-
-    renderRowsInProjections(seatsInRow) {
-
-        return seatsInRow.map((seat) => {
-            
-          return <Button>{seat.row},{seat.number}</Button>
-          
-        })
-        
-      }
-
-    fillTableWithDaata() {
-
-                return this.state.seats.map(seat => {
-            return <Row className="justify-content-center" style={{ width: '100rem'}}>{this.renderRowsInProjections(seat.seatsInRow)}<br></br></Row>
+    
+    handleClick() {
+        this.setState({
+            button: !this.state.button
         })
     }
+
+    renderRowsInProjections(seatsInRow) {
+        return seatsInRow.map((seat) => { return <ToggleButtonGroup type="checkbox"> <ToggleButton type="button" disabled={seat.reserved === true ? true : false} className={this.state.button ? "buttonTrue" : "buttonFalse"} onClick={this.handleClick}>{seat.row},{seat.number}</ToggleButton></ToggleButtonGroup> })
+    }
+
+    fillTableWithDaata() {
+        return this.state.seats.map(seat => {
+            return <Row className="justify-content-center" style={{ width: '100rem' }}>{this.renderRowsInProjections(seat.seatsInRow)}<br></br></Row>
+        })
+    }
+
     render() {
         const rowsData = this.fillTableWithDaata();
-               return (
-                <Row className="justify-content-center">
-                            <br></br>
-                            {rowsData}
-                            <br></br>
-                </Row>
+        return (
+            <Row className="justify-content-center">
+                <br></br>
+                {rowsData}
+                <br></br>
+            </Row>
         );
     }
 }
+
 export default ProjectionDetails;
