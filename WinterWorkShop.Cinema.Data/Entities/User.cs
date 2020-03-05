@@ -20,6 +20,7 @@ namespace WinterWorkShop.Cinema.Data
 
         [Column("isAdmin")]
         public bool IsAdmin { get; set; }
+        public int BonusPoints { get; set; }
 
         public ICollection<Ticket> Tickets { get; set; }
 

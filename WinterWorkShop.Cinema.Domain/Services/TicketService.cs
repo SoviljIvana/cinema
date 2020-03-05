@@ -13,9 +13,11 @@ namespace WinterWorkShop.Cinema.Domain.Services
     public class TicketService : ITicketService
     {
         private readonly ITicketRepository _ticketRepository;
-        public TicketService(ITicketRepository ticketRepository)
+        private readonly IUsersRepository _usersRepository;
+        public TicketService(ITicketRepository ticketRepository, IUsersRepository usersRepository)
         {
             _ticketRepository = ticketRepository;
+            _usersRepository = usersRepository;
         }
 
         public async Task<IEnumerable<TicketDomainModel>> GetAllTickets()
@@ -59,7 +61,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 ProjectionId = ticketDomainModel.ProjectionId,
                 SeatId = ticketDomainModel.SeatId,
-                UserId = ticketDomainModel.UserId
+                UserId = ticketDomainModel.UserId,
+                Paid = false
             };
 
             Ticket InsertedTicket = _ticketRepository.Insert(newTicket);
@@ -74,6 +77,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
 
             _ticketRepository.Save();
+                        
             CreateTicketResultModel resultModel = new CreateTicketResultModel
             {
                 ErrorMessage = null,
@@ -124,6 +128,29 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     };
                 }
 
+
+                var user = await _usersRepository.GetByIdAsync(data.UserId);
+
+                Data.User userWithPoints = new Data.User() 
+                {
+                    FirstName = user.FirstName,
+                    BonusPoints = user.BonusPoints + 1,
+                    Id = user.Id,
+                    IsAdmin = user.IsAdmin,
+                    LastName = user.LastName,
+                    UserName = user.UserName
+                };
+
+                var updateCheck = _usersRepository.Update(userWithPoints);
+                if (updateCheck==null)
+                {
+                    return new PaymentResponse
+                    {
+                        Message = Messages.TICKET_UPDATE_ERROR,
+                        IsSuccess = false
+                    };
+                }
+
                 _ticketRepository.Save();
 
                 PaymentResponse paymentResponse = new PaymentResponse()
@@ -136,8 +163,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             return new PaymentResponse
             {
-                IsSuccess = false,
-                Message = Messages.TICKET_NOT_FOUND
+                IsSuccess = true,
+                Message = null
             };
         }
 
