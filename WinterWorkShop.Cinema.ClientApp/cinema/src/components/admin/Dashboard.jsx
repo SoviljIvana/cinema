@@ -18,6 +18,7 @@ import EditAuditorium from './AuditoriumActions/EditAuditorium';
 import ShowAllAuditoriums from './AuditoriumActions/ShowAllAuditoriums';
 import ShowAllProjections from './ProjectionActions/ShowAllProjections';
 import NewProjection from './ProjectionActions/NewProjection';
+import FilterProjections from './ProjectionActions/FilterProjections';
 
 
 // higher order component
@@ -69,6 +70,9 @@ class Dashboard extends Component {
                         <NavLink activeClassName="active-link" to='/dashboard/AllProjections'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Projections</NavLink>
                     </Row>
                     <Row className="justify-content-center mt-2">
+                        <NavLink activeClassName="active-link" to='/dashboard/FilterProjections'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>Filter Projections</NavLink>
+                    </Row>
+                    <Row className="justify-content-center mt-2">
                         <NavLink activeClassName="active-link" to='/dashboard/NewProjection'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Projection</NavLink>
                     </Row>
                 </Col>
@@ -86,6 +90,7 @@ class Dashboard extends Component {
                         <PrivateRouteAdmin path="/dashboard/EditAuditorium/:id" component={EditAuditorium} />
                         <PrivateRouteAdmin path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
                         <PrivateRouteAdmin path="/dashboard/AllProjections" component={ShowAllProjections} />
+                        <PrivateRouteAdmin path="/dashboard/FilterProjections" component={FilterProjections}/>
                         <PrivateRouteAdmin path="/dashboard/NewProjection" component={NewProjection} />
                     </Switch>
                 </Col>
