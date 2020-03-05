@@ -11,10 +11,12 @@ namespace WinterWorkShop.Cinema.Domain.Services
     public class UserService : IUserService
     {
         private readonly IUsersRepository _usersRepository;
+        private readonly ITicketRepository _ticketRepository;
 
-        public UserService(IUsersRepository usersRepository)
+        public UserService(IUsersRepository usersRepository, ITicketRepository ticketRepository)
         {
             _usersRepository = usersRepository;
+            _ticketRepository = ticketRepository;
         }
 
         public async Task<IEnumerable<UserDomainModel>> GetAllAsync()
@@ -74,6 +76,22 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
 
+            var listOfTickets = _ticketRepository.GetAllForSpecificUser(data.Id);
+
+            var ticketsList = new List<TicketDomainModel>();
+            foreach (var item in listOfTickets)
+            {
+                ticketsList.Add(new TicketDomainModel 
+                {
+                    MovieName = item.Projection.Movie.Title,
+                    AuditoriumName = item.Projection.Auditorium.Name,
+                    CinemaName = item.Projection.Auditorium.Cinema.Name,
+                    ProjectionTime = item.Projection.DateTime.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                    SeatNumber = item.Seat.Number,
+                    SeatRow = item.Seat.Row
+                });
+            }
+
             UserDomainModel domainModel = new UserDomainModel
             {
                 Id = data.Id,
@@ -81,6 +99,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 LastName = data.LastName,
                 UserName = data.UserName,
                 IsAdmin = data.IsAdmin,
+                BonusPoints = data.BonusPoints,
+                Tickets = ticketsList
             };
 
             return domainModel;
