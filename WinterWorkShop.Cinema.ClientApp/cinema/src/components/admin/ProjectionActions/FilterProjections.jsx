@@ -5,14 +5,10 @@ import { FormControl, Row, Table, FormGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
-import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import Select from 'react-select';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
-
 
 
 class FilterProjections extends Component {
@@ -23,13 +19,15 @@ class FilterProjections extends Component {
           filterList: 
           [ {label: "No filter", value: 'FilterByText'},
             {label:"Filter by movie name ", value: 'moviename'},
-            {label:"Filter by cinema name ", value :'cinemaname'},
             {label: "Filter by auditorium name ", value: 'auditname'},
+            {label:"Filter by cinema name ", value :'cinemaname'},
             {label: "Filter by projection time " , value: 'dates'}],
           filter: "",
-          alll:"",
+          searchString: "",
           selectedOption: "",
         projections: [],
+        auditoriums: [],
+        cinemas: [],
         isLoading: true,
         submitted: false,
         canSubmit: true
@@ -41,15 +39,17 @@ class FilterProjections extends Component {
       this.change = this.change.bind(this);
 
     }
+    
     change = selectedOption => {
     this.setState({ selectedOption });
-    return <input>hahahha</input>
-}
+    }
 
     componentDidMount() {
+        this.getCinemas();
+        this.getAuditoriums();
         let startingString = "qwertyuiopasdfghjkl"
         let startingFilter ="FilterByText"
-      this.getProjections(startingString, startingFilter);
+        //this.getSpecificProjections(startingString, startingFilter);
       
     }
 
@@ -62,23 +62,30 @@ class FilterProjections extends Component {
         e.preventDefault();
         this.setState({ submitted: true });
         const {searchData, selectedOption} = this.state;
-        let filter = selectedOption.value
-        if (searchData && filter) {
-            this.getProjections(searchData, filter);
+        let filter = selectedOption.value;
+        if (searchData[0] == null && searchData != null)
+        {
+            NotificationManager.error('Please insert valid data. ');
+            this.setState({ submitted: false }); 
+            return null;
+        }
+        let searchString = searchData[0].name || searchData;
+        if (searchString && filter) {
+            this.getSpecificProjections(searchString, filter);
         } else {
             NotificationManager.error('Please fill in data');
             this.setState({ submitted: false });
         }
     }
 
-    getProjections(searchData, filter) {
+    getSpecificProjections(searchString, filter) {
       const requestOptions = {
         method: 'GET',
         headers: {'Content-Type': 'application/json',
                       'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
       };
       this.setState({isLoading: true});
-      fetch(`${serviceConfig.baseURL}/api/Projections/${filter}/${searchData}`, requestOptions)
+      fetch(`${serviceConfig.baseURL}/api/Projections/${filter}/${searchString}`, requestOptions)
         .then(response => {
           if (!response.ok) {
             return Promise.reject(response);
@@ -95,6 +102,57 @@ class FilterProjections extends Component {
             NotificationManager.error(response.message || response.statusText);
         });
     }
+
+    getAuditoriums() {
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+  
+        fetch(`${serviceConfig.baseURL}/api/Auditoriums/all`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ auditoriums: data });
+              }
+          })
+          .catch(response => {
+              NotificationManager.error(response.message || response.statusText);
+              this.setState({ submitted: false });
+          });
+      }
+
+    getCinemas() {
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+  
+        this.setState({isLoading: true});
+        fetch(`${serviceConfig.baseURL}/api/Cinemas/all`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ cinemas: data, isLoading: false });
+              }
+          })
+          .catch(response => {
+              NotificationManager.error(response.message || response.statusText);
+              this.setState({ isLoading: false });
+          });
+      }
 
     removeProjection(id) {
         // to be implemented
@@ -120,8 +178,47 @@ class FilterProjections extends Component {
         this.props.history.push(`editProjection/${id}`);
     }
 
+    switchFunction = (selectedOption, auditoriums, cinemas, searchData) => {
+        let value = selectedOption.value;
+        switch (value){
+            case 'FilterByText':
+                return <input label='Search for:'
+                    id = 'searchData'
+                    type = 'text'
+                    value = {searchData = null}
+                    placeholder = "Insert search data"
+                    onChange = {this.handleChange}
+                    />
+            case 'moviename':
+                return <input 
+                    id = 'searchData'
+                    type = 'text'
+                    value = {searchData = null}
+                    placeholder = "Insert search data"
+                    onChange = {this.handleChange}
+                    />
+            case 'auditname':
+                return <Typeahead 
+                labelKey="name"
+                 id = 'auditorium'
+                 options = {auditoriums}
+                 value = {searchData}
+                 onChange = {searchData => this.setState({ searchData })}
+                 />
+            case 'cinemaname':
+                return <Typeahead 
+                labelKey="name"
+                 id = 'cinema'
+                 options = {cinemas}
+                 value = {searchData}
+                 onChange = {searchData => this.setState({ searchData })}
+                 />
+
+        }
+    }
+
     render() {
-        const {isLoading, searchData, alll, filterList, selectedOption} = this.state;
+        const {isLoading, searchData, auditoriums, cinemas, filterList, selectedOption} = this.state;
         let{filter} = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm" variant="dark">
@@ -141,20 +238,15 @@ class FilterProjections extends Component {
         return (
             <React.Fragment>
                 <FormGroup>
-                        <label for='searchData'>Enter search parameter: </label>
-                        <input 
-                            id = 'searchData'
-                            type = 'text'
-                            value = {searchData}
-                            onChange = {this.handleChange}
-                            />
                         <Select
                             id = 'filterOptions'
                             options= {filterList}
                             value = {selectedOption}
                             onChange={this.change}
+                            //onClick= {this.switchFunction(selectedOption, auditoriums, cinemas, searchData)}
                             placeholder="Choose filter"
                         />
+                        <div>{this.switchFunction(selectedOption, auditoriums, cinemas, searchData)}</div>
                         <button onClick = {this.handleSubmit}>Confirm</button>           
                 </FormGroup>
                 <Row className="no-gutters pt-2">
