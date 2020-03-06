@@ -46,6 +46,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Ok(ticketDomainModels);
         }
+
         /// <summary>
         /// Adds a ticket
         /// </summary>

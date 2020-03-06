@@ -23,7 +23,6 @@ class UserProfile extends Component {
         tickets:[],
         isLoading: true,
         submitted: false,
-
         userNameJWT : '',
     };
 }
@@ -87,8 +86,6 @@ fillTableWithDaata(){
       
       const rowsData = this.fillTableWithDaata();
         return (
-       
-
         <Container>
         <Row className="justify-content-center">
           <Col>

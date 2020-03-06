@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { Row, Container, ToggleButton, ToggleButtonGroup, Button } from 'react-bootstrap';
+import { Row, Container, ToggleButton, ToggleButtonGroup, Button, Card } from 'react-bootstrap';
 import './App.css';
 import $ from 'jquery';
-import  jwt_decode from 'jwt-decode';
+import jwt_decode from 'jwt-decode';
 
 var decoded = jwt_decode(localStorage.getItem('jwt'));
 console.log(decoded);
@@ -21,6 +21,7 @@ class ProjectionDetails extends Component {
             seats: [],
             isLoading: true,
             button: true,
+            tickets: [],
             listOfSeats: [],
             projectionId: '',
             submitted: false,
@@ -68,12 +69,12 @@ class ProjectionDetails extends Component {
     }
 
     addTickets() {
-        const { listOfSeats, projectionId} = this.state;
+        const { listOfSeats, projectionId } = this.state;
 
         const data = {
             seatModels: listOfSeats,
             ProjectionId: projectionId,
-            UserName : userNameFromJWT,   
+            UserName: userNameFromJWT,
         };
 
         const requestOptions = {
@@ -83,7 +84,7 @@ class ProjectionDetails extends Component {
                 'Authorization': 'Bearer ' + localStorage.getItem('jwt')
             },
             body: JSON.stringify(data)
-       
+
         };
 
         fetch(`${serviceConfig.baseURL}/api/Tickets/add`, requestOptions)
@@ -91,13 +92,16 @@ class ProjectionDetails extends Component {
                 if (!response.ok) {
                     return Promise.reject(response);
                 }
-                return response.statusText();
+                return response.json();
+                var a = response.json();
+                console.log(response);
             })
             .catch(response => {
                 NotificationManager.error(response.message || response.statusText);
                 this.setState({ subitted: false });
 
             });
+
     }
 
     handleClick(seat) {
@@ -122,8 +126,8 @@ class ProjectionDetails extends Component {
                     if (n == 0) {
                         this.state.listOfSeats.push(seat.id);
                         this.setState({
-                            button:!this.state.button
-                          })
+                            button: !this.state.button
+                        })
                     }
                 }
                 console.log(this.state.listOfSeats);
@@ -151,10 +155,13 @@ class ProjectionDetails extends Component {
                     <br></br>
                     {rowsData}
                     <br></br>
+
+                    <hr />
                 </Row>
-                
-                    <Button className="justify-content-center" onClick={this.addTickets}> Create ticket </Button>
-                    
+                <Button className="justify-content-center" onClick={this.addTickets} > Create ticket </Button>
+                <Card>
+
+                </Card>
             </Container>
 
         );
