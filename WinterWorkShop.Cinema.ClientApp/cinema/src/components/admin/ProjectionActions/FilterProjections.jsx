@@ -9,6 +9,7 @@ import 'react-dropdown/style.css'
 import { Typeahead } from 'react-bootstrap-typeahead';
 import Select from 'react-select';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import DateTimePicker from 'react-datetime-picker/dist/DateTimePicker';
 
 
 class FilterProjections extends Component {
@@ -25,6 +26,8 @@ class FilterProjections extends Component {
           filter: "",
           searchString: "",
           selectedOption: "",
+        startDate: '',
+        endDate: '',
         projections: [],
         auditoriums: [],
         cinemas: [],
@@ -61,7 +64,11 @@ class FilterProjections extends Component {
     handleSubmit(e) {
         e.preventDefault();
         this.setState({ submitted: true });
-        const {searchData, selectedOption} = this.state;
+        const {searchData, selectedOption, startDate, endDate} = this.state;
+        if(selectedOption.value == 'dates'){
+            this.getProjectionsInATimeSpan(startDate, endDate)
+            return null; 
+        }
         let filter = selectedOption.value;
         if (searchData[0] == null && searchData != null)
         {
@@ -77,7 +84,36 @@ class FilterProjections extends Component {
             this.setState({ submitted: false });
         }
     }
+    getProjectionsInATimeSpan(startDate,endDate) {
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+        let date1 = JSON.stringify(startDate);
+        let date2 = JSON.stringify(endDate);
 
+        let slicedDate1 = date1.slice(1, -1);
+        let slicedDate2= date2.slice(1, -1);
+        
+        this.setState({isLoading: true});
+        fetch(`${serviceConfig.baseURL}/api/Projections/dates/${slicedDate1},${slicedDate2}`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ projections: data, isLoading: false });
+              }
+          })
+          .catch(response => {
+              this.setState({isLoading: false});
+              NotificationManager.error(response.message || response.statusText);
+          });
+      }
     getSpecificProjections(searchString, filter) {
       const requestOptions = {
         method: 'GET',
@@ -177,9 +213,12 @@ class FilterProjections extends Component {
         // to be implemented
         this.props.history.push(`editProjection/${id}`);
     }
+    onStartDateChange = startingDate => this.setState({ startDate: startingDate })
+    onEndDateChange = endingDate => this.setState({ endDate : endingDate })
 
     switchFunction = (selectedOption, auditoriums, cinemas, searchData) => {
         let value = selectedOption.value;
+        
         switch (value){
             case 'FilterByText':
                 return <input label='Search for:'
@@ -213,13 +252,21 @@ class FilterProjections extends Component {
                  value = {searchData}
                  onChange = {searchData => this.setState({ searchData })}
                  />
+            case 'dates': 
+                return [<DateTimePicker
+                            value = {this.state.startDate}
+                            onChange = {this.onStartDateChange}                 
+                        />,
+                       <DateTimePicker
+                            value = {this.state.endDate}
+                            onChange = {this.onEndDateChange}
+                       />]
 
         }
     }
 
     render() {
         const {isLoading, searchData, auditoriums, cinemas, filterList, selectedOption} = this.state;
-        let{filter} = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm" variant="dark">
                             <thead>
