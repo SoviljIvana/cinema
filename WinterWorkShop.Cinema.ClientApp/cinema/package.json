@@ -12,6 +12,8 @@
     "bootstrap": "^4.4.1",
     "jquery": "^3.4.1",
     "jwt-decode": "^2.2.0",
+    "linked-list": "^2.1.0",
+    "linked-list-adt": "^0.2.1",
     "multiselect-react-dropdown": "^1.4.7",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",

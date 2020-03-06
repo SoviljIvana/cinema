@@ -101,11 +101,11 @@ class NewCinema extends React.Component {
       });
   }
 
-  addAuditorium = (e) => {
-    this.setState((prevState) =>({
-      listOfAuditoriums: [...prevState.listOfAuditoriums, {name: "", seatRows: 0, numberOfSeats: 0}]
-    })); 
-  }
+  // addAuditorium = (e) => {
+  //   this.setState((prevState) =>({
+  //     listOfAuditoriums: [...prevState.listOfAuditoriums, {name: "", seatRows: 0, numberOfSeats: 0}]
+  //   })); 
+  // }
 
   render() {
     const { cinemaName, submitted, canSubmit } = this.state;
