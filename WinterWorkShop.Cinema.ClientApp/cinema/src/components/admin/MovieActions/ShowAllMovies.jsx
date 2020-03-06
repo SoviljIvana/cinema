@@ -17,19 +17,66 @@ class ShowAllMovies extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            searchData:"",
             movies: [],
             isLoading: true,
 
         };
         this.editMovie = this.editMovie.bind(this);
         this.removeMovie = this.removeMovie.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    handleChange(e) {
+        const { id, value } = e.target;
+        this.setState({ [id]: value });
+    }
+
+    handleSubmit(e){
+        e.preventDefault(); 
+        this.setState({submitted: true});
+        const {searchData} = this.state;
+        if(searchData){
+            this.getSearch(searchData);
+        } else {
+            NotificationManager.error('Please fill in data');
+            this.setState({ submitted: false });
+        }
+    }
 
     componentDidMount() {
         this.getProjections();
     }
 
+    getSearch(searchData) {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
+        };
+
+        this.setState({ isLoading: true });
+        fetch(`${serviceConfig.baseURL}/api/Movies/search/${searchData}`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    this.setState({ movies: data, isLoading: false });
+                }
+            })
+            .catch(response => {
+                this.setState({ isLoading: false });
+                NotificationManager.error("No results, please try again. ");
+                this.setState({ submitted: false });
+            });
+    }
 
     getProjections() {
         const requestOptions = {
@@ -55,7 +102,7 @@ class ShowAllMovies extends Component {
             })
             .catch(response => {
                 this.setState({ isLoading: false });
-                NotificationManager.error(response.message || response.statusText);
+                NotificationManager.error("response.message || response.statusText");
                 this.setState({ submitted: false });
             });
     }
@@ -109,7 +156,7 @@ class ShowAllMovies extends Component {
     }
 
     render() {
-        const { isLoading } = this.state;
+        const { isLoading, searchData } = this.state;
         const rowsData = this.fillTableWithDaata();
         const table = (<Table striped bordered hover size="sm">
             <thead>
@@ -127,6 +174,15 @@ class ShowAllMovies extends Component {
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
             <React.Fragment>
+                <label for = 'searchData'>Search for a movie by tags OR movie title:</label>
+                <input
+                    id = 'searchData'
+                    type = 'text'
+                    value = {searchData}
+                    placeholder = "Insert search data"
+                    onChange = {this.handleChange}
+                    />
+                <button onClick = {this.handleSubmit}>Confirm</button>   
                 <Row className="no-gutters pt-2">
                     <h1 className="form-header ml-2">All Movies</h1>
                 </Row>

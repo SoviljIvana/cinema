@@ -39,6 +39,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             var allMovies = await _moviesRepository.GetAllWithMovieTags();
 
             List<Movie> listOfFilms = new List<Movie>();
+            List<Movie> listOfFilmByTitle = new List<Movie>();
 
             foreach (var stringData in listOfString)
             {
@@ -78,15 +79,121 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 }
                 else
                 {
-                    return null;
+                    foreach (var movieTitle in listOfString)
+                    {
+                        List<Movie> movieTitles;
+
+                        movieTitles = allMovies.Where(y => y.Title.Contains(movieTitle)).ToList();
+                        if (movieTitles.Count != 0)
+                        {
+                            if (listOfFilmByTitle.Count == 0)
+                            {
+                                foreach (var movie in movieTitles)
+                                {
+                                    //var movie = allMovies.SingleOrDefault(g => g.Id.Equals(movieTag.MovieId));
+                                    listOfFilmByTitle.Add(movie);
+                                }
+                            }
+                            else
+                            {
+                                var listOfFilmsForCheck = new List<Movie>();
+                                listOfFilmsForCheck = listOfFilmByTitle;
+
+                                for (int j = 0; j < listOfFilmsForCheck.Count; j++)
+                                {
+                                    int numberOfNotMatching = 0;
+                                    for (int i = 0; i < movieTitles.Count; i++)
+                                    {
+                                        if (!movieTitles[i].Id.Equals(listOfFilmsForCheck[j].Id))
+                                        {
+                                            numberOfNotMatching = numberOfNotMatching + 1;
+                                        }
+                                        if (numberOfNotMatching == movieTitles.Count)
+                                        {
+                                            listOfFilmByTitle.Remove(listOfFilmsForCheck[j]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                        //var movies = _moviesRepository.SearchMoviesByTitle(movieTitle);
+                    }
                 }
             }
-            var n = listOfFilms.Count();
+            //var n = listOfFilms.Count();
 
-            if (listOfFilms.Count() == 0)
+            if (listOfFilms.Count() == 0 && listOfFilmByTitle.Count == 0)
             {
                 return null;
             }
+
+            //if (listOfFilms.Count() == 0)
+            //{
+            //    foreach (var movieTitle in listOfString)
+            //    {
+            //        List<Movie> movieTitles;
+
+            //        movieTitles = allMovies.Where(y => y.Title.Contains(movieTitle)).ToList();
+            //        if (movieTitles.Count != 0)
+            //        {
+            //            if (listOfFilmByTitle.Count == 0)
+            //            {
+            //                foreach (var movie in movieTitles)
+            //                {
+            //                    //var movie = allMovies.SingleOrDefault(g => g.Id.Equals(movieTag.MovieId));
+            //                    listOfFilmByTitle.Add(movie);
+            //                }
+            //            }
+            //            else
+            //            {
+            //                var listOfFilmsForCheck = new List<Movie>();
+            //                listOfFilmsForCheck = listOfFilmByTitle;
+
+            //                for (int j = 0; j < listOfFilmsForCheck.Count; j++)
+            //                {
+            //                    int numberOfNotMatching = 0;
+            //                    for (int i = 0; i < movieTitles.Count; i++)
+            //                    {
+            //                        if (!movieTitles[i].Id.Equals(listOfFilmsForCheck[j].Id))
+            //                        {
+            //                            numberOfNotMatching = numberOfNotMatching + 1;
+            //                        }
+            //                        if (numberOfNotMatching == movieTitles.Count)
+            //                        {
+            //                            listOfFilmByTitle.Remove(listOfFilmsForCheck[j]);
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            return null;
+            //        }
+            //        //var movies = _moviesRepository.SearchMoviesByTitle(movieTitle);
+            //    }
+            //}
+
+            if (listOfFilmByTitle!= null && listOfFilmByTitle.Count>0)
+            {
+                foreach (var item in listOfFilmByTitle)
+                {
+                    MovieDomainModel model = new MovieDomainModel
+                    {
+                        Title = item.Title,
+                        Current = item.Current,
+                        Id = item.Id,
+                        Year = item.Year,
+                        Rating = item.Rating ?? 0
+                    };
+                    result.Add(model);
+                }
+            }
+
             foreach (var item in listOfFilms)
             {
                 MovieDomainModel model = new MovieDomainModel

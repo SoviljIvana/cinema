@@ -15,6 +15,7 @@ namespace WinterWorkShop.Cinema.Repositories
         Task<IEnumerable<Movie>> GetTopTenMovies();
         Task<IEnumerable<Movie>> GetCurrent();
         Task<IEnumerable<Movie>> GetAllWithMovieTags();
+        IEnumerable<Movie> SearchMoviesByTitle(string searchData);
     }
 
     public class MoviesRepository : IMoviesRepository
@@ -101,5 +102,11 @@ namespace WinterWorkShop.Cinema.Repositories
             return data;
         }
 
+        public IEnumerable<Movie> SearchMoviesByTitle(string searchData)
+        {
+            var data = _cinemaContext.Movies.Where(x => x.Title.Contains(searchData)).ToList();
+
+            return data;
+        }
     }
 }
