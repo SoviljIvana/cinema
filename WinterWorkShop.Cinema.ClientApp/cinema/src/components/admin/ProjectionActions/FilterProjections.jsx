@@ -290,7 +290,6 @@ class FilterProjections extends Component {
                             options= {filterList}
                             value = {selectedOption}
                             onChange={this.change}
-                            //onClick= {this.switchFunction(selectedOption, auditoriums, cinemas, searchData)}
                             placeholder="Choose filter"
                         />
                         <div>{this.switchFunction(selectedOption, auditoriums, cinemas, searchData)}</div>
