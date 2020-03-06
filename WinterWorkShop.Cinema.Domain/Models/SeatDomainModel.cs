@@ -14,5 +14,7 @@ namespace WinterWorkShop.Cinema.Domain.Models
 
         public int Number { get; set; }
         public bool Reserved { get; set; }
+        public bool Selected { get; set; }
+        public int Counter { get; set; }
     }
 }

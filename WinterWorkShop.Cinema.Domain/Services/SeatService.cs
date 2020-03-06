@@ -66,7 +66,9 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     AuditoriumId = seat.AuditoriumId,
                     Id = seat.Id,
                     Number = seat.Number,
-                    Row = seat.Row
+                    Row = seat.Row,
+                    Selected = false,
+                    Counter = 0
                 };
 
                 foreach (var reservedSeat in reservedSeatsForThisProjection)
