@@ -76,7 +76,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             {
                 try
                 {
-                    ticketDomainModel.SeatId = item.Id;
+                    ticketDomainModel.SeatId = Guid.Parse(item);
                     createTicketResultModel = await _ticketService.CreateNewTicket(ticketDomainModel);
                 }
                 catch (DbUpdateException e)

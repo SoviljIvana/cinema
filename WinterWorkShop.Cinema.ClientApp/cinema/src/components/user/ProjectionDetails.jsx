@@ -2,11 +2,15 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { Row, Container, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import { Row, Container, ToggleButton, ToggleButtonGroup, Button } from 'react-bootstrap';
 import './App.css';
 import $ from 'jquery';
-var LinkedList = require('linked-list-adt');
-var list = new LinkedList();
+import  jwt_decode from 'jwt-decode';
+
+var decoded = jwt_decode(localStorage.getItem('jwt'));
+console.log(decoded);
+var userNameFromJWT = decoded.sub;
+console.log(userNameFromJWT)
 
 class ProjectionDetails extends Component {
 
@@ -17,13 +21,17 @@ class ProjectionDetails extends Component {
             isLoading: true,
             button: true,
             listOfSeats: [],
+            projectionId: '',
+            submitted: false,
         };
         this.handleClick = this.handleClick.bind(this);
+        this.addTickets = this.addTickets.bind(this);
     }
 
     componentDidMount() {
         var idProjection = window.location.pathname.split("/").pop();
         this.getSeats(idProjection);
+        this.state.projectionId = idProjection;
     }
 
     getSeats(projectionId) {
@@ -50,7 +58,7 @@ class ProjectionDetails extends Component {
                         isLoading: false
                     });
                 }
-               // console.log(data);
+                // console.log(data);
             })
             .catch(response => {
                 this.setState({ isLoading: false });
@@ -58,62 +66,68 @@ class ProjectionDetails extends Component {
             });
     }
 
+    addTickets() {
+        const { listOfSeats, projectionId} = this.state;
+
+        const data = {
+            seatModels: listOfSeats,
+            ProjectionId: projectionId,
+            UserName : userNameFromJWT,   
+        };
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
+            body: JSON.stringify(data)
+       
+        };
+
+        fetch(`${serviceConfig.baseURL}/api/Tickets/add`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.statusText();
+            })
+            .catch(response => {
+                NotificationManager.error(response.message || response.statusText);
+                this.setState({ subitted: false });
+
+            });
+    }
 
     handleClick(seat) {
         seat.counter = seat.counter + 1;
         if (!seat.reserved) {
-            
-        if (seat.counter % 2 != 0) {
-            
-            if (this.state.listOfSeats.length == 0) {
-                this.state.listOfSeats.push(seat.id);
-            }
-            else{
-                let n = 0
-                for (let index = 0; index < this.state.listOfSeats.length; index++) {
-                    
-                    if( this.state.listOfSeats[index] == seat.id){
 
-                        this.state.listOfSeats.splice(index, 1)
-                        n = n+ 1;
-                    }
-                    
-                    // else{
-                    //     this.state.listOfSeats.push(seat.id);
-                    // }
-                }
-                if (n == 0) {
+            if (seat.counter % 2 != 0) {
+
+                if (this.state.listOfSeats.length == 0) {
                     this.state.listOfSeats.push(seat.id);
                 }
+                else {
+                    let n = 0;
+                    for (let index = 0; index < this.state.listOfSeats.length; index++) {
+
+                        if (this.state.listOfSeats[index] == seat.id) {
+
+                            this.state.listOfSeats.splice(index, 1)
+                            n = n + 1;
+                        }
+                    }
+                    if (n == 0) {
+                        this.state.listOfSeats.push(seat.id);
+                        this.setState({
+                            button:!this.state.button
+                          })
+                    }
+                }
+                console.log(this.state.listOfSeats);
             }
-
-            console.log(this.state.listOfSeats);
-
         }
-
-        }
-         
-
-        // if (!seat.reserved) {
-        //     let i = 0
-        //     if (this.state.listOfSeats.length != 0) {
-        //         for (let index = 0; index < this.state.listOfSeats.length; index++) {
-                
-        //             if( this.state.listOfSeats[index] == seat.id){
-        //                 i = i+1;
-        //             }
-        //         }
-        //         if (i==0) {
-        //             this.state.listOfSeats.push(seat.id);
-        //         }
-        //     }else{
-        //         this.state.listOfSeats.push(seat.id);
-        //         seat.selected = true
-        //     }
-            
-        //     
-            
-        // }
     }
 
     renderRowsInProjections(seatsInRow) {
@@ -137,9 +151,12 @@ class ProjectionDetails extends Component {
                     {rowsData}
                     <br></br>
                 </Row>
+                
+                    <Button className="justify-content-center" onClick={this.addTickets}> Create ticket </Button>
+                    
             </Container>
+
         );
     }
 }
-
-export default ProjectionDetails;
+export default ProjectionDetails;           
