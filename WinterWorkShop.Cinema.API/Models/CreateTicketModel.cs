@@ -11,6 +11,6 @@ namespace WinterWorkShop.Cinema.API.Models
         public Guid UserId { get; set; }
         public Guid ProjectionId { get; set; }
         public string UserName { get; set; }
-        public List<SeatModel> seatModels { get; set; }
+        public List<string> seatModels { get; set; }
     }
 }
