@@ -5,8 +5,10 @@ import 'react-notifications/lib/notifications.css';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { NotificationContainer } from 'react-notifications';
+
 // components
 import Header from './components/Header';
+import UserProfile from './components/UserProfile';
 import ProjectionDetails from './components/user/ProjectionDetails';
 import AllProjectionsForCinema from './components/user/AllProjectionsForCinema';
 import AllForProjection from './components/user/AllForProjection';
@@ -20,6 +22,7 @@ function App() {
   return (
     <React.Fragment>
       <Header/>
+      
       <div className="set-overflow-y">
       <Switch>
         <Redirect exact from="/" to="projectionlist" />
@@ -28,6 +31,7 @@ function App() {
         <Route path="/projectiondetails/allForProjection/:id" component={AllForProjection} />
 
         <PrivateRouteAdmin path="/dashboard" component={Dashboard} />
+        <PrivateRouteAdmin path="/userProfile" component={UserProfile} />
       </Switch>
       <NotificationContainer />
       </div>

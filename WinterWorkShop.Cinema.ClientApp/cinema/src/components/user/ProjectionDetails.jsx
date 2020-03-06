@@ -7,6 +7,7 @@ import Spinner from '../Spinner';
 import ReactStars from 'react-stars';
 import './App.css';
 
+
 class ProjectionDetails extends Component {
 
     constructor(props) {
