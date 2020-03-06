@@ -8,6 +8,7 @@ import $ from 'jquery';
 var LinkedList = require('linked-list-adt');
 var list = new LinkedList();
 
+
 class ProjectionDetails extends Component {
 
     constructor(props) {

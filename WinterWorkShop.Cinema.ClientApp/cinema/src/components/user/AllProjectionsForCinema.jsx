@@ -9,6 +9,7 @@ import ReactStars from 'react-stars';
 import ListGroup from 'react-bootstrap/ListGroup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 const ratingChanged = (newRating) => {
   console.log(newRating)
 }
