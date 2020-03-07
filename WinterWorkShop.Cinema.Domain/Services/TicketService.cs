@@ -209,5 +209,40 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
             return null;
         }
+
+        public async Task<IEnumerable<TicketDomainModel>> GetAllTicketsForThisUser(string username)
+        {
+            var data = await _ticketRepository.GetAllUnpaidForSpecificUser(username);
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<TicketDomainModel> result = new List<TicketDomainModel>();
+
+            TicketDomainModel model;
+            foreach (var item in data)
+            {
+
+                model = new TicketDomainModel
+                {
+                    Id = item.Id,
+                    Paid = item.Paid,
+                    SeatId = item.SeatId,
+                    SeatNumber = item.Seat.Number,
+                    SeatRow = item.Seat.Row,
+                    MovieName = item.Projection.Movie.Title,
+                    ProjectionId = item.ProjectionId,
+                    AuditoriumName = item.Seat.Auditorium.Name,
+                    CinemaName = item.Seat.Auditorium.Cinema.Name,
+                    UserName = item.User.FirstName + " " + item.User.LastName,
+                    UserId = item.UserId,
+                    ProjectionTime =  item.Projection.DateTime.ToString("dddd, dd MMMM yyyy HH:mm:ss")
+                };
+                result.Add(model);
+            }
+
+            return result;
+        }
     }
 }

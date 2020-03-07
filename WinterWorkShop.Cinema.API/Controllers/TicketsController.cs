@@ -159,5 +159,21 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(result);
 
         }
+
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        [Route("allTickets/{username}")]
+        public async Task<ActionResult<IEnumerable<TicketDomainModel>>> GetAllUnpaidTicketsForUser(string username)
+        {
+            IEnumerable<TicketDomainModel> ticketDomainModels;
+            ticketDomainModels = await _ticketService.GetAllTicketsForThisUser(username);
+
+            if (ticketDomainModels == null)
+            {
+                ticketDomainModels = new List<TicketDomainModel>();
+            }
+
+            return Ok(ticketDomainModels);
+        }
     }
 }
