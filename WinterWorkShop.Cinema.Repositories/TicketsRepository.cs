@@ -14,6 +14,7 @@ namespace WinterWorkShop.Cinema.Repositories
         IEnumerable<Ticket> GetAllForSpecificProjection(Guid id);
         IEnumerable<Ticket> GetAllForSpecificSeat(Guid id);
         IEnumerable<Ticket> GetAllForSpecificUser(Guid id);
+        Task<IEnumerable<Ticket>> GetAllUnpaidForSpecificUser(string username);
     }
 
     public class TicketsRepository : ITicketRepository
@@ -35,7 +36,11 @@ namespace WinterWorkShop.Cinema.Repositories
             var data = await _cinemaContext.Tickets.Include(x=>x.Seat.Auditorium.Cinema).Include(x=>x.Projection.Movie).Include(x=>x.User).ToListAsync();
             return data;
         }
-
+        public async Task<IEnumerable<Ticket>> GetAllUnpaidForSpecificUser(string username)
+        {
+            var data = await _cinemaContext.Tickets.Include(x => x.Seat.Auditorium.Cinema).Include(x => x.Projection.Movie).Include(x => x.User).Where(x=>x.User.UserName.Equals(username)).ToListAsync();
+            return data;
+        }
         public IEnumerable<Ticket> GetAllForSpecificProjection(Guid id)
         {
             var data = _cinemaContext.Tickets.Include(x => x.Seat).Include(x => x.Projection).Where(x=>x.ProjectionId == id).ToList();
