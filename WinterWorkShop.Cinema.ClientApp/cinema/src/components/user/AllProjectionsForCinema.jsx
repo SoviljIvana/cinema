@@ -8,8 +8,27 @@ import Spinner from '../Spinner';
 import ReactStars from 'react-stars';
 import ListGroup from 'react-bootstrap/ListGroup';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import { Fade } from 'react-slideshow-image';
+import Image1 from './movie1.png';
+import Image2 from './movie2.jpg';
+import Image3 from './movie3.png';
+import './App.css';
 
-
+const fadeImages = [
+  Image1,
+  Image2,
+  Image3,
+];
+const fadeProperties = {
+  duration: 5000,
+  transitionDuration: 500,
+  infinite: false,
+  indicators: true,
+  onChange: (oldIndex, newIndex) => {
+    console.log(`fade transition from ${oldIndex} to ${newIndex}`);
+  }
+}
 const ratingChanged = (newRating) => {
   console.log(newRating)
 }
@@ -23,7 +42,8 @@ class AllProjectionsForCinema extends Component {
       projectionTime: '',
       movieId: '',
       auditoriumId: '',
-      auditoriumName: ''
+      auditoriumName: '',
+    
     };
 //    this.details = this.details.bind(this);
     this.seatsForProjection = this.seatsForProjection.bind(this);
@@ -83,7 +103,11 @@ class AllProjectionsForCinema extends Component {
       </ul>
     })
   }
+  
 
+   
+
+  
   fillTableWithDaata() {
 
     return this.state.movies.map(movie => {
@@ -124,22 +148,36 @@ class AllProjectionsForCinema extends Component {
   render() {
     const { isLoading } = this.state;
     const rowsData = this.fillTableWithDaata();
-    const table = (<Table striped bordered hover size="sm">
+    const table = (<table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
       <tbody>
         {rowsData}
       </tbody>
-    </Table>);
+    </table>);
     const showTable = isLoading ? <Spinner></Spinner> : table;
     return (
-      <React.Fragment>
+    
         <Row className="no-gutters pr-5 pl-5">
-          <br>
-          </br>
-          {showTable}
-          <br>
-          </br>
-        </Row>
-      </React.Fragment>
+           <div className="slide-container">
+      <Fade {...fadeProperties}>
+        <div className="each-fade">
+            <img src={fadeImages[0]} />
+
+        </div>
+        <div className="each-fade">
+    
+            <img src={fadeImages[1]} />
+   
+        </div>
+        <div className="each-fade">
+        
+            <img src={fadeImages[2]} />
+      
+        </div>
+      </Fade>
+    </div>
+          <br></br>
+         {showTable}
+       </Row>
     );
   }
 }

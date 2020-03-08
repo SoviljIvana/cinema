@@ -1,12 +1,10 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import React, { Component} from 'react';
+import { Link } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Row, Container, ToggleButton, ToggleButtonGroup, Button, Card } from 'react-bootstrap';
 import './App.css';
-import $ from 'jquery';
 import jwt_decode from 'jwt-decode';
-
 var decoded = jwt_decode(localStorage.getItem('jwt'));
 console.log(decoded);
 var userNameFromJWT = decoded.sub;
@@ -116,9 +114,7 @@ class ProjectionDetails extends Component {
                 else {
                     let n = 0;
                     for (let index = 0; index < this.state.listOfSeats.length; index++) {
-
                         if (this.state.listOfSeats[index] == seat.id) {
-
                             this.state.listOfSeats.splice(index, 1)
                             n = n + 1;
                         }
@@ -155,10 +151,9 @@ class ProjectionDetails extends Component {
                     <br></br>
                     {rowsData}
                     <br></br>
-
                     <hr />
                 </Row>
-                <Button className="justify-content-center" onClick={this.addTickets} > Create ticket </Button>
+                <Link className="text-decoration-none" to='/tickets'>  <Button className="justify-content-center" onClick={this.addTickets} > Create ticket </Button></Link>
                 <Card>
 
                 </Card>

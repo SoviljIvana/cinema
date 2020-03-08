@@ -158,7 +158,8 @@ class ShowAllMovies extends Component {
     render() {
         const { isLoading, searchData } = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="sm">
+      
+        const table = (<Table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th className="text-center cursor-pointer">Title</th>
