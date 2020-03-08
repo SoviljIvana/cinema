@@ -8,6 +8,7 @@
 
         #region Payments
         public const string PAYMENT_CREATION_ERROR = "Connection error, occured while creating new payment, please try again";
+        public const string PAYMENT_UNSUCCESSFUL = "Payment is unsuccessfull!";
         #endregion
 
         #region Auditoriums
