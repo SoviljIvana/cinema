@@ -29,7 +29,6 @@ function App() {
         <Route path="/projectiondetails/:id" component={ProjectionDetails} />
         <Route path="/projectionlist" component={AllProjectionsForCinema} />
         <Route path="/projectiondetails/allForProjection/:id" component={AllForProjection} />
-
         <PrivateRouteAdmin path="/dashboard" component={Dashboard} />
         <PrivateRouteAdmin path="/userProfile" component={UserProfile} />
       </Switch>
