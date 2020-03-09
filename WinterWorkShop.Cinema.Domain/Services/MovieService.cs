@@ -132,10 +132,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 foreach (var item in listOfFilmByTitle)
                 {
-                    //var projectionsForMovie = new List<ProjectionDomainModel>();
-                    //List<Projection> projectionFromMovieProjectionModels = new List<Projection>();
-                    //projectionFromMovieProjectionModels = item.Projections.ToList();
-
                     MovieDomainModel model = new MovieDomainModel
                     {
                         Title = item.Title,
