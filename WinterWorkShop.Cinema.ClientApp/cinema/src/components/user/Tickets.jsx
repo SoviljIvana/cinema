@@ -1,31 +1,166 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
-import { serviceConfig } from '../appSettings';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import jwt_decode from 'jwt-decode';
+import { serviceConfig } from '../../appSettings';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+
+var decoded = jwt_decode(localStorage.getItem('jwt'));
+console.log(decoded);
+var userNameFromJWT = decoded.sub;
+console.log(userNameFromJWT)
 
 class Tickets extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        users:[],
-        tickets:[],
-        isLoading: true,
-        submitted: false,
-        userNameJWT : '',
+      tickets: [],
+      isLoading: true,
+      submitted: false,
+      userNameJWT: '',
+      response1: "",
+      response2: ''
+
     };
-}
-    render() {
-        return (
-        <Container>
+    this.removeTicket = this.removeTicket.bind(this);
+    this.payment = this.payment.bind(this);
+
+  }
+
+  componentDidMount() {
+    this.getAllUnpaidTicketsForUser();
+  }
+
+  getAllUnpaidTicketsForUser() {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+    };
+
+    this.setState({ isLoading: true });
+    fetch(`${serviceConfig.baseURL}/api/tickets/allTickets/${userNameFromJWT}`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({ isLoading: false, tickets: data });
+        }
+        console.log(this.state.tickets);
+
+      })
+      .catch(response => {
+        this.setState({ isLoading: false });
+        NotificationManager.error(response.message || response.statusText);
+        this.setState({ submitted: false });
+      });
+  }
+
+  removeTicket(id) {
+
+  }
+
+  payment() {
+    const { response2 } = this.state;
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      },
+    };
+    fetch(`${serviceConfig.baseURL}/api/Levi9Payment`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+          
+        }
+        console.log(response);
+
+        return response.json();
+      })
+      .then(response => {
+        if (response) {
+          this.setState({
+          response2: response.isSuccess
+          });
+          console.log(response);
+          console.log("response2");
+          console.log(this.state.response2);
+          this.payValue();
+        }
+      })
+      .catch(response => {
+        NotificationManager.error(response.message || response.statusText);
+      });
+  }
+
+  payValue() {
+    const {  response2 } = this.state;
+
+    const data = {
+        UserName: userNameFromJWT,
+        PaymentSuccess : response2
+ 
+    };
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      },
+      body: JSON.stringify(data)
+
+    };
+    fetch(`${serviceConfig.baseURL}/api/tickets/payValue`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+          
+        }
+        return response.json();
+      })
+      .catch(response => {
+        NotificationManager.error(response.message || response.statusText);
+      });
+  }
+  
+  fillTableWithDaata() {
+    return this.state.tickets.map(ticket => {
+      return <div key={ticket.id}>
+               <ul className="text-center cursor-pointer">
+          <li><b>Cinema: </b>{ticket.cinemaName}, <b>auditorium: </b> {ticket.auditoriumName}, <b>movie:</b> {ticket.movieName} <br></br> <b>seat row: </b>{ticket.seatRow} <b>seat number: </b>{ticket.seatNumber} <br></br> <b>Time: </b>{ticket.projectionTime}
+            <td width="5%" className="text-center cursor-pointer" onClick={this.removeTicket(ticket.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash} /></td>
+                     </li>
+        </ul>
+      </div>
+    })
+  }
+
+  render() {
+    const rowsData = this.fillTableWithDaata();
+    return (
+      <Container>
         <Row className="justify-content-center">
           <Col>
-             <h4>Tickets:</h4>         
+            <h4>Unpaid tickets:</h4>
+            {rowsData}
+            <hr />
           </Col>
+          <Col><Button onClick={this.payment} >Pay</Button></Col>
         </Row>
       </Container>
-        );
-      }
+    );
+  }
 }
 
 export default Tickets;
