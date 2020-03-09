@@ -136,14 +136,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
                     ErrorMessage = Messages.AUDITORIUM_DOES_NOT_EXIST,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                    StatusCode = System.Net.HttpStatusCode.NotFound
                 };
 
-                return BadRequest(errorResponse);
+                return NotFound(errorResponse);
             }
-
-            if(auditoriumModel.cinemaId!=0)
-                auditoriumToUpdate.CinemaId = auditoriumModel.cinemaId;
 
             if (auditoriumModel.numberOfSeats != 0)
                 auditoriumToUpdate.NumberOfSeats = auditoriumModel.numberOfSeats;
@@ -152,6 +149,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 auditoriumToUpdate.SeatRows = auditoriumModel.seatRows;
 
             auditoriumToUpdate.Name = auditoriumModel.name;
+            auditoriumToUpdate.CinemaId = auditoriumModel.cinemaId;
 
             AuditoriumResultModel auditoriumDomainModel;
             try
