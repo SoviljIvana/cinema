@@ -43,18 +43,67 @@ class AllProjectionsForCinema extends Component {
       movieId: '',
       auditoriumId: '',
       auditoriumName: '',
+      searchData: ''
     
     };
 //    this.details = this.details.bind(this);
     this.seatsForProjection = this.seatsForProjection.bind(this);
     this.renderProjectionButtons = this.renderProjectionButtons.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     //this.fillTableWithDaata = this.fillTableWithDaata.bind(this);
   }
+
+  handleChange(e) {
+    const { id, value } = e.target;
+    this.setState({ [id]: value });
+}
+
+handleSubmit(e){
+    e.preventDefault(); 
+    this.setState({submitted: true});
+    const {searchData} = this.state;
+    if(searchData){
+        this.getSearch(searchData);
+    } else {
+        NotificationManager.error('Please fill in data');
+        this.setState({ submitted: false });
+    }
+}
 
   componentDidMount() {
     this.getMovies();
 
   }
+
+  getSearch(searchData) {
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+        }
+    };
+
+    this.setState({ isLoading: true });
+    fetch(`${serviceConfig.baseURL}/api/Movies/search/${searchData}`, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data) {
+                this.setState({ movies: data, isLoading: false });
+            }
+        })
+        .catch(response => {
+            this.setState({ isLoading: false });
+            NotificationManager.error("No results, please try again. ");
+            this.setState({ submitted: false });
+        });
+}
 
   getMovies() {
     const requestOptions = {
@@ -104,10 +153,6 @@ class AllProjectionsForCinema extends Component {
     })
   }
   
-
-   
-
-  
   fillTableWithDaata() {
 
     return this.state.movies.map(movie => {
@@ -146,7 +191,7 @@ class AllProjectionsForCinema extends Component {
     return renderedSeats;
   }
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, searchData } = this.state;
     const rowsData = this.fillTableWithDaata();
     const table = (<table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
       <tbody>
@@ -175,6 +220,17 @@ class AllProjectionsForCinema extends Component {
         </div>
       </Fade>
     </div>
+    <div>
+                <label for = 'searchData'>Search for a movie by tags OR movie title:</label>
+                <input
+                    id = 'searchData'
+                    type = 'text'
+                    value = {searchData}
+                    placeholder = "Insert search data"
+                    onChange = {this.handleChange}
+                    />
+                <button onClick = {this.handleSubmit}>Search</button> 
+      </div>
           <br></br>
          {showTable}
        </Row>
