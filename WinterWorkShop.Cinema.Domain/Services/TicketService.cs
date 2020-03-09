@@ -126,6 +126,35 @@ namespace WinterWorkShop.Cinema.Domain.Services
             foreach (var ticket in tickets)
             {
                 ticket.Paid = true;
+                var updatedTicket = _ticketRepository.Update(ticket);
+                if (updatedTicket == null)
+                {
+                    return new PaymentResponse
+                    {
+                        Message = Messages.TICKET_UPDATE_ERROR,
+                        IsSuccess = false
+                    };
+                }
+            }
+
+            Data.User userWithPoints = new Data.User()
+            {
+                FirstName = userCheck.FirstName,
+                BonusPoints = userCheck.BonusPoints + 1,
+                Id = userCheck.Id,
+                IsAdmin = userCheck.IsAdmin,
+                LastName = userCheck.LastName,
+                UserName = userCheck.UserName
+            };
+
+            var updateCheck = _usersRepository.Update(userWithPoints);
+            if (updateCheck == null)
+            {
+                return new PaymentResponse
+                {
+                    Message = Messages.TICKET_UPDATE_ERROR,
+                    IsSuccess = false
+                };
             }
 
             return new PaymentResponse

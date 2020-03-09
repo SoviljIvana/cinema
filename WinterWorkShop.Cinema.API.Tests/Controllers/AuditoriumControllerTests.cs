@@ -41,6 +41,12 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 numberOfSeats = 1,
                 seatRows = 1
             };
+            _createAuditoriumResultModel = new CreateAuditoriumResultModel()
+            {
+                Auditorium = _auditoriumDomainModel,
+                ErrorMessage = null,
+                IsSuccessful = true
+            };
             _listOfAuditoriumDomainModels = new List<AuditoriumDomainModel>();
             _listOfAuditoriumDomainModels.Add(_auditoriumDomainModel);
             _mockAuditoriumService = new Mock<IAuditoriumService>();
@@ -126,9 +132,9 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             DbUpdateException dbUpdateException = new DbUpdateException("Error.", exception);
             CreateAuditoriumModel createAuditoriumModel = _createAuditoriumModel;
             _mockAuditoriumService = new Mock<IAuditoriumService>();
-            _mockAuditoriumService.Setup(x=>x.CreateAuditorium(It.IsAny<AuditoriumDomainModel>(), It.IsAny<int>(), It.IsAny<int>())).Throws(dbUpdateException);
+            _mockAuditoriumService.Setup(x => x.CreateAuditorium(It.IsAny<AuditoriumDomainModel>(), It.IsAny<int>(), It.IsAny<int>())).Throws(dbUpdateException);
             AuditoriumsController auditoriumsController = new AuditoriumsController(_mockAuditoriumService.Object);
-            
+
             //Act
             var resultAction = auditoriumsController.PostAsync(createAuditoriumModel).ConfigureAwait(false).GetAwaiter()
                 .GetResult().Result;
@@ -167,9 +173,62 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             var errorResult = (ErrorResponseModel)badObjectResult;
             //Assert
             Assert.IsNotNull(resultResponse);
+            Assert.IsNotNull(errorResult.ErrorMessage);
             Assert.IsInstanceOfType(resultAction, typeof(BadRequestObjectResult));
             Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
         }
+        [TestMethod]
+        public void AuditoriumController_PostAsync_Returns_Created_createAuditoriumResultModel()
+        {
+            //Arrange
+            int expectedStatusCode = 201;
+            CreateAuditoriumResultModel createAuditoriumResultModel = _createAuditoriumResultModel;
+            Task<CreateAuditoriumResultModel> responseTask = Task.FromResult(createAuditoriumResultModel);
+            CreateAuditoriumModel createAuditoriumModel = _createAuditoriumModel;
+            _mockAuditoriumService = new Mock<IAuditoriumService>();
+            _mockAuditoriumService.Setup(x => x.CreateAuditorium(It.IsAny<AuditoriumDomainModel>(), It.IsAny<int>(), It.IsAny<int>())).Returns(responseTask);
+            AuditoriumsController auditoriumsController = new AuditoriumsController(_mockAuditoriumService.Object);
+
+            //Act
+            var resultAction = auditoriumsController.PostAsync(createAuditoriumModel).ConfigureAwait(false).GetAwaiter()
+                .GetResult().Result;
+            var createdResult = ((CreatedResult)resultAction).Value;
+            var resultCreateAuditoriumResultModel = (CreateAuditoriumResultModel)createdResult;
+            //Assert
+            Assert.IsNotNull(resultCreateAuditoriumResultModel);
+            Assert.IsInstanceOfType(resultAction, typeof(CreatedResult));
+            Assert.AreEqual(expectedStatusCode, ((CreatedResult)resultAction).StatusCode);
+            Assert.IsNull(resultCreateAuditoriumResultModel.ErrorMessage);
+            Assert.IsTrue(resultCreateAuditoriumResultModel.IsSuccessful);
+            Assert.AreEqual(createAuditoriumResultModel.Auditorium.Id, resultCreateAuditoriumResultModel.Auditorium.Id);
+        }
+        [TestMethod]
+        public void AuditoriumController_GetAsync_ReturnOkObjectResult()
+        {
+            //Arrange
+            int expectedStatusCode = 200;
+            
+            AuditoriumDomainModel auditoriumDomainModel = _auditoriumDomainModel;
+            Task<AuditoriumDomainModel> responseTask = Task.FromResult(auditoriumDomainModel);
+            _mockAuditoriumService = new Mock<IAuditoriumService>();
+            _mockAuditoriumService.Setup(x => x.GetAuditoriumByIdAsync(It.IsAny<int>())).Returns(responseTask);
+            AuditoriumsController auditoriumsController = new AuditoriumsController(_mockAuditoriumService.Object);
+            //Act
+            var resultAction = auditoriumsController.GetAsync(It.IsAny<int>()).ConfigureAwait(false).GetAwaiter()
+                .GetResult().Result;
+            var result = ((OkObjectResult)resultAction).Value;
+            var returnModel = (AuditoriumDomainModel)result;
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)resultAction).StatusCode);
+            Assert.AreEqual(auditoriumDomainModel.Id, returnModel.Id);
+
+        }
+
+
+
+
 
 
     }
