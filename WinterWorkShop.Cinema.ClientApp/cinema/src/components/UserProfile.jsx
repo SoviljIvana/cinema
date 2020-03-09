@@ -2,13 +2,9 @@ import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../appSettings';
 import { Table } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import Switch from "react-switch";
-import ReactStars from 'react-stars';
-import { Navbar, Nav, Form, FormControl, Button} from 'react-bootstrap';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import jwt_decode from 'jwt-decode';
+import Spinner from '../components/Spinner'
 
 var decoded = jwt_decode(localStorage.getItem('jwt'));
 console.log(decoded);
@@ -21,13 +17,11 @@ class UserProfile extends Component {
     this.state = {
         users:[],
         tickets:[],
-        isLoading: true,
         submitted: false,
         userNameJWT : '',
+        isLoading: true,
     };
 }
-
-
 
 componentDidMount() {
     this.getUsers();
@@ -81,10 +75,16 @@ fillTableWithDaata(){
 
 
     render() {
-        
+      const { isLoading } = this.state;
+      const rowsData = this.fillTableWithDaata();
       const users = this.state.users
       
-      const rowsData = this.fillTableWithDaata();
+      const table = (<Table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+      <tbody>
+          {rowsData}
+      </tbody>
+  </Table>);
+          const showTable = isLoading ? <Spinner/> : table;
         return (
         <Container>
         <Row className="justify-content-center">
@@ -98,7 +98,7 @@ fillTableWithDaata(){
                 <Card.Text>
                 
                 <h4>Tickets:</h4>
-                      {rowsData}
+                      {showTable}
                 <hr/>
                 </Card.Text>
                 <Row className="justify-content-center font-weight-bold">

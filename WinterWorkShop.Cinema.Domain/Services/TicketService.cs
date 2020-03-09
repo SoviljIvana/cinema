@@ -123,10 +123,23 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 };
             }
 
+            var newListOfTickets = new List<Ticket>();
+
             foreach (var ticket in tickets)
             {
-                ticket.Paid = true;
-                var updatedTicket = _ticketRepository.Update(ticket);
+                newListOfTickets.Add(new Ticket()
+                {
+                    Id = ticket.Id,
+                    Paid = true,
+                    ProjectionId = ticket.ProjectionId,
+                    SeatId = ticket.SeatId,
+                    UserId = ticket.UserId
+                });
+            }
+
+            foreach (var ticketForUpdate in newListOfTickets)
+            {
+                var updatedTicket = _ticketRepository.Update(ticketForUpdate);
                 if (updatedTicket == null)
                 {
                     return new PaymentResponse
@@ -156,6 +169,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     IsSuccess = false
                 };
             }
+            _ticketRepository.Save();
 
             return new PaymentResponse
             {

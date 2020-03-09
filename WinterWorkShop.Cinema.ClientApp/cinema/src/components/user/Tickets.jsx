@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+import { Container, Row, Col, Card, Button, Spinner, Table} from 'react-bootstrap';
 import jwt_decode from 'jwt-decode';
 import { serviceConfig } from '../../appSettings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,7 +26,6 @@ class Tickets extends Component {
     };
     this.removeTicket = this.removeTicket.bind(this);
     this.payment = this.payment.bind(this);
-
   }
 
   componentDidMount() {
@@ -81,7 +81,7 @@ class Tickets extends Component {
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
-          
+
         }
         console.log(response);
 
@@ -90,11 +90,12 @@ class Tickets extends Component {
       .then(response => {
         if (response) {
           this.setState({
-          response2: response.isSuccess
+            response2: response.isSuccess
           });
           console.log(response);
           console.log("response2");
           console.log(this.state.response2);
+          setTimeout(1500);
           this.payValue();
         }
       })
@@ -104,12 +105,11 @@ class Tickets extends Component {
   }
 
   payValue() {
-    const {  response2 } = this.state;
-
+    const { response2 } = this.state;
     const data = {
-        UserName: userNameFromJWT,
-        PaymentSuccess : response2
- 
+      UserName: userNameFromJWT,
+      PaymentSuccess: response2
+
     };
 
     const requestOptions = {
@@ -119,44 +119,56 @@ class Tickets extends Component {
         'Authorization': 'Bearer ' + localStorage.getItem('jwt')
       },
       body: JSON.stringify(data)
-
     };
     fetch(`${serviceConfig.baseURL}/api/tickets/payValue`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
-          
         }
         return response.json();
       })
+      .then(result => {
+        NotificationManager.success('Successfuly payed!');
+        window.open('../../UserProfile')
+      })
       .catch(response => {
+     
         NotificationManager.error(response.message || response.statusText);
       });
+      setTimeout(3000);
+      this.props.push('/userProfile');
+
   }
-  
+
   fillTableWithDaata() {
     return this.state.tickets.map(ticket => {
       return <div key={ticket.id}>
-               <ul className="text-center cursor-pointer">
+        <ul className="text-center cursor-pointer">
           <li><b>Cinema: </b>{ticket.cinemaName}, <b>auditorium: </b> {ticket.auditoriumName}, <b>movie:</b> {ticket.movieName} <br></br> <b>seat row: </b>{ticket.seatRow} <b>seat number: </b>{ticket.seatNumber} <br></br> <b>Time: </b>{ticket.projectionTime}
             <td width="5%" className="text-center cursor-pointer" onClick={this.removeTicket(ticket.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash} /></td>
-                     </li>
+          </li>
         </ul>
       </div>
     })
   }
 
   render() {
+    const { isLoading } = this.state;
     const rowsData = this.fillTableWithDaata();
+    const table = (<Table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+    <tbody>
+        {rowsData}
+    </tbody>
+</Table>);
+        const showTable = isLoading ? <Spinner/> : table;
     return (
       <Container>
         <Row className="justify-content-center">
           <Col>
             <h4>Unpaid tickets:</h4>
-            {rowsData}
-            <hr />
+            {showTable}
           </Col>
-          <Col><Button onClick={this.payment} >Pay</Button></Col>
+        <Col><Button onClick={this.payment} >Pay </Button></Col>
         </Row>
       </Container>
     );

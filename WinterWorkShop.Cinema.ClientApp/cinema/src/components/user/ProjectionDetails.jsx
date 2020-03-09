@@ -1,4 +1,4 @@
-import React, { Component} from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
@@ -23,6 +23,7 @@ class ProjectionDetails extends Component {
             listOfSeats: [],
             projectionId: '',
             submitted: false,
+            projections: []
         };
         this.handleClick = this.handleClick.bind(this);
         this.addTickets = this.addTickets.bind(this);
@@ -124,15 +125,16 @@ class ProjectionDetails extends Component {
                         })
                     }
                 }
-                console.log(this.state.listOfSeats);
+
             }
         }
     }
 
     renderRowsInProjections(seatsInRow) {
-        return seatsInRow.map((seat) => { return <ToggleButtonGroup type="checkbox"> <ToggleButton type="button" disabled={seat.reserved === true ? true : false} className={this.state.button ? "buttonTrue" : "buttonFalse"} onClick={() => this.handleClick(seat)}>{seat.row},{seat.number}  </ToggleButton></ToggleButtonGroup> })
+        return seatsInRow.map((seat) => {
+            return <ToggleButtonGroup type="checkbox"> <ToggleButton type="button" disabled={seat.reserved === true ? true : false} className={this.state.button ? "buttonTrue" : "buttonFalse"} onClick={() => this.handleClick(seat)}>{seat.row},{seat.number}</ToggleButton></ToggleButtonGroup>
+        })
     }
-
 
     fillTableWithDaata() {
         return this.state.seats.map(seat => {
@@ -142,22 +144,17 @@ class ProjectionDetails extends Component {
 
     render() {
         const rowsData = this.fillTableWithDaata();
-
+        console.log();
         return (
             <Container>
                 <Row className="justify-content-center">
                     <br></br>
                     {rowsData}
                     <br></br>
-                    <hr />
                 </Row>
                 <Link className="text-decoration-none" to='/tickets'>  <Button className="justify-content-center" onClick={this.addTickets} > Create ticket </Button></Link>
-                <Card>
-
-                </Card>
             </Container>
-
         );
     }
 }
-export default ProjectionDetails;           
+export default ProjectionDetails;
