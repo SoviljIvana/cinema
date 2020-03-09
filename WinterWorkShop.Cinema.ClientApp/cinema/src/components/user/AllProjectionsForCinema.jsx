@@ -51,6 +51,10 @@ class AllProjectionsForCinema extends Component {
     this.renderProjectionButtons = this.renderProjectionButtons.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleTopTen = this.handleTopTen.bind(this);
+    this.handleShowAll = this.handleShowAll.bind(this);
+
+
     //this.fillTableWithDaata = this.fillTableWithDaata.bind(this);
   }
 
@@ -70,6 +74,17 @@ handleSubmit(e){
         this.setState({ submitted: false });
     }
 }
+handleTopTen(e){
+  e.preventDefault(); 
+  this.setState({submitted: true});
+  this.getTopTenMovies();
+  }
+
+  handleShowAll(e){
+    e.preventDefault(); 
+    this.setState({submitted: true});
+    this.getMovies();
+    }
 
   componentDidMount() {
     this.getMovies();
@@ -138,6 +153,40 @@ handleSubmit(e){
 
   }
  
+  getTopTenMovies() {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+    };
+    this.setState({ isLoading: true });
+    fetch(`${serviceConfig.baseURL}/api/Movies/top`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({
+            movies: data,
+            isLoading: false
+          });
+        }
+
+      })
+      .catch(response => {
+        this.setState({ isLoading: false });
+        NotificationManager.error(response.message || response.statusText);
+        this.setState({ submitted: false });
+      });
+
+  }
+
+
   seatsForProjection(id) {
     this.props.history.push(`projectionDetails/allForProjection/`+ `${id}`);
   }
@@ -221,6 +270,9 @@ handleSubmit(e){
       </Fade>
     </div>
     <div>
+                <button onClick = {this.handleShowAll}>Show all</button> 
+                <button onClick = {this.handleTopTen}>Show Top 10</button> 
+                <div>
                 <label for = 'searchData'>Search for a movie by tags OR movie title:</label>
                 <input
                     id = 'searchData'
@@ -229,7 +281,8 @@ handleSubmit(e){
                     placeholder = "Insert search data"
                     onChange = {this.handleChange}
                     />
-                <button onClick = {this.handleSubmit}>Search</button> 
+                <button onClick = {this.handleSubmit}>Search</button>
+                </div>
       </div>
           <br></br>
          {showTable}

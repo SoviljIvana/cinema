@@ -140,7 +140,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         Year = item.Year,
                         Rating = item.Rating ?? 0,
                         listOfProjections = new List<ProjectionDomainModel>()
-                };
+                    };
                     var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
 
                     foreach (var projection in projectionsForThisMovie)
@@ -510,8 +510,21 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     Id = item.Id,
                     Rating = item.Rating ?? 0,
                     Title = item.Title,
-                    Year = item.Year
+                    Year = item.Year,
+                    listOfProjections = new List<ProjectionDomainModel>()
                 };
+                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+
+                foreach (var projection in projectionsForThisMovie)
+                {
+                    model.listOfProjections.Add(new ProjectionDomainModel()
+                    {
+                        Id = projection.Id,
+                        ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                        AuditoriumName = projection.Auditorium.Name
+                    });
+
+                }
                 result.Add(model);
 
             }
