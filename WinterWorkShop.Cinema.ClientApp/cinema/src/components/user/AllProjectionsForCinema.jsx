@@ -14,6 +14,7 @@ import Image1 from './movie1.png';
 import Image2 from './movie2.jpg';
 import Image3 from './movie3.png';
 import './App.css';
+import { Link } from 'react-router-dom';
 
 const fadeImages = [
   Image1,
@@ -53,7 +54,6 @@ class AllProjectionsForCinema extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTopTen = this.handleTopTen.bind(this);
     this.handleShowAll = this.handleShowAll.bind(this);
-
 
     //this.fillTableWithDaata = this.fillTableWithDaata.bind(this);
   }
@@ -186,7 +186,6 @@ handleTopTen(e){
 
   }
 
-
   seatsForProjection(id) {
     this.props.history.push(`projectionDetails/allForProjection/`+ `${id}`);
   }
@@ -282,6 +281,8 @@ handleTopTen(e){
                     onChange = {this.handleChange}
                     />
                 <button onClick = {this.handleSubmit}>Search</button>
+                <Link className="text-decoration-none" to='/ProjectionsFilterForCinema'><button >Filter projections</button></Link>
+                
                 </div>
       </div>
           <br></br>
