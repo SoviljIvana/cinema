@@ -40,9 +40,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             if (auditoriumDomainModels == null)
             {
-                auditoriumDomainModels = new List<AuditoriumDomainModel>();
+                return NotFound(Messages.AUDITORIUM_NOT_FOUND);
             }
-
             return Ok(auditoriumDomainModels);
         }
 

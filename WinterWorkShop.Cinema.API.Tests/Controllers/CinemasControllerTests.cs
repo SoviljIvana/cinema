@@ -15,7 +15,7 @@ using WinterWorkShop.Cinema.Domain.Models;
 namespace WinterWorkShop.Cinema.Tests.Controllers
 {
     [TestClass]
-    public class CinemasControllerTest
+    public class CinemasControllerTests
     {
         public CinemaDomainModel _cinemaDomainModel; 
         private Mock<ICinemaService> _cinemaService;
@@ -61,7 +61,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedStatusCode, ((OkObjectResult)result).StatusCode);
         }
         [TestMethod]
-        public void GetAsync_Return_NewList() 
+        public void GetAsync_Return_NotFoundObject() 
         {
             IEnumerable<CinemaDomainModel> cinemaDomainModels = null;
             Task<IEnumerable<CinemaDomainModel>> responseTask = Task.FromResult(cinemaDomainModels);
