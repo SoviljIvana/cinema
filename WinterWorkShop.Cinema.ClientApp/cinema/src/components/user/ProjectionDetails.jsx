@@ -91,8 +91,6 @@ class ProjectionDetails extends Component {
                     return Promise.reject(response);
                 }
                 return response.json();
-                var a = response.json();
-                console.log(response);
             })
             .catch(response => {
                 NotificationManager.error(response.message || response.statusText);
