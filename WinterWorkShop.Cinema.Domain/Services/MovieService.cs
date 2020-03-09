@@ -90,7 +90,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
                             {
                                 foreach (var movie in movieTitles)
                                 {
-                                    //var movie = allMovies.SingleOrDefault(g => g.Id.Equals(movieTag.MovieId));
                                     listOfFilmByTitle.Add(movie);
                                 }
                             }
@@ -120,65 +119,16 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         {
                             return null;
                         }
-                        //var movies = _moviesRepository.SearchMoviesByTitle(movieTitle);
                     }
                 }
             }
-            //var n = listOfFilms.Count();
 
             if (listOfFilms.Count() == 0 && listOfFilmByTitle.Count == 0)
             {
                 return null;
             }
 
-            //if (listOfFilms.Count() == 0)
-            //{
-            //    foreach (var movieTitle in listOfString)
-            //    {
-            //        List<Movie> movieTitles;
-
-            //        movieTitles = allMovies.Where(y => y.Title.Contains(movieTitle)).ToList();
-            //        if (movieTitles.Count != 0)
-            //        {
-            //            if (listOfFilmByTitle.Count == 0)
-            //            {
-            //                foreach (var movie in movieTitles)
-            //                {
-            //                    //var movie = allMovies.SingleOrDefault(g => g.Id.Equals(movieTag.MovieId));
-            //                    listOfFilmByTitle.Add(movie);
-            //                }
-            //            }
-            //            else
-            //            {
-            //                var listOfFilmsForCheck = new List<Movie>();
-            //                listOfFilmsForCheck = listOfFilmByTitle;
-
-            //                for (int j = 0; j < listOfFilmsForCheck.Count; j++)
-            //                {
-            //                    int numberOfNotMatching = 0;
-            //                    for (int i = 0; i < movieTitles.Count; i++)
-            //                    {
-            //                        if (!movieTitles[i].Id.Equals(listOfFilmsForCheck[j].Id))
-            //                        {
-            //                            numberOfNotMatching = numberOfNotMatching + 1;
-            //                        }
-            //                        if (numberOfNotMatching == movieTitles.Count)
-            //                        {
-            //                            listOfFilmByTitle.Remove(listOfFilmsForCheck[j]);
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            return null;
-            //        }
-            //        //var movies = _moviesRepository.SearchMoviesByTitle(movieTitle);
-            //    }
-            //}
-
-            if (listOfFilmByTitle!= null && listOfFilmByTitle.Count>0)
+            if (listOfFilmByTitle != null && listOfFilmByTitle.Count > 0)
             {
                 foreach (var item in listOfFilmByTitle)
                 {
@@ -188,8 +138,21 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         Current = item.Current,
                         Id = item.Id,
                         Year = item.Year,
-                        Rating = item.Rating ?? 0
-                    };
+                        Rating = item.Rating ?? 0,
+                        listOfProjections = new List<ProjectionDomainModel>()
+                };
+                    var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+
+                    foreach (var projection in projectionsForThisMovie)
+                    {
+                        model.listOfProjections.Add(new ProjectionDomainModel()
+                        {
+                            Id = projection.Id,
+                            ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                            AuditoriumName = projection.Auditorium.Name
+                        });
+
+                    }
                     result.Add(model);
                 }
             }
@@ -202,8 +165,22 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     Current = item.Current,
                     Id = item.Id,
                     Year = item.Year,
-                    Rating = item.Rating ?? 0
+                    Rating = item.Rating ?? 0,
+                    listOfProjections = new List<ProjectionDomainModel>()
+
                 };
+                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+
+                foreach (var projection in projectionsForThisMovie)
+                {
+                    model.listOfProjections.Add(new ProjectionDomainModel()
+                    {
+                        Id = projection.Id,
+                        ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                        AuditoriumName = projection.Auditorium.Name
+                    });
+
+                }
                 result.Add(model);
             }
             return result;
@@ -245,7 +222,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 _movieTagsRepository.Insert(movieTag);
             }
 
-            if (movieCreateTagDomainModel.tagsForMovieToAdd!= null && movieCreateTagDomainModel.tagsForMovieToAdd.Count>0)
+            if (movieCreateTagDomainModel.tagsForMovieToAdd != null && movieCreateTagDomainModel.tagsForMovieToAdd.Count > 0)
             {
                 foreach (var item in movieCreateTagDomainModel.tagsForMovieToAdd)
                 {
@@ -507,7 +484,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     if (hasOskarListAnswer.Contains(true))
                     {
                         var firstElement = listaMovie[i];
-                        var secondElement = listaMovie[i-1];
+                        var secondElement = listaMovie[i - 1];
                         resultOrder.Remove(secondElement);
                         resultOrder.Add(firstElement);
                         resultOrder.Add(secondElement);
@@ -567,7 +544,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
                 foreach (var projection in projectionsForThisMovie)
                 {
-                    model.listOfProjections.Add(new ProjectionDomainModel() 
+                    model.listOfProjections.Add(new ProjectionDomainModel()
                     {
                         Id = projection.Id,
                         ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
