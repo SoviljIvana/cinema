@@ -48,17 +48,42 @@ class ShowAllProjections extends Component {
     }
 
     removeProjection(id) {
-        // to be implemented
-    }
+      const requestOptions = {
+          method: 'DELETE',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+          }
+      };
+    
+      fetch(`${serviceConfig.baseURL}/api/projections/${id}`, requestOptions)
+          .then(response => {
+              if (!response.ok) {
+                  return Promise.reject(response);
+              }
+              return response.statusText;
+          })
+          .then(result => {
+              NotificationManager.success('Successfuly removed projection with id:', id);
+              const newState = this.state.projections.filter(projection => {
+                  return projection.id !== id;
+              })
+              this.setState({ projections: newState });
+          })
+          .catch(response => {
+              NotificationManager.error("Unable to delete projection.");
+              this.setState({ submitted: false });
+          });
+  }
 
     fillTableWithDaata() {
         return this.state.projections.map(projection => {
             return <tr key={projection.id}>
               
-                        <td width="18%">{projection.movieTitle}</td>
-                        <td width="18%">{projection.projectionTime}</td>
-                        <td width="5%" className="text-center cursor-pointer" onClick={() => this.editProjection(projection.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
-                        <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeProjection(projection.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
+                        <td width="30%">{projection.movieTitle}</td>
+                        <td width = '30%'>{projection.auditoriumName}</td>
+                        <td width="30%">{projection.projectionTime}</td>
+                        <td width="10%" className="text-center cursor-pointer" onClick={() => this.removeProjection(projection.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
                     </tr>
         })
     }
