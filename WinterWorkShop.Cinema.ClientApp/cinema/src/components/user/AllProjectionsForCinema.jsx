@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Container, Col, Card, Button, ListGroupItem ,CardBody} from 'react-bootstrap';
+import { Container, Col, Card, Button,ButtonToolbar, ListGroupItem, CardBody, CardDeck } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Row, Table } from 'react-bootstrap';
@@ -10,14 +10,12 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { Fade } from 'react-slideshow-image';
-import Image1 from './movie1.png';
 import Image2 from './movie2.jpg';
 import Image3 from './movie3.png';
 import './App.css';
 import { Link } from 'react-router-dom';
 
 const fadeImages = [
-  Image1,
   Image2,
   Image3,
 ];
@@ -45,9 +43,9 @@ class AllProjectionsForCinema extends Component {
       auditoriumId: '',
       auditoriumName: '',
       searchData: ''
-    
+
     };
-//    this.details = this.details.bind(this);
+    //    this.details = this.details.bind(this);
     this.seatsForProjection = this.seatsForProjection.bind(this);
     this.renderProjectionButtons = this.renderProjectionButtons.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -61,30 +59,30 @@ class AllProjectionsForCinema extends Component {
   handleChange(e) {
     const { id, value } = e.target;
     this.setState({ [id]: value });
-}
-
-handleSubmit(e){
-    e.preventDefault(); 
-    this.setState({submitted: true});
-    const {searchData} = this.state;
-    if(searchData){
-        this.getSearch(searchData);
-    } else {
-        NotificationManager.error('Please fill in data');
-        this.setState({ submitted: false });
-    }
-}
-handleTopTen(e){
-  e.preventDefault(); 
-  this.setState({submitted: true});
-  this.getTopTenMovies();
   }
 
-  handleShowAll(e){
-    e.preventDefault(); 
-    this.setState({submitted: true});
-    this.getMovies();
+  handleSubmit(e) {
+    e.preventDefault();
+    this.setState({ submitted: true });
+    const { searchData } = this.state;
+    if (searchData) {
+      this.getSearch(searchData);
+    } else {
+      NotificationManager.error('Please fill in data');
+      this.setState({ submitted: false });
     }
+  }
+  handleTopTen(e) {
+    e.preventDefault();
+    this.setState({ submitted: true });
+    this.getTopTenMovies();
+  }
+
+  handleShowAll(e) {
+    e.preventDefault();
+    this.setState({ submitted: true });
+    this.getMovies();
+  }
 
   componentDidMount() {
     this.getMovies();
@@ -93,32 +91,32 @@ handleTopTen(e){
 
   getSearch(searchData) {
     const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-        }
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
     };
 
     this.setState({ isLoading: true });
     fetch(`${serviceConfig.baseURL}/api/Movies/search/${searchData}`, requestOptions)
-        .then(response => {
-            if (!response.ok) {
-                return Promise.reject(response);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data) {
-                this.setState({ movies: data, isLoading: false });
-            }
-        })
-        .catch(response => {
-            this.setState({ isLoading: false });
-            NotificationManager.error("No results, please try again. ");
-            this.setState({ submitted: false });
-        });
-}
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({ movies: data, isLoading: false });
+        }
+      })
+      .catch(response => {
+        this.setState({ isLoading: false });
+        NotificationManager.error("No results, please try again. ");
+        this.setState({ submitted: false });
+      });
+  }
 
   getMovies() {
     const requestOptions = {
@@ -152,7 +150,7 @@ handleTopTen(e){
       });
 
   }
- 
+
   getTopTenMovies() {
     const requestOptions = {
       method: 'GET',
@@ -187,35 +185,31 @@ handleTopTen(e){
   }
 
   seatsForProjection(id) {
-    this.props.history.push(`projectionDetails/allForProjection/`+ `${id}`);
+    this.props.history.push(`projectionDetails/allForProjection/` + `${id}`);
   }
 
   renderProjectionButtons(listOfProjections) {
 
     return listOfProjections.map((list) => {
-      return <ul key={list.id}>
-        <br></br>
-        <Button onClick={() => this.seatsForProjection(list.id)}>{list.projectionTimeString}</Button>
-        <br />
-      </ul>
+      return <ListGroup.Item key={list.id}><Button variant="dark" onClick={() => this.seatsForProjection(list.id)}>{list.projectionTimeString}</Button></ListGroup.Item>
     })
   }
-  
+
   fillTableWithDaata() {
 
     return this.state.movies.map(movie => {
-      return <ul key={movie.id}>
+      return <div key={movie.id} >
         <br></br>
-        <Card border="danger" bg="dark"  style={{ width: '80rem' }} key={movie.id}>
-          <Card.Header  ><Button variant="link" className="text-center cursor-pointer" onClick={() => this.details(movie.id)}>{movie.title}</Button></Card.Header>
-          <Card.Body className="list-group-flush">
-            <div text="white">{movie.year}</div>
-            <div bg="dark" text="white" >{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'} />}</div>
-            <div >{this.renderProjectionButtons(movie.listOfProjections)} </div>
-          </Card.Body>
-        </Card>
+        <div class="movie" style={{ width: '77rem' }} key={movie.id}>
+          <Card.Header class="sub-section-title" as="h5">{movie.title}</Card.Header>
+          <ListGroup class="movie-details" variant="flush">
+          <ListGroup.Item > Year: {movie.year}</ListGroup.Item>
+          <ListGroup.Item > Rating:<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'black'} color2={'#ffd700'} /></ListGroup.Item >
+          <ListGroup.Item > Projections:{this.renderProjectionButtons(movie.listOfProjections)}</ListGroup.Item>
+          </ListGroup>
+        </div>
         <br />
-      </ul>
+      </div>
     })
   }
 
@@ -248,48 +242,43 @@ handleTopTen(e){
     </table>);
     const showTable = isLoading ? <Spinner></Spinner> : table;
     return (
-    
-        <Row className="no-gutters pr-5 pl-5">
-           <div className="slide-container">
-      <Fade {...fadeProperties}>
-        <div className="each-fade">
-            <img src={fadeImages[0]} />
 
-        </div>
-        <div className="each-fade">
-    
-            <img src={fadeImages[1]} />
-   
-        </div>
-        <div className="each-fade">
-        
-            <img src={fadeImages[2]} />
-      
-        </div>
-      </Fade>
-    </div>
+      <Row className="no-gutters pr-5 pl-5">
+        <p className="slide-container">
+          <Fade {...fadeProperties}>
+            <div className="each-fade">
+              <img src={fadeImages[0]} />
+            </div>
+            <div className="each-fade">
+              <img src={fadeImages[1]} />
+            </div>
+           
+          </Fade>
+        </p>
+        <p>
+          <Button onClick={this.handleShowAll}>Show all</Button>
+        </p>
+        <p>
+          <button onClick={this.handleTopTen}>Show Top 10</button>
+        </p>
+          <p>
+            <label for='searchData'>Search for a movie by tags OR movie title:</label>
+            <input
+              id='searchData'
+              type='text'
+              value={searchData}
+              placeholder="Insert search data"
+              onChange={this.handleChange}
+            />
+            <Button onClick={this.handleSubmit}>Search</Button>
+            <Link className="text-decoration-none" to='/ProjectionsFilterForCinema'><Button >Filter projections</Button></Link>
+            <br></br>
+             </p>
+       
     <div>
-                <button onClick = {this.handleShowAll}>Show all</button> 
-                <button onClick = {this.handleTopTen}>Show Top 10</button> 
-                <div>
-                <label for = 'searchData'>Search for a movie by tags OR movie title:</label>
-                <input
-                    id = 'searchData'
-                    type = 'text'
-                    value = {searchData}
-                    placeholder = "Insert search data"
-                    onChange = {this.handleChange}
-                    />
-                <button onClick = {this.handleSubmit}>Search</button>
-                <Link className="text-decoration-none" to='/ProjectionsFilterForCinema'><button >Filter projections</button></Link>
-                
-                </div>
-      </div>
-          <br></br>
-         {showTable}
-       </Row>
+          {showTable}</div>
+      </Row>
     );
   }
 }
-
 export default AllProjectionsForCinema;
