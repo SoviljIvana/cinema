@@ -23,6 +23,7 @@ class ProjectionDetails extends Component {
             listOfSeats: [],
             projectionId: '',
             submitted: false,
+            projections: []
         };
         this.handleClick = this.handleClick.bind(this);
         this.addTickets = this.addTickets.bind(this);
@@ -91,8 +92,6 @@ class ProjectionDetails extends Component {
                     return Promise.reject(response);
                 }
                 return response.json();
-                var a = response.json();
-                console.log(response);
             })
             .catch(response => {
                 NotificationManager.error(response.message || response.statusText);
@@ -172,10 +171,10 @@ class ProjectionDetails extends Component {
 
     renderRowsInProjections(seatsInRow) {
         return seatsInRow.map((seat) => {
+
             return <ToggleButtonGroup type="checkbox"> <ToggleButton type="button"
                 disabled={seat.reserved === true ? true : false} className={this.state.button ? "buttonTrue" : "buttonFalse"}
-                onClick={() => this.handleClick(seat)}>{seat.row},{seat.number}  </ToggleButton></ToggleButtonGroup>
-        })
+                onClick={() => this.handleClick(seat)}>{seat.row},{seat.number}  </ToggleButton></ToggleButtonGroup>        })
     }
 
     fillTableWithDaata() {
@@ -186,20 +185,18 @@ class ProjectionDetails extends Component {
 
     render() {
         const rowsData = this.fillTableWithDaata();
-
+        console.log();
         return (
             <Container>
                 <Row className="justify-content-center">
                     <br></br>
                     {rowsData}
                     <br></br>
-                    <hr />
                 </Row>
                 <Link className="text-decoration-none" to='/tickets'>  <Button className="justify-content-center" onClick={this.addTickets} > Create ticket </Button></Link>
 
             </Container>
-
         );
     }
 }
-export default ProjectionDetails;           
+export default ProjectionDetails;

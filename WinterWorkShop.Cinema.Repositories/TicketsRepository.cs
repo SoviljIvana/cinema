@@ -38,7 +38,7 @@ namespace WinterWorkShop.Cinema.Repositories
         }
         public async Task<IEnumerable<Ticket>> GetAllUnpaidForSpecificUser(string username)
         {
-            var data = await _cinemaContext.Tickets.Include(x => x.Seat.Auditorium.Cinema).Include(x => x.Projection.Movie).Include(x => x.User).Where(x=>x.User.UserName.Equals(username)).ToListAsync();
+            var data = await _cinemaContext.Tickets.Include(x => x.Seat.Auditorium.Cinema).Include(x => x.Projection.Movie).Include(x => x.User).Where(x=>x.User.UserName.Equals(username) && x.Paid.Equals(false)).ToListAsync();
             return data;
         }
         public IEnumerable<Ticket> GetAllForSpecificProjection(Guid id)

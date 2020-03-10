@@ -14,6 +14,7 @@ import Image1 from './movie1.png';
 import Image2 from './movie2.jpg';
 import Image3 from './movie3.png';
 import './App.css';
+import { Link } from 'react-router-dom';
 
 const fadeImages = [
   Image1,
@@ -43,18 +44,81 @@ class AllProjectionsForCinema extends Component {
       movieId: '',
       auditoriumId: '',
       auditoriumName: '',
+      searchData: ''
     
     };
 //    this.details = this.details.bind(this);
     this.seatsForProjection = this.seatsForProjection.bind(this);
     this.renderProjectionButtons = this.renderProjectionButtons.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleTopTen = this.handleTopTen.bind(this);
+    this.handleShowAll = this.handleShowAll.bind(this);
+
     //this.fillTableWithDaata = this.fillTableWithDaata.bind(this);
   }
+
+  handleChange(e) {
+    const { id, value } = e.target;
+    this.setState({ [id]: value });
+}
+
+handleSubmit(e){
+    e.preventDefault(); 
+    this.setState({submitted: true});
+    const {searchData} = this.state;
+    if(searchData){
+        this.getSearch(searchData);
+    } else {
+        NotificationManager.error('Please fill in data');
+        this.setState({ submitted: false });
+    }
+}
+handleTopTen(e){
+  e.preventDefault(); 
+  this.setState({submitted: true});
+  this.getTopTenMovies();
+  }
+
+  handleShowAll(e){
+    e.preventDefault(); 
+    this.setState({submitted: true});
+    this.getMovies();
+    }
 
   componentDidMount() {
     this.getMovies();
 
   }
+
+  getSearch(searchData) {
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+        }
+    };
+
+    this.setState({ isLoading: true });
+    fetch(`${serviceConfig.baseURL}/api/Movies/search/${searchData}`, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data) {
+                this.setState({ movies: data, isLoading: false });
+            }
+        })
+        .catch(response => {
+            this.setState({ isLoading: false });
+            NotificationManager.error("No results, please try again. ");
+            this.setState({ submitted: false });
+        });
+}
 
   getMovies() {
     const requestOptions = {
@@ -89,6 +153,39 @@ class AllProjectionsForCinema extends Component {
 
   }
  
+  getTopTenMovies() {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+    };
+    this.setState({ isLoading: true });
+    fetch(`${serviceConfig.baseURL}/api/Movies/top`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({
+            movies: data,
+            isLoading: false
+          });
+        }
+
+      })
+      .catch(response => {
+        this.setState({ isLoading: false });
+        NotificationManager.error(response.message || response.statusText);
+        this.setState({ submitted: false });
+      });
+
+  }
+
   seatsForProjection(id) {
     this.props.history.push(`projectionDetails/allForProjection/`+ `${id}`);
   }
@@ -103,10 +200,6 @@ class AllProjectionsForCinema extends Component {
       </ul>
     })
   }
-  
-
-   
-
   
   fillTableWithDaata() {
 
@@ -146,7 +239,7 @@ class AllProjectionsForCinema extends Component {
     return renderedSeats;
   }
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, searchData } = this.state;
     const rowsData = this.fillTableWithDaata();
     const table = (<table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
       <tbody>
@@ -175,6 +268,23 @@ class AllProjectionsForCinema extends Component {
         </div>
       </Fade>
     </div>
+    <div>
+                <button onClick = {this.handleShowAll}>Show all</button> 
+                <button onClick = {this.handleTopTen}>Show Top 10</button> 
+                <div>
+                <label for = 'searchData'>Search for a movie by tags OR movie title:</label>
+                <input
+                    id = 'searchData'
+                    type = 'text'
+                    value = {searchData}
+                    placeholder = "Insert search data"
+                    onChange = {this.handleChange}
+                    />
+                <button onClick = {this.handleSubmit}>Search</button>
+                <Link className="text-decoration-none" to='/ProjectionsFilterForCinema'><button >Filter projections</button></Link>
+                
+                </div>
+      </div>
           <br></br>
          {showTable}
        </Row>

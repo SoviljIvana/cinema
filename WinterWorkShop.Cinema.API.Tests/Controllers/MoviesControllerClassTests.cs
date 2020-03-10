@@ -259,8 +259,6 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedErrorMessage, resultErrorResponseModel);
         }
 
-        //GetCurrent
-        //case return okObjectResult
         [TestMethod]
         public void MoviesController_GetCurrent_ReturnOkObjectResult()
         {
@@ -283,7 +281,6 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedCount, resultList.Count);
             Assert.AreEqual(_movieDomainModel.Id, resultList[0].Id);
         }
-        //case return StatusCodeObjectResultNotFound
 
         [TestMethod]
         public void MoviesController_GetCurrent_ReturnStatusCodeObjectResult()
@@ -335,7 +332,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         }
 
         [TestMethod]
-        public void MoviesController_CreateNewMovieWithHisTags_Returns_BadRequeest_UnvalidModelState()
+        public void MoviesController_CreateNewMovieWithHisTags_Returns_BadRequest_InvalidModelState()
         {
             //Arrange
             string expectedMessage = "Invalid Model State";
@@ -440,7 +437,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         //UpdateMovie
 
         [TestMethod]
-        public void MoviesController_UpdateMovie_Returns_BadRequeest_UnvalidModelState()
+        public void MoviesController_UpdateMovie_Returns_BadRequeest_InvalidModelState()
         {
             //Arrange
             string expectedMessage = "Invalid Model State";

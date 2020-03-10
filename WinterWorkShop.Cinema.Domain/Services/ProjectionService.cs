@@ -191,6 +191,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
                     Projection = new ProjectionDomainFilterModel
                     {
+                        Id = item.Id,
                         AditoriumName = item.Auditorium.Name,
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
@@ -244,6 +245,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
                     Projection = new ProjectionDomainFilterModel
                     {
+                        Id = item.Id,
                         AditoriumName = item.Auditorium.Name,
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
@@ -278,6 +280,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 result.Add(new CreateProjectionFilterResultModel
                 {
+
                     IsSuccessful = true,
                     ErrorMessage = Messages.PROJECTION_SEARCH_NORESULT,
                     Projection = new ProjectionDomainFilterModel
@@ -298,6 +301,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
                     Projection = new ProjectionDomainFilterModel
                     {
+                        Id = item.Id,
                         AditoriumName = item.Auditorium.Name,
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
@@ -354,6 +358,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
                     Projection = new ProjectionDomainFilterModel
                     {
+                        Id = item.Id,
                         AditoriumName = item.Auditorium.Name,
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
@@ -410,6 +415,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
                     Projection = new ProjectionDomainFilterModel
                     {
+                        Id = item.Id,
                         AditoriumName = item.Auditorium.Name,
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,

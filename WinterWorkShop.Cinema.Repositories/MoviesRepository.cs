@@ -48,7 +48,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public async Task<IEnumerable<Movie>> GetAllWithMovieTags()
         {
-            var data = await _cinemaContext.Movies.Include(s => s.MovieTags).ToListAsync();
+            var data = await _cinemaContext.Movies.Include(s => s.MovieTags).Include(y => y.Projections).ToListAsync();
             return data;
         }
 
@@ -61,7 +61,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public async Task<IEnumerable<Movie>> GetCurrent()
         {
-            var data = await _cinemaContext.Movies.Include(x=>x.Projections)
+            var data = await _cinemaContext.Movies.Include(x => x.Projections)
                 .Where(x => x.Current).ToListAsync();
 
             return data;
@@ -97,7 +97,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public async Task<IEnumerable<Movie>> GetTopTenMovies()
         {
-            var data = await _cinemaContext.Movies.Include(x=>x.MovieTags).OrderByDescending(x => x.Rating).Take(11).ToListAsync();
+            var data = await _cinemaContext.Movies.Include(x => x.MovieTags).OrderByDescending(x => x.Rating).Take(11).ToListAsync();
 
             return data;
         }

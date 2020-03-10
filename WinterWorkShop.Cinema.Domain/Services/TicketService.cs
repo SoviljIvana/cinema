@@ -102,31 +102,44 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return resultModel;
         }
 
-        public async Task<PaymentResponse> ConfirmPayment(List<TicketDomainModel> ticketDomainModels)
+        public async Task<PaymentResponse> ConfirmPayment(string username)
         {
-            foreach (var item in ticketDomainModels)
+            var userCheck = _usersRepository.GetByUserName(username);
+            if (userCheck == null)
             {
-                var data = await _ticketRepository.GetByIdAsync(item.Id);
-
-                if (data == null)
+                return new PaymentResponse
                 {
-                    return new PaymentResponse
-                    {
-                        IsSuccess = false,
-                        Message = Messages.TICKET_NOT_FOUND
-                    };
-                }
-
-                Ticket ticket = new Ticket()
-                {
-                    Id = data.Id,
-                    Paid = true,
-                    UserId = data.UserId,
-                    ProjectionId = data.ProjectionId,
-                    SeatId = data.SeatId,
+                    IsSuccess = false,
+                    Message = Messages.USER_NOT_FOUND
                 };
+            }
+            var tickets = await _ticketRepository.GetAllUnpaidForSpecificUser(username);
+            if (tickets == null)
+            {
+                return new PaymentResponse
+                {
+                    IsSuccess = false,
+                    Message = Messages.TICKET_NOT_FOUND
+                };
+            }
 
-                var updatedTicket = _ticketRepository.Update(ticket);
+            var newListOfTickets = new List<Ticket>();
+
+            foreach (var ticket in tickets)
+            {
+                newListOfTickets.Add(new Ticket()
+                {
+                    Id = ticket.Id,
+                    Paid = true,
+                    ProjectionId = ticket.ProjectionId,
+                    SeatId = ticket.SeatId,
+                    UserId = ticket.UserId
+                });
+            }
+
+            foreach (var ticketForUpdate in newListOfTickets)
+            {
+                var updatedTicket = _ticketRepository.Update(ticketForUpdate);
                 if (updatedTicket == null)
                 {
                     return new PaymentResponse
@@ -135,44 +148,69 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         IsSuccess = false
                     };
                 }
-
-
-                var user = await _usersRepository.GetByIdAsync(data.UserId);
-
-                Data.User userWithPoints = new Data.User() 
-                {
-                    FirstName = user.FirstName,
-                    BonusPoints = user.BonusPoints + 1,
-                    Id = user.Id,
-                    IsAdmin = user.IsAdmin,
-                    LastName = user.LastName,
-                    UserName = user.UserName
-                };
-
-                var updateCheck = _usersRepository.Update(userWithPoints);
-                if (updateCheck==null)
-                {
-                    return new PaymentResponse
-                    {
-                        Message = Messages.TICKET_UPDATE_ERROR,
-                        IsSuccess = false
-                    };
-                }
-
-                _ticketRepository.Save();
-
-                PaymentResponse paymentResponse = new PaymentResponse()
-                {
-                    Message = null,
-                    IsSuccess = true
-                };
-
             }
+
+            Data.User userWithPoints = new Data.User()
+            {
+                FirstName = userCheck.FirstName,
+                BonusPoints = userCheck.BonusPoints + 1,
+                Id = userCheck.Id,
+                IsAdmin = userCheck.IsAdmin,
+                LastName = userCheck.LastName,
+                UserName = userCheck.UserName
+            };
+
+            var updateCheck = _usersRepository.Update(userWithPoints);
+            if (updateCheck == null)
+            {
+                return new PaymentResponse
+                {
+                    Message = Messages.TICKET_UPDATE_ERROR,
+                    IsSuccess = false
+                };
+            }
+            _ticketRepository.Save();
 
             return new PaymentResponse
             {
                 IsSuccess = true,
                 Message = null
+            };
+        }
+
+        public async Task<PaymentResponse> DeleteTicketsPaymentUnsuccessful(string username)
+        {
+            var userCheck = _usersRepository.GetByUserName(username);
+            if (userCheck == null)
+            {
+                return new PaymentResponse
+                {
+                    IsSuccess = false,
+                    Message = Messages.USER_NOT_FOUND
+                };
+            }
+
+            var tickets = await _ticketRepository.GetAllUnpaidForSpecificUser(username);
+            if (tickets == null)
+            {
+                return new PaymentResponse
+                {
+                    IsSuccess = false,
+                    Message = Messages.TICKET_NOT_FOUND
+                };
+            }
+
+            foreach (var ticket in tickets)
+            {
+                _ticketRepository.Delete(ticket.Id);
+            }
+
+            _ticketRepository.Save();
+
+            return new PaymentResponse
+            {
+                IsSuccess = true,
+                Message = Messages.PAYMENT_UNSUCCESSFUL
             };
         }
 
@@ -189,7 +227,6 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 _ticketRepository.Delete(item.Id);
             }
-
 
             return null; 
         }

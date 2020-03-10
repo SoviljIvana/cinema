@@ -111,37 +111,33 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         [HttpPost]
         [Route("payValue")]
-        public async Task<ActionResult<PaymentResponseModel>> ConfirmPayment(TicketPaymentConfirm ticketResultModels)
+        public async Task<ActionResult<PaymentResponse>> ConfirmPayment(TicketPaymentConfirm ticketPaymentConfirm)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            List<TicketDomainModel> listOfTicketsIds = new List<TicketDomainModel>();
-            foreach (var item in ticketResultModels.listOfTickets)
-            {
-                TicketDomainModel ticketDomainModel = new TicketDomainModel
-                {
-                    Id = item.Id
-                };
-                listOfTicketsIds.Add(ticketDomainModel);
-            }
-
             PaymentResponse result;
 
             try
             {
-                result = await _ticketService.ConfirmPayment(listOfTicketsIds);
+                if (ticketPaymentConfirm.PaymentSuccess)
+                {
+                    result = await _ticketService.ConfirmPayment(ticketPaymentConfirm.UserName);
+                }
+                else
+                {
+                    result = await _ticketService.DeleteTicketsPaymentUnsuccessful(ticketPaymentConfirm.UserName);
+                }
             }
             catch (DbUpdateException e)
             {
                 ErrorResponseModel errorResponse = new ErrorResponseModel
-                {
-                    ErrorMessage = e.InnerException.Message ?? e.Message,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
-                };
-
+                    {
+                        ErrorMessage = e.InnerException.Message ?? e.Message,
+                        StatusCode = System.Net.HttpStatusCode.BadRequest
+                    };
                 return BadRequest(errorResponse);
             }
 
@@ -153,11 +149,10 @@ namespace WinterWorkShop.Cinema.API.Controllers
                     StatusCode = System.Net.HttpStatusCode.BadRequest
                 };
 
-                return BadRequest(errorResponse);
+                return NotFound(errorResponse);
             }
 
             return Ok(result);
-
         }
 
         [Authorize(Roles = "admin")]

@@ -7,6 +7,7 @@ namespace WinterWorkShop.Cinema.API.Models
 {
     public class TicketPaymentConfirm
     {
-        public List<CreateTicketModel> listOfTickets { get; set; }
+        public string UserName { get; set; }
+        public bool PaymentSuccess { get; set; }
     }
 }
