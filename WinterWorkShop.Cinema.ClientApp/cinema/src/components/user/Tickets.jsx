@@ -65,7 +65,32 @@ class Tickets extends Component {
   }
 
   removeTicket(id) {
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+  };
 
+  fetch(`${serviceConfig.baseURL}/api/tickets/${id}`, requestOptions)
+      .then(response => {
+          if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.statusText;
+      })
+      .then(result => {
+          NotificationManager.success('Successfuly removed ticket with id:', id);
+          const newState = this.state.tickets.filter(ticket => {
+              return ticket.id !== id;
+          })
+          this.setState({ tickets: newState });
+      })
+      .catch(response => {
+          NotificationManager.error(response.message || response.statusText);
+          this.setState({ submitted: false });
+      });
   }
 
   payment() {
@@ -139,7 +164,7 @@ class Tickets extends Component {
       return <div key={ticket.id}>
                <ul className="text-center cursor-pointer">
           <li><b>Cinema: </b>{ticket.cinemaName}, <b>auditorium: </b> {ticket.auditoriumName}, <b>movie:</b> {ticket.movieName} <br></br> <b>seat row: </b>{ticket.seatRow} <b>seat number: </b>{ticket.seatNumber} <br></br> <b>Time: </b>{ticket.projectionTime}
-            <td width="5%" className="text-center cursor-pointer" onClick={this.removeTicket(ticket.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash} /></td>
+            <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeTicket(ticket.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash} /></td>
                      </li>
         </ul>
       </div>

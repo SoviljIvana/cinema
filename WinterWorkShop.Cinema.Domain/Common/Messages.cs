@@ -84,6 +84,7 @@
         public const string TICKET_NOT_FOUND = "Error occured while finding ticket, please try again.";
         public const string TICKET_UPDATE_ERROR = "Error occured while updating ticket pay property, please try again.";
         public const string MOVIE_SEARCH_SUCCESSFUL = "Search successful. ";
+        public const string TICKET_DOES_NOT_EXIST = "Ticket does not exist. ";
 
         #endregion
 

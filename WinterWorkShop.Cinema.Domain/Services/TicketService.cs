@@ -217,6 +217,32 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return null; 
         }
 
+        public async Task<CreateTicketResultModel> DeleteTicketById(Guid id)
+        {
+            var data = _ticketRepository.Delete(id);
+
+            if (data == null)
+            {
+                return null; 
+            }
+
+            _ticketRepository.Save();
+
+            CreateTicketResultModel deletedTicket = new CreateTicketResultModel()
+            {
+                ErrorMessage = null, 
+                IsSuccessful =  true, 
+                Ticket = new TicketDomainModel
+                {
+                    Id = data.Id,
+                    SeatId = data.SeatId,
+                    UserId = data.UserId,
+                    Paid = false
+                }
+            };
+            return deletedTicket; 
+        }
+
         public async Task<TicketDomainModel> DeleteTicketFromProjection(Guid id)
         {
             var ticketsForProjection = _ticketRepository.GetAllForSpecificProjection(id);
