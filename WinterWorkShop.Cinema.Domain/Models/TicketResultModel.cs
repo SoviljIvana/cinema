@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WinterWorkShop.Cinema.Domain.Models
 {
-    public class CreateTicketResultModel
+    public class TicketResultModel
     {
         public bool IsSuccessful { get; set; }
 

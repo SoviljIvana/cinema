@@ -55,7 +55,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<ActionResult<IEnumerable<CreateTicketResultModel>>> CreateTicket([FromBody]CreateTicketModel createTicketModel)
+        public async Task<ActionResult<IEnumerable<TicketResultModel>>> CreateTicket([FromBody]CreateTicketModel createTicketModel)
         {
             if (!ModelState.IsValid)
             {
@@ -71,8 +71,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
             var listOFSeats = createTicketModel.seatModels;
 
 
-            List<CreateTicketResultModel> createTicketResultModels = new List<CreateTicketResultModel>();
-            CreateTicketResultModel createTicketResultModel;
+            List<TicketResultModel> createTicketResultModels = new List<TicketResultModel>();
+            TicketResultModel createTicketResultModel;
 
             foreach (var item in listOFSeats)
             {
@@ -166,7 +166,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             if (ticketDomainModels == null)
             {
-                ticketDomainModels = new List<TicketDomainModel>();
+                NotFound(Messages.TICKET_NOT_FOUND);
             }
 
             return Ok(ticketDomainModels);
@@ -177,7 +177,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            CreateTicketResultModel deletedTicket;
+            TicketResultModel deletedTicket;
             try
             {
                 deletedTicket = await _ticketService.DeleteTicketById(id);

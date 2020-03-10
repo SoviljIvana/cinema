@@ -419,6 +419,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Accepted("movies//" + createMovieResultModel.Movie.Id, createMovieResultModel.Movie);
         }
+
+        //TODO: prebaciti u drugi kontroler!
         /// <summary>
         /// Returns all seats for a specific projection
         /// </summary>
