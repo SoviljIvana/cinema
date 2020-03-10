@@ -5,6 +5,7 @@ import { serviceConfig } from '../../appSettings';
 import { Row, Container, ToggleButton, ToggleButtonGroup, Button, Card } from 'react-bootstrap';
 import './App.css';
 import jwt_decode from 'jwt-decode';
+import $ from "jquery";
 var decoded = jwt_decode(localStorage.getItem('jwt'));
 console.log(decoded);
 var userNameFromJWT = decoded.sub;
@@ -27,6 +28,7 @@ class ProjectionDetails extends Component {
         };
         this.handleClick = this.handleClick.bind(this);
         this.addTickets = this.addTickets.bind(this);
+        // this.handleColor = this.handleColor.bind(this);
     }
 
     componentDidMount() {
@@ -102,15 +104,24 @@ class ProjectionDetails extends Component {
     }
 
     handleClick(seat) {
-
+        
         seat.counter = seat.counter + 1;
         if (!seat.reserved) {
 
-            if (seat.counter % 2 != 0) { //dupli klik handle
+           // if (seat.counter % 2 != 0) { //dupli klik handle
+                let id = seat.id
+                let element = document.getElementById(id);
+                let buttonTrue = "buttonTrue";
+                let buttonFalse = "buttonFalse";
+                //element.classList.remove(buttonTrue);
+                
+                
 
                 if (this.state.listOfSeats.length == 0) //provera da li je lista prazna, ako jeste dodaje element
                 {
                     this.state.listOfSeats.push(seat);
+                    element.classList.add(buttonFalse);
+
                 }
                 else {
                     if (seat.row == this.state.listOfSeats[0].row) // provera reda u kom se nallazi element
@@ -128,6 +139,8 @@ class ProjectionDetails extends Component {
                                 {
                                     if (seat.number + 1 == first || seat.number - 1 == first || second == seat.number + 1 || second == seat.number - 1) {
                                         this.state.listOfSeats.splice(index, 1)
+                                        //element.classList.add(buttonTrue);
+                                        element.classList.remove(buttonFalse);
                                         n = n + 1;
                                     }
                                 }
@@ -135,11 +148,12 @@ class ProjectionDetails extends Component {
                             if (n == 0) {
                                 if (first == seat.number + 1 || first == seat.number - 1 || second == seat.number + 1 || second == seat.number - 1) {
                                     this.state.listOfSeats.push(seat);
-                                    this.setState({
-                                        button: true
-                                    })
+                                    element.classList.add(buttonFalse);
+
                                 }
                                 else {
+                                    //element.classList.add(buttonTrue);
+                                    element.classList.remove(buttonFalse);
                                     return NotificationManager.error("mora biti jedan pored drugog!");
                                 }
                             }
@@ -148,33 +162,53 @@ class ProjectionDetails extends Component {
                         {
                             if (this.state.listOfSeats[0].id == seat.id) {
                                 this.state.listOfSeats.splice(0, 1)
+                                //element.classList.add(buttonTrue);
+                                element.classList.remove(buttonFalse)
                             }
-                            if (this.state.listOfSeats[0].number == seat.number + 1 || this.state.listOfSeats[0].number == seat.number - 1) {
+                           else if (this.state.listOfSeats[0].number == seat.number + 1 || this.state.listOfSeats[0].number == seat.number - 1) {
                                 this.state.listOfSeats.push(seat);
-                                this.setState({
-                                    button: true
-                                })
+                                element.classList.add(buttonFalse);
+
                             }
                             else {
+
                                 return NotificationManager.error("mora biti jedan pored drugog!");
                             }
                         }
                     }
-                    else {
+                    else{
+
+                        // this.handleColor(seat);
+
                         return NotificationManager.error("mora isti red!");
+                        
                     }
                 }
-            }
+            //}
         }
         console.log(this.state.listOfSeats);
     }
 
+    // handleColor(seat){
+        
+    //                             // let ida = 'ab348100-b076-4417-a70c-08d7c4d412ee';
+    //                             let element = document.getElementById(id);
+    //                             let newClass = "buttonTrue1";
+    //                             let primary = "btn-primary";
+                                
+    //                             element.classList.add(newClass);
+        
+    //                              console.log(element.classList);
+
+    // }
+
     renderRowsInProjections(seatsInRow) {
         return seatsInRow.map((seat) => {
 
-            return <ToggleButtonGroup type="checkbox"> <ToggleButton type="button"
-                disabled={seat.reserved === true ? true : false} className={this.state.button ? "buttonTrue" : "buttonFalse"}
-                onClick={() => this.handleClick(seat)}>{seat.row},{seat.number}  </ToggleButton></ToggleButtonGroup>        })
+            return <Button type="button" id={seat.id}
+                disabled={seat.reserved === true ? true : false} 
+                onClick={() => this.handleClick(seat)}>{seat.row},{seat.number}</Button>
+        })
     }
 
     fillTableWithDaata() {
@@ -193,7 +227,7 @@ class ProjectionDetails extends Component {
                     {rowsData}
                     <br></br>
                 </Row>
-                <Link className="text-decoration-none" to='/tickets'>  <Button className="justify-content-center" onClick={this.addTickets} > Create ticket </Button></Link>
+                <Link className="text-decoration-none" to='/tickets'>  <Button onClick={this.addTickets} > Create ticket </Button></Link>
 
             </Container>
         );
