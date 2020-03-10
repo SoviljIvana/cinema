@@ -9,13 +9,13 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
     public interface ITicketService
     {
         Task<IEnumerable<TicketDomainModel>> GetAllTickets();
-        Task<CreateTicketResultModel> CreateNewTicket(TicketDomainModel ticketDomainModel);
+        Task<TicketResultModel> CreateNewTicket(TicketDomainModel ticketDomainModel);
         Task<PaymentResponse> ConfirmPayment(string username);
         Task<TicketDomainModel> DeleteTicket(Guid id);
         Task<TicketDomainModel> DeleteTicketFromProjection(Guid id);
         Task<IEnumerable<TicketDomainModel>> GetAllTicketsForThisUser(string username);
         Task<PaymentResponse> DeleteTicketsPaymentUnsuccessful(string username);
-        Task<CreateTicketResultModel> DeleteTicketById(Guid id);
+        Task<TicketResultModel> DeleteTicketById(Guid id);
 
     }
 }

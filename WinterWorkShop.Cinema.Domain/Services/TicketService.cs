@@ -20,6 +20,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             _usersRepository = usersRepository;
         }
 
+        //nigde se ne koristi
         public async Task<IEnumerable<TicketDomainModel>> GetAllTickets()
         {
             var data = await _ticketRepository.GetAll();
@@ -54,12 +55,13 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        public async Task<CreateTicketResultModel> CreateNewTicket(TicketDomainModel ticketDomainModel)
+
+        public async Task<TicketResultModel> CreateNewTicket(TicketDomainModel ticketDomainModel)
         {
-            var userIdFind = _usersRepository.GetByUserName(ticketDomainModel.UserName);
-            if (userIdFind==null)
+            var user = _usersRepository.GetByUserName(ticketDomainModel.UserName);
+            if (user==null)
             {
-                return new CreateTicketResultModel
+                return new TicketResultModel
                 {
                     IsSuccessful = false,
                     ErrorMessage = Messages.USER_NOT_FOUND
@@ -69,7 +71,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 ProjectionId = ticketDomainModel.ProjectionId,
                 SeatId = ticketDomainModel.SeatId,
-                UserId = userIdFind.Id,
+                UserId = user.Id,
                 Paid = false
             };
 
@@ -77,7 +79,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             if (InsertedTicket == null)
             {
-                return new CreateTicketResultModel
+                return new TicketResultModel
                 {
                     IsSuccessful = false,
                     ErrorMessage = Messages.TICKET_CREATION_ERROR
@@ -86,7 +88,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             _ticketRepository.Save();
                         
-            CreateTicketResultModel resultModel = new CreateTicketResultModel
+            TicketResultModel resultModel = new TicketResultModel
             {
                 ErrorMessage = null,
                 IsSuccessful = true,
@@ -165,7 +167,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 return new PaymentResponse
                 {
-                    Message = Messages.TICKET_UPDATE_ERROR,
+                    Message = Messages.USER_UPDATE_ERROR,
                     IsSuccess = false
                 };
             }
@@ -214,6 +216,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             };
         }
 
+        //moze da bude void ako nista ne vraca
         public async Task<TicketDomainModel> DeleteTicket(Guid id) 
         {
             var ticketsForSeat = _ticketRepository.GetAllForSpecificSeat(id);
@@ -231,7 +234,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return null; 
         }
 
-        public async Task<CreateTicketResultModel> DeleteTicketById(Guid id)
+        public async Task<TicketResultModel> DeleteTicketById(Guid id)
         {
             var data = _ticketRepository.Delete(id);
 
@@ -242,7 +245,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             _ticketRepository.Save();
 
-            CreateTicketResultModel deletedTicket = new CreateTicketResultModel()
+            TicketResultModel deletedTicket = new TicketResultModel()
             {
                 ErrorMessage = null, 
                 IsSuccessful =  true, 
@@ -255,7 +258,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 }
             };
             return deletedTicket; 
-        }
+            }
 
         public async Task<TicketDomainModel> DeleteTicketFromProjection(Guid id)
         {

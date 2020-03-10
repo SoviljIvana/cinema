@@ -19,7 +19,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         {
             _seatService = seatService;
         }
-
+        //TODO: ovo se nigde ne koristi
         /// <summary>
         /// Gets all seats
         /// </summary>
