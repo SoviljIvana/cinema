@@ -437,7 +437,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         //UpdateMovie
 
         [TestMethod]
-        public void MoviesController_UpdateMovie_Returns_BadRequeest_UnvalidModelState()
+        public void MoviesController_UpdateMovie_Returns_BadRequeest_InvalidModelState()
         {
             //Arrange
             string expectedMessage = "Invalid Model State";
