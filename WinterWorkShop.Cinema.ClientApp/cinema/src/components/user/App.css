@@ -1,11 +1,11 @@
 .slide-container {
   width: 70%;
- 
   margin: auto;
   }
 
 h3 {
-  text-align: center; }
+ text-align: center;
+}
 
 .each-slide > div {
   display: flex;
@@ -43,7 +43,27 @@ h3 {
   margin: 0;
   background: #adceed;
 }
+/* .container {
+  display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: center;
+} */
 .buttonTrue {
+  /* display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none; */
+  color: #000;
+  background-color: yellow;
+  /* border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999; */
+}
+.buttonTrue1 {
   display: inline-block;
   padding: 15px 25px;
   font-size: 24px;
@@ -51,31 +71,32 @@ h3 {
   text-align: center;
   text-decoration: none;
   outline: none;
-  color: black;
-  background-color: yellow;
+  color: #000!important;
+  background-color: yellow!important;
   border: none;
   border-radius: 15px;
+  box-shadow: 0 9px #999;
 }
-.container {
-  margin-right: auto;
-  margin-left: auto;
-  padding-left: 15px;
-  padding-right: 15px;
+.buttonFalse {
+  /* display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none; */
+  color: #fff;
+  background-color: red;
+  /* border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999; */
 }
-.header-wrapper {
 
+.header-wrapper {
   position: relative;
   z-index: 1000;
       background-size: auto;
   background-size: cover;
-
-}
-::before, ::after {
-
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-
 }
 body {
   font: 16px 'Roboto', Arial, Helvetica sans-serif;
@@ -95,17 +116,4 @@ body {
   height: auto;
   z-index: 1000;
 
-}
-.buttonFalse {
-  display: inline-block;
-  padding: 15px 25px;
-  font-size: 24px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  color: black;
-  background-color: yellow;
-  border: none;
-  border-radius: 15px;
 }
