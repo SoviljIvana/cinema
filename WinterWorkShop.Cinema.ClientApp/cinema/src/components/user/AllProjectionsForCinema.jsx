@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Container, Col, Card, Button, ListGroupItem } from 'react-bootstrap';
+import { Container, Col, Card, Button, ListGroupItem ,CardBody} from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Row, Table } from 'react-bootstrap';
@@ -113,13 +113,13 @@ class AllProjectionsForCinema extends Component {
     return this.state.movies.map(movie => {
       return <ul key={movie.id}>
         <br></br>
-        <Card border="primary" style={{ width: '100rem' }} key={movie.id}>
-          <Card.Header text="white" style={{ width: '99rem' }}><Button variant="link" className="text-center cursor-pointer" onClick={() => this.details(movie.id)}>{movie.title}</Button></Card.Header>
-          <ListGroup className="list-group-flush">
-            <ListGroupItem text="white" style={{ width: '99rem' }}>{movie.year}</ListGroupItem>
-            <ListGroupItem bg="dark" text="white" style={{ width: '99rem' }}>{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'} />}</ListGroupItem>
-            <ListGroupItem >{this.renderProjectionButtons(movie.listOfProjections)} </ListGroupItem>
-          </ListGroup>
+        <Card border="danger" bg="dark"  style={{ width: '80rem' }} key={movie.id}>
+          <Card.Header  ><Button variant="link" className="text-center cursor-pointer" onClick={() => this.details(movie.id)}>{movie.title}</Button></Card.Header>
+          <Card.Body className="list-group-flush">
+            <div text="white">{movie.year}</div>
+            <div bg="dark" text="white" >{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'} />}</div>
+            <div >{this.renderProjectionButtons(movie.listOfProjections)} </div>
+          </Card.Body>
         </Card>
         <br />
       </ul>
