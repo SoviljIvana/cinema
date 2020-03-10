@@ -123,5 +123,4 @@ class ShowAllProjections extends Component {
       }
 }
 
-
 export default ShowAllProjections;
