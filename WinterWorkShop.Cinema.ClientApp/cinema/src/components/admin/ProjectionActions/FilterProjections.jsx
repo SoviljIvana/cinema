@@ -191,20 +191,42 @@ class FilterProjections extends Component {
       }
 
     removeProjection(id) {
-        // to be implemented
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
+        };
+      
+        fetch(`${serviceConfig.baseURL}/api/projections/${id}`, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response.statusText;
+            })
+            .then(result => {
+                NotificationManager.success('Successfuly removed projection with id:', id);
+                const newState = this.state.projections.filter(projection => {
+                    return projection.projection.id !== id;
+                })
+                this.setState({ projections: newState });
+            })
+            .catch(response => {
+                NotificationManager.error("Unable to delete projection.");
+                this.setState({ submitted: false });
+            });
     }
 
     fillTableWithDaata() {
         return this.state.projections.map(projection => {
             return <tr key={projection.id}>
-              
-                        <td width="22.5%">{projection.movieTitle}</td>
-                        <td width="22.5%">{projection.cinemaName}</td>
-                        <td width="22.5%">{projection.aditoriumName}</td>
-                        <td width="22.5%">{projection.projectionTime}</td>
-                        <td width="5%" className="text-center cursor-pointer" onClick={() => this.editProjection(projection.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
+                        <td width="23.75%">{projection.movieTitle}</td>
+                        <td width="23.75%">{projection.cinemaName}</td>
+                        <td width="23.75%">{projection.auditoriumName}</td>
+                        <td width="23.75%">{projection.projectionTime}</td>
                         <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeProjection(projection.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
-                        
                     </tr>
         })
     }

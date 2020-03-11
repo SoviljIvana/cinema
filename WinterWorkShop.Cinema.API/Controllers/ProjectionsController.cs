@@ -235,6 +235,17 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 };
                 return BadRequest(errorResponse);
             }
+
+            if(deletedProjection.ErrorMessage == Messages.PROJECTION_IN_FUTURE)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.PROJECTION_IN_FUTURE,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+
             return Accepted("auditoriums//" + deletedProjection.Projection.Id, deletedProjection);
         }
     }

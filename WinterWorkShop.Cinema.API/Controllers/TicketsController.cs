@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WinterWorkShop.Cinema.API.Models;
+using WinterWorkShop.Cinema.Domain.Common;
 using WinterWorkShop.Cinema.Domain.Interfaces;
 using WinterWorkShop.Cinema.Domain.Models;
 using WinterWorkShop.Cinema.Domain.Services;
@@ -54,7 +55,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<ActionResult<IEnumerable<CreateTicketResultModel>>> CreateTicket([FromBody]CreateTicketModel createTicketModel)
+        public async Task<ActionResult<IEnumerable<TicketResultModel>>> CreateTicket([FromBody]CreateTicketModel createTicketModel)
         {
             if (!ModelState.IsValid)
             {
@@ -70,14 +71,14 @@ namespace WinterWorkShop.Cinema.API.Controllers
             var listOFSeats = createTicketModel.seatModels;
 
 
-            List<CreateTicketResultModel> createTicketResultModels = new List<CreateTicketResultModel>();
-            CreateTicketResultModel createTicketResultModel;
+            List<TicketResultModel> createTicketResultModels = new List<TicketResultModel>();
+            TicketResultModel createTicketResultModel;
 
             foreach (var item in listOFSeats)
             {
                 try
                 {
-                    ticketDomainModel.SeatId = Guid.Parse(item);
+                    ticketDomainModel.SeatId = item.Id;
                     createTicketResultModel = await _ticketService.CreateNewTicket(ticketDomainModel);
                 }
                 catch (DbUpdateException e)
@@ -165,10 +166,54 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             if (ticketDomainModels == null)
             {
-                ticketDomainModels = new List<TicketDomainModel>();
+                NotFound(Messages.TICKET_NOT_FOUND);
             }
 
             return Ok(ticketDomainModels);
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            TicketResultModel deletedTicket;
+            try
+            {
+                deletedTicket = await _ticketService.DeleteTicketById(id);
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+
+                return BadRequest(errorResponse);
+            }
+            if(deletedTicket == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.TICKET_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+            if(deletedTicket.Ticket == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = Messages.TICKET_NOT_FOUND,
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError
+                };
+
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
+            }
+            return Accepted("tickets//" + deletedTicket.Ticket.Id, deletedTicket);
+
         }
     }
 }
