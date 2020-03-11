@@ -97,7 +97,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
         }
 
 
-        public async Task<CreateProjectionResultModel> CreateProjection(ProjectionDomainModel domainModel)
+        public async Task<ProjectionResultModel> CreateProjection(ProjectionDomainModel domainModel)
         {
             int projectionTime = 3;
 
@@ -107,7 +107,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             if (projectionsAtSameTime != null && projectionsAtSameTime.Count > 0)
             {
-                return new CreateProjectionResultModel
+                return new ProjectionResultModel
                 {
                     IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTIONS_AT_SAME_TIME
@@ -125,7 +125,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             if (insertedProjection == null)
             {
-                return new CreateProjectionResultModel
+                return new ProjectionResultModel
                 {
                     IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_CREATION_ERROR
@@ -133,7 +133,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             }
 
             _projectionsRepository.Save();
-            CreateProjectionResultModel result = new CreateProjectionResultModel
+            ProjectionResultModel result = new ProjectionResultModel
             {
                 IsSuccessful = true,
                 ErrorMessage = null,
@@ -149,285 +149,309 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
-        public async Task<IEnumerable<CreateProjectionFilterResultModel>> FilterAllProjections(string searchData)
+        public async Task<CreateProjectionFilterResultModel> FilterAllProjections(string searchData)
         {
             var data = await _projectionsRepository.FilterAllProjections(searchData);
 
-            List<CreateProjectionFilterResultModel> result = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel result = new CreateProjectionFilterResultModel();
+            List<ProjectionDomainFilterModel> projectionDomainFilterModels = new List<ProjectionDomainFilterModel>();
+            result.Projections = new List<ProjectionDomainFilterModel>();
 
             if (data == null)
             {
-                result.Add(new CreateProjectionFilterResultModel
+                return new CreateProjectionFilterResultModel()
                 {
                     IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_ERROR
-                });
-                return result;
+                };
             }
             var n = data.Count();
 
-
             if (data.Count() == 0)
             {
-                result.Add(new CreateProjectionFilterResultModel
+
+                result = new CreateProjectionFilterResultModel()
                 {
-                    IsSuccessful = true,
+                    IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_NORESULT,
-                    Projection = new ProjectionDomainFilterModel
-                    {
-                        AditoriumName = "Auditorium not found",
-                        MovieTitle = "Movie not found.",
-                        CinemaName = "Cinema not found",
-                    }
+                    Projections = new List<ProjectionDomainFilterModel>()
+
+                };
+                result.Projections.Add(new ProjectionDomainFilterModel
+                {
+                    AuditoriumName = "Auditorium not found",
+                    MovieTitle = "Movie not found.",
+                    CinemaName = "Cinema not found",
                 });
                 return result;
             }
 
             foreach (var item in data)
             {
-                CreateProjectionFilterResultModel model = new CreateProjectionFilterResultModel
+                ProjectionDomainFilterModel projection = new ProjectionDomainFilterModel()
                 {
-                    IsSuccessful = true,
-                    ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
-                    Projection = new ProjectionDomainFilterModel
-                    {
                         Id = item.Id,
-                        AditoriumName = item.Auditorium.Name,
+                        AuditoriumName = item.Auditorium.Name,
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
                         CinemaName = item.Auditorium.Cinema.Name
-                    }
                 };
-                result.Add(model);
+                projectionDomainFilterModels.Add(projection);
             }
+
+            result = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = projectionDomainFilterModels
+            };
+
             return result;
         }
 
-        public async Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByMovieName(string searchData)
+        public async Task<CreateProjectionFilterResultModel> FilterProjectionsByMovieName(string searchData)
         {
             var data = await _projectionsRepository.FilterProjectionsByMovieTitle(searchData);
 
-            List<CreateProjectionFilterResultModel> result = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel result = new CreateProjectionFilterResultModel();
+            List<ProjectionDomainFilterModel> projectionDomainFilterModels = new List<ProjectionDomainFilterModel>();
+            result.Projections = new List<ProjectionDomainFilterModel>();
 
             if (data == null)
             {
-                result.Add(new CreateProjectionFilterResultModel
+                return new CreateProjectionFilterResultModel()
                 {
                     IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_ERROR
-                });
-                return result;
+                };
             }
             var n = data.Count();
 
-
             if (data.Count() == 0)
             {
-                result.Add(new CreateProjectionFilterResultModel
+
+                result = new CreateProjectionFilterResultModel()
                 {
-                    IsSuccessful = true,
+                    IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_NORESULT,
-                    Projection = new ProjectionDomainFilterModel
-                    {
-                        AditoriumName = "Auditorium not found",
-                        MovieTitle = "Movie not found.",
-                        CinemaName = "Cinema not found",
-                    }
+                    Projections = new List<ProjectionDomainFilterModel>()
+
+                };
+                result.Projections.Add(new ProjectionDomainFilterModel
+                {
+                    AuditoriumName = "Auditorium not found",
+                    MovieTitle = "Movie not found.",
+                    CinemaName = "Cinema not found",
                 });
                 return result;
             }
 
             foreach (var item in data)
             {
-                CreateProjectionFilterResultModel model = new CreateProjectionFilterResultModel
+                ProjectionDomainFilterModel projection = new ProjectionDomainFilterModel()
                 {
-                    IsSuccessful = true,
-                    ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
-                    Projection = new ProjectionDomainFilterModel
-                    {
                         Id = item.Id,
-                        AditoriumName = item.Auditorium.Name,
+                        AuditoriumName = item.Auditorium.Name,
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
                         CinemaName = item.Auditorium.Cinema.Name
-                    }
                 };
-                result.Add(model);
+                projectionDomainFilterModels.Add(projection);
             }
+
+            result = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = projectionDomainFilterModels
+            };
+
             return result;
 
         }
 
-        public async Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByCinemaName(string searchData)
+        public async Task<CreateProjectionFilterResultModel> FilterProjectionsByCinemaName(string searchData)
         {
             var data = await _projectionsRepository.FilterProjectionsByCinemaName(searchData);
 
-            List<CreateProjectionFilterResultModel> result = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel result = new CreateProjectionFilterResultModel();
+            List<ProjectionDomainFilterModel> projectionDomainFilterModels = new List<ProjectionDomainFilterModel>();
+            result.Projections = new List<ProjectionDomainFilterModel>();
 
             if (data == null)
             {
-                result.Add(new CreateProjectionFilterResultModel
+                return new CreateProjectionFilterResultModel()
                 {
                     IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_ERROR
-                });
-                return result;
+                };
             }
             var n = data.Count();
 
-
             if (data.Count() == 0)
             {
-                result.Add(new CreateProjectionFilterResultModel
-                {
 
-                    IsSuccessful = true,
+                result = new CreateProjectionFilterResultModel()
+                {
+                    IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_NORESULT,
-                    Projection = new ProjectionDomainFilterModel
-                    {
-                        CinemaName = "Cinema not found",
-                        AditoriumName = "Auditorium not found",
-                        MovieTitle = "Movie not found.",
-                    }
+                    Projections = new List<ProjectionDomainFilterModel>()
+
+                };
+                result.Projections.Add(new ProjectionDomainFilterModel
+                {
+                    AuditoriumName = "Auditorium not found",
+                    MovieTitle = "Movie not found.",
+                    CinemaName = "Cinema not found",
                 });
                 return result;
             }
 
             foreach (var item in data)
             {
-                CreateProjectionFilterResultModel model = new CreateProjectionFilterResultModel
+                ProjectionDomainFilterModel projection = new ProjectionDomainFilterModel()
                 {
-                    IsSuccessful = true,
-                    ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
-                    Projection = new ProjectionDomainFilterModel
-                    {
-                        Id = item.Id,
-                        AditoriumName = item.Auditorium.Name,
-                        MovieTitle = item.Movie.Title,
-                        ProjectionTime = item.DateTime,
-                        CinemaName = item.Auditorium.Cinema.Name
-                    }
+                    Id = item.Id,
+                    AuditoriumName = item.Auditorium.Name,
+                    MovieTitle = item.Movie.Title,
+                    ProjectionTime = item.DateTime,
+                    CinemaName = item.Auditorium.Cinema.Name
                 };
-                result.Add(model);
+                projectionDomainFilterModels.Add(projection);
             }
+
+            result = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = projectionDomainFilterModels
+            };
+
             return result;
 
         }
 
-        public async Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByAuditoriumName(string searchData)
+        public async Task<CreateProjectionFilterResultModel> FilterProjectionsByAuditoriumName(string searchData)
         {
             var data = await _projectionsRepository.FilterProjectionsByAuditoriumName(searchData);
 
-            List<CreateProjectionFilterResultModel> result = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel result = new CreateProjectionFilterResultModel();
+            List<ProjectionDomainFilterModel> projectionDomainFilterModels = new List<ProjectionDomainFilterModel>();
+            result.Projections = new List<ProjectionDomainFilterModel>();
 
             if (data == null)
             {
-                result.Add(new CreateProjectionFilterResultModel
+                return new CreateProjectionFilterResultModel()
                 {
                     IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_ERROR
-                });
-                return result;
+                };
             }
             var n = data.Count();
 
-
             if (data.Count() == 0)
             {
-                result.Add(new CreateProjectionFilterResultModel
+
+                result = new CreateProjectionFilterResultModel()
                 {
-                    IsSuccessful = true,
+                    IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_NORESULT,
-                    Projection = new ProjectionDomainFilterModel
-                    {
-                        CinemaName = "Cinema not found",
-                        AditoriumName = "Auditorium not found",
-                        MovieTitle = "Movie not found.",
-                    }
+                    Projections = new List<ProjectionDomainFilterModel>()
+
+                };
+                result.Projections.Add(new ProjectionDomainFilterModel
+                {
+                    AuditoriumName = "Auditorium not found",
+                    MovieTitle = "Movie not found.",
+                    CinemaName = "Cinema not found",
                 });
                 return result;
             }
 
-            List<ProjectionDomainFilterModel> listProjDomMode = new List<ProjectionDomainFilterModel>();
-
             foreach (var item in data)
             {
-                CreateProjectionFilterResultModel model = new CreateProjectionFilterResultModel
+                ProjectionDomainFilterModel projection = new ProjectionDomainFilterModel()
                 {
-                    IsSuccessful = true,
-                    ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
-                    Projection = new ProjectionDomainFilterModel
-                    {
-                        Id = item.Id,
-                        AditoriumName = item.Auditorium.Name,
-                        MovieTitle = item.Movie.Title,
-                        ProjectionTime = item.DateTime,
-                        CinemaName = item.Auditorium.Cinema.Name
-                    }
+                    Id = item.Id,
+                    AuditoriumName = item.Auditorium.Name,
+                    MovieTitle = item.Movie.Title,
+                    ProjectionTime = item.DateTime,
+                    CinemaName = item.Auditorium.Cinema.Name
                 };
-                result.Add(model);
+                projectionDomainFilterModels.Add(projection);
             }
+
+            result = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = projectionDomainFilterModels
+            };
+
             return result;
         }
 
-
-
-
-        public async Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByDates(DateTime startDate, DateTime endDate)
+        public async Task<CreateProjectionFilterResultModel> FilterProjectionsByDates(DateTime startDate, DateTime endDate)
         {
             var data = await _projectionsRepository.FilterProjectionsByDates(startDate, endDate);
 
-            List<CreateProjectionFilterResultModel> result = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel result = new CreateProjectionFilterResultModel();
+            List<ProjectionDomainFilterModel> projectionDomainFilterModels = new List<ProjectionDomainFilterModel>();
+            result.Projections = new List<ProjectionDomainFilterModel>();
 
             if (data == null)
             {
-                result.Add(new CreateProjectionFilterResultModel
+                return new CreateProjectionFilterResultModel()
                 {
                     IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_ERROR
-                });
-                return result;
+                };
             }
             var n = data.Count();
 
-
             if (data.Count() == 0)
             {
-                result.Add(new CreateProjectionFilterResultModel
+
+                result = new CreateProjectionFilterResultModel()
                 {
-                    IsSuccessful = true,
+                    IsSuccessful = false,
                     ErrorMessage = Messages.PROJECTION_SEARCH_NORESULT,
-                    Projection = new ProjectionDomainFilterModel
-                    {
-                        AditoriumName = "Auditorium not found",
-                        MovieTitle = "Movie not found.",
-                        CinemaName = "Cinema not found",
-                    }
+                    Projections = new List<ProjectionDomainFilterModel>()
+
+                };
+                result.Projections.Add(new ProjectionDomainFilterModel
+                {
+                    AuditoriumName = "Auditorium not found",
+                    MovieTitle = "Movie not found.",
+                    CinemaName = "Cinema not found",
                 });
                 return result;
             }
 
             foreach (var item in data)
             {
-                CreateProjectionFilterResultModel model = new CreateProjectionFilterResultModel
+                ProjectionDomainFilterModel projection = new ProjectionDomainFilterModel()
                 {
-                    IsSuccessful = true,
-                    ErrorMessage = Messages.PROJECTION_SEARCH_SUCCESSFUL,
-                    Projection = new ProjectionDomainFilterModel
-                    {
-                        Id = item.Id,
-                        AditoriumName = item.Auditorium.Name,
-                        MovieTitle = item.Movie.Title,
-                        ProjectionTime = item.DateTime,
-                        CinemaName = item.Auditorium.Cinema.Name
-                    }
+                    Id = item.Id,
+                    AuditoriumName = item.Auditorium.Name,
+                    MovieTitle = item.Movie.Title,
+                    ProjectionTime = item.DateTime,
+                    CinemaName = item.Auditorium.Cinema.Name
                 };
-                result.Add(model);
+                projectionDomainFilterModels.Add(projection);
             }
+
+            result = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = projectionDomainFilterModels
+            };
+
             return result;
         }
 
-        public async Task<CreateProjectionResultModel> DeleteProjection(Guid id)
+        public async Task<ProjectionResultModel> DeleteProjection(Guid id)
         {
 
             var existingProjections = _projectionsRepository.GetProjectionById(id);
@@ -435,7 +459,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             if (existingProjections == null)
             {
-                CreateProjectionResultModel errorModel = new CreateProjectionResultModel
+                ProjectionResultModel errorModel = new ProjectionResultModel
                 {
                     ErrorMessage = Messages.PROJECTION_IN_FUTURE,
                     IsSuccessful = true
@@ -445,7 +469,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             if (existingProjections.DateTime > DateTime.Now)
             {
-                CreateProjectionResultModel errorModel = new CreateProjectionResultModel
+                ProjectionResultModel errorModel = new ProjectionResultModel
                 {
                     ErrorMessage = Messages.PROJECTION_IN_FUTURE,
                     IsSuccessful = false,
@@ -469,7 +493,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             _projectionsRepository.Save();
 
-            CreateProjectionResultModel domainModel = new CreateProjectionResultModel
+            ProjectionResultModel domainModel = new ProjectionResultModel
             {
                 ErrorMessage = null,
                 IsSuccessful = true,

@@ -21,7 +21,7 @@ class FilterProjections extends Component {
           [ {label: "No filter", value: 'FilterByText'},
             {label:"Filter by movie name ", value: 'moviename'},
             {label: "Filter by auditorium name ", value: 'auditname'},
-            {label:"Filter by cinema name ", value :'cinemaname'},
+            {label:"Filter by cinnpema name ", value :'cinemaname'},
             {label: "Filter by projection time " , value: 'dates'}],
           filter: "",
           searchString: "",
@@ -106,7 +106,7 @@ class FilterProjections extends Component {
           })
           .then(data => {
             if (data) {
-              this.setState({ projections: data, isLoading: false });
+              this.setState({ projections: data.projections, isLoading: false });
               }
           })
           .catch(response => {
@@ -130,7 +130,7 @@ class FilterProjections extends Component {
         })
         .then(data => {
           if (data) {
-            this.setState({ projections: data, isLoading: false });
+            this.setState({ projections: data.projections, isLoading: false });
             }
         })
         .catch(response => {
@@ -222,13 +222,11 @@ class FilterProjections extends Component {
     fillTableWithDaata() {
         return this.state.projections.map(projection => {
             return <tr key={projection.id}>
-              
-                        <td width="23.75%">{projection.projection.movieTitle}</td>
-                        <td width="23.75%">{projection.projection.cinemaName}</td>
-                        <td width="23.75%">{projection.projection.aditoriumName}</td>
-                        <td width="23.75%">{projection.projection.projectionTime}</td>
-                        <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeProjection(projection.projection.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
-                        
+                        <td width="23.75%">{projection.movieTitle}</td>
+                        <td width="23.75%">{projection.cinemaName}</td>
+                        <td width="23.75%">{projection.auditoriumName}</td>
+                        <td width="23.75%">{projection.projectionTime}</td>
+                        <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeProjection(projection.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
                     </tr>
         })
     }
