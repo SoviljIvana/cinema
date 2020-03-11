@@ -1,7 +1,9 @@
 .slide-container {
-  width: 100%;
+  width: 70%;
+
   margin: auto;
   }
+
 .each-slide > div {
   display: flex;
   align-items: center;
