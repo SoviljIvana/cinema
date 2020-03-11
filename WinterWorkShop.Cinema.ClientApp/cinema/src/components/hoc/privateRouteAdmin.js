@@ -6,7 +6,7 @@ import * as authCheck from '../helpers/authCheck';
 export const PrivateRouteAdmin = ({ component: Component, ...rest }) => {
     useEffect(() => {
         if(!authCheck.isAdmin()){
-            NotificationManager.error('You shall not pass!');
+            NotificationManager.error('Only admin can access that page!');
         }
       });
     return (

@@ -10,10 +10,15 @@ class Header extends Component {
     super(props);
     this.state = {
       username: '',
+      user:[],
       submitted: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount(){
+    this.guestToken();
   }
 
   handleChange(e) {
@@ -23,21 +28,69 @@ class Header extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-
     this.setState({ submitted: true });
-    const { username } = this.state;
-    if (username) {
-      this.login();
-    } else {
-      this.setState({ submitted: false });
-    }
-  }
+    //const { username,user } = this.state;
+    this.getUser(this.state.username);
 
-  login() {
+  }
+  getUser(username){  
+      const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+      };
+      fetch(`${serviceConfig.baseURL}/api/users/byusername/${username}`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({user:data, isLoading: false})
+              if (this.state.user.isAdmin == true) {
+                this.adminLogin();
+              }else if(this.state.user.isAdmin == false) {
+                this.userLogin();
+              }
+              }
+          })
+          .catch(response => {
+              NotificationManager.error("Unable to login. ");
+              this.setState({ submitted: false });
+          });
+  }
+  guestToken() {
+    const requestOptions = {
+      method: 'GET'
+    };
+
+    fetch(`${serviceConfig.baseURL}/get-token?name=gost&guest=true&admin=false&superUser=false`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        NotificationManager.success('Singed in as guest!');
+        if (data.token) {
+          localStorage.setItem("jwt", data.token);
+        }
+      })
+      .catch(response => {
+        NotificationManager.error("Unable to sign in. ");
+        this.setState({ submitted: false });
+      });
+  }
+  adminLogin() {
     const { username } = this.state;
 
     const requestOptions = {
-      method: 'GET'
+      method: 'GET',
+      headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
 
     fetch(`${serviceConfig.baseURL}/get-token?name=${username}&admin=true`, requestOptions)
@@ -48,13 +101,38 @@ class Header extends Component {
         return response.json();
       })
       .then(data => {
-        NotificationManager.success('Successfuly signed in!');
+        NotificationManager.success('Signed in as admin!');
         if (data.token) {
           localStorage.setItem("jwt", data.token);
         }
       })
       .catch(response => {
         NotificationManager.error(response.message || response.statusText);
+        this.setState({ submitted: false });
+      });
+  }
+  userLogin() {
+    const { username } = this.state;
+
+    const requestOptions = {
+      method: 'GET'
+    };
+
+    fetch(`${serviceConfig.baseURL}/get-token?name=${username}`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        NotificationManager.success('Successfully signed in as'+ this.state.user.firstName + '!');
+        if (data.token) {
+          localStorage.setItem("jwt", data.token);
+        }
+      })
+      .catch(response => {
+        NotificationManager.error("Unable to sign in. ");
         this.setState({ submitted: false });
       });
   }
