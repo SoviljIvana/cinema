@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WinterWorkShop.Cinema.Domain.Models
 {
-    public class CreateProjectionResultModel
+    public class ProjectionResultModel
     {
         public ProjectionDomainModel Projection { get; set; }
 
