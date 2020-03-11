@@ -72,6 +72,7 @@ class AllProjectionsForCinema extends Component {
       this.setState({ submitted: false });
     }
   }
+  
   handleTopTen(e) {
     e.preventDefault();
     this.setState({ submitted: true });
@@ -200,7 +201,7 @@ class AllProjectionsForCinema extends Component {
     return this.state.movies.map(movie => {
       return <div key={movie.id} >
         <br></br>
-        <div class="movie" style={{ width: '77rem' }} key={movie.id}>
+        <div class="movie" style={{ width: '100rem' }} key={movie.id}>
           <Card.Header class="sub-section-title" as="h5">{movie.title}</Card.Header>
           <ListGroup class="movie-details" variant="flush">
           <ListGroup.Item > Year: {movie.year}</ListGroup.Item>

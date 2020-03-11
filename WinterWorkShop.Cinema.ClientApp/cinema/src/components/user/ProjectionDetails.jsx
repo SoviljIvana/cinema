@@ -113,17 +113,18 @@ class ProjectionDetails extends Component {
                 let element = document.getElementById(id);
                 let buttonTrue = "buttonTrue";
                 let buttonFalse = "buttonFalse";
+
+
                 //element.classList.remove(buttonTrue);
                 
-                
-
-                if (this.state.listOfSeats.length == 0) //provera da li je lista prazna, ako jeste dodaje element
+                 if (this.state.listOfSeats.length == 0) //provera da li je lista prazna, ako jeste dodaje element
                 {
                     this.state.listOfSeats.push(seat);
                     element.classList.add(buttonFalse);
 
                 }
                 else {
+
                     if (seat.row == this.state.listOfSeats[0].row) // provera reda u kom se nallazi element
                     {
                         let length = this.state.listOfSeats.length // definisanje duzine liste
@@ -131,31 +132,52 @@ class ProjectionDetails extends Component {
                         let second = 1;
                         if (this.state.listOfSeats.length >= 2) { // ako je u listi vise od 2 elementa
 
+                            let maxNumber = 1;
+                            let minNumber = 1;
+                            for (let index = 0; index < this.state.listOfSeats.length; index++) {
+                                if(this.state.listOfSeats[index].number > maxNumber){
+                                    maxNumber = this.state.listOfSeats[index].number;
+                                }
+                                if(this.state.listOfSeats[index].number < minNumber){
+                                    minNumber = this.state.listOfSeats[index].number;
+                                }
+                            }
+
                             second = this.state.listOfSeats[length - 2].number; // pretposlednji element
                             let n = 0; // broj ponavljanja elementa koji se dodaje u listu 
                             for (let index = 0; index < this.state.listOfSeats.length; index++) //prolazi kroz listu elemenata
                             {
                                 if (this.state.listOfSeats[index].id == seat.id) // proverava da li ima jednakih elemenata
                                 {
-                                    if (seat.number + 1 == first || seat.number - 1 == first || second == seat.number + 1 || second == seat.number - 1) {
+                                    n = n + 1;
+                                    if (seat.number == maxNumber || seat.number == minNumber ) {
                                         this.state.listOfSeats.splice(index, 1)
                                         //element.classList.add(buttonTrue);
                                         element.classList.remove(buttonFalse);
-                                        n = n + 1;
+                                        
                                     }
                                 }
                             }
                             if (n == 0) {
-                                if (first == seat.number + 1 || first == seat.number - 1 || second == seat.number + 1 || second == seat.number - 1) {
-                                    this.state.listOfSeats.push(seat);
+                                if (seat.number - 1 == maxNumber || seat.number + 1 == minNumber ) {
+                                     this.state.listOfSeats.push(seat);
                                     element.classList.add(buttonFalse);
 
                                 }
                                 else {
-                                    //element.classList.add(buttonTrue);
-                                    element.classList.remove(buttonFalse);
+                                    
+                                    // if (seat.number - 1 == maxNumber || seat.number + 1 == minNumber ) {
+                                    // //element.classList.add(buttonTrue);
+                                    // element.classList.remove(buttonFalse);
+                                    // }
                                     return NotificationManager.error("mora biti jedan pored drugog!");
                                 }
+                            }
+                            else{
+                                if (seat.number < maxNumber && seat.number > minNumber ) {
+                                    return NotificationManager.error("mora biti krajnji!");
+                                   
+                                    }
                             }
                         }
                         else // ako je u listi samo jedan element 
@@ -171,17 +193,13 @@ class ProjectionDetails extends Component {
 
                             }
                             else {
-
                                 return NotificationManager.error("mora biti jedan pored drugog!");
                             }
                         }
                     }
                     else{
-
                         // this.handleColor(seat);
-
                         return NotificationManager.error("mora isti red!");
-                        
                     }
                 }
             //}
