@@ -70,7 +70,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "guest, admin")]
         [HttpGet]
         [Route("byusername/{username}")]
         public async Task<ActionResult<UserDomainModel>> GetbyUserNameAsync(string username)
