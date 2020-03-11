@@ -40,7 +40,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             if (projectionDomainModels == null)
             {
-                projectionDomainModels = new List<ProjectionDomainModel>();
+                return NotFound(Messages.PROJECTION_GET_ALL_PROJECTIONS_ERROR);
             }
 
             return Ok(projectionDomainModels);
@@ -74,7 +74,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 ProjectionTime = projectionModel.ProjectionTime
             };
 
-            CreateProjectionResultModel createProjectionResultModel;
+            ProjectionResultModel createProjectionResultModel;
 
             try
             {
@@ -112,27 +112,18 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("FilterByText/{searchData}")]
-        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByAll(string searchData)
+        public async Task<ActionResult<CreateProjectionFilterResultModel>> FilterByAll(string searchData)
         {
-            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
-            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel createProjectionFilterResultModel;
 
-            projectionDomainModels = await _projectionService.FilterAllProjections(searchData);
+            createProjectionFilterResultModel = await _projectionService.FilterAllProjections(searchData);
 
-            list = projectionDomainModels.ToList();
-
-            if (!list[0].IsSuccessful)
+            if (!createProjectionFilterResultModel.IsSuccessful)
             {
-                ErrorResponseModel errorResponse = new ErrorResponseModel()
-                {
-                    ErrorMessage = list[0].ErrorMessage,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
-                };
-
-                return BadRequest(errorResponse);
+                return NotFound(createProjectionFilterResultModel.ErrorMessage);
             }
 
-            return Ok(projectionDomainModels);
+            return Ok(createProjectionFilterResultModel);
         }
 
         /// <summary>
@@ -142,24 +133,15 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("moviename/{searchData}")]
-        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByMovieName(string searchData)
+        public async Task<ActionResult<CreateProjectionFilterResultModel>> FilterByMovieName(string searchData)
         {
-            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
-            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel projectionDomainModels;
 
             projectionDomainModels = await _projectionService.FilterProjectionsByMovieName(searchData);
 
-            list = projectionDomainModels.ToList();
-
-            if (!list[0].IsSuccessful)
+            if (!projectionDomainModels.IsSuccessful)
             {
-                ErrorResponseModel errorResponse = new ErrorResponseModel()
-                {
-                    ErrorMessage = list[0].ErrorMessage,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
-                };
-
-                return BadRequest(errorResponse);
+                return NotFound(projectionDomainModels.ErrorMessage);
             }
 
             return Ok(projectionDomainModels);
@@ -172,24 +154,15 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("cinemaname/{searchData}")]
-        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByCinemaName(string searchData)
+        public async Task<ActionResult<CreateProjectionFilterResultModel>> FilterByCinemaName(string searchData)
         {
-            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
-            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel projectionDomainModels;
 
             projectionDomainModels = await _projectionService.FilterProjectionsByCinemaName(searchData);
 
-            list = projectionDomainModels.ToList();
-
-            if (!list[0].IsSuccessful)
+            if (!projectionDomainModels.IsSuccessful)
             {
-                ErrorResponseModel errorResponse = new ErrorResponseModel()
-                {
-                    ErrorMessage = list[0].ErrorMessage,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
-                };
-
-                return BadRequest(errorResponse);
+                return NotFound(projectionDomainModels.ErrorMessage);
             }
 
             return Ok(projectionDomainModels);
@@ -202,24 +175,15 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("auditname/{searchData}")]
-        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByAuditoriumName(string searchData)
+        public async Task<ActionResult<CreateProjectionFilterResultModel>> FilterByAuditoriumName(string searchData)
         {
-            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
-            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel projectionDomainModels;
 
             projectionDomainModels = await _projectionService.FilterProjectionsByAuditoriumName(searchData);
 
-            list = projectionDomainModels.ToList();
-
-            if (!list[0].IsSuccessful)
+            if (!projectionDomainModels.IsSuccessful)
             {
-                ErrorResponseModel errorResponse = new ErrorResponseModel()
-                {
-                    ErrorMessage = list[0].ErrorMessage,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
-                };
-
-                return BadRequest(errorResponse);
+                return NotFound(projectionDomainModels.ErrorMessage);
             }
 
             return Ok(projectionDomainModels);
@@ -233,24 +197,15 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("dates/{startDate},{endDate}")]
-        public async Task<ActionResult<IEnumerable<ProjectionDomainFilterModel>>> FilterByDates(DateTime startDate, DateTime endDate)
+        public async Task<ActionResult<CreateProjectionFilterResultModel>> FilterByDates(DateTime startDate, DateTime endDate)
         {
-            IEnumerable<CreateProjectionFilterResultModel> projectionDomainModels;
-            List<CreateProjectionFilterResultModel> list = new List<CreateProjectionFilterResultModel>();
+            CreateProjectionFilterResultModel projectionDomainModels;
 
             projectionDomainModels = await _projectionService.FilterProjectionsByDates(startDate, endDate);
 
-            list = projectionDomainModels.ToList();
-
-            if (!list[0].IsSuccessful)
+            if (!projectionDomainModels.IsSuccessful)
             {
-                ErrorResponseModel errorResponse = new ErrorResponseModel()
-                {
-                    ErrorMessage = list[0].ErrorMessage,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
-                };
-
-                return BadRequest(errorResponse);
+                return NotFound(projectionDomainModels.ErrorMessage);
             }
 
             return Ok(projectionDomainModels);
@@ -264,9 +219,9 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Authorize(Roles = "admin")]
         [HttpDelete]
         [Route("{id}")]
-        public async Task<ActionResult> Delete(Guid id)
+        public async Task<ActionResult> DeleteProjection(Guid id)
         {
-            CreateProjectionResultModel deletedProjection;
+            ProjectionResultModel deletedProjection;
             try
             {
                 deletedProjection = await _projectionService.DeleteProjection(id);
@@ -279,21 +234,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
                     StatusCode = System.Net.HttpStatusCode.BadRequest
                 };
                 return BadRequest(errorResponse);
-
-            }
-
-            if (deletedProjection == null)
-            {
-                ErrorResponseModel errorResponse = new ErrorResponseModel
-                {
-                    ErrorMessage = Messages.AUDITORIUM_DOES_NOT_EXIST,
-                    StatusCode = System.Net.HttpStatusCode.InternalServerError
-                };
-
-                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError, errorResponse);
             }
             return Accepted("auditoriums//" + deletedProjection.Projection.Id, deletedProjection);
-
         }
     }
 }

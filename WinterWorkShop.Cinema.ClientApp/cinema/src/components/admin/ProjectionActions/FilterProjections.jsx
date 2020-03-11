@@ -21,7 +21,7 @@ class FilterProjections extends Component {
           [ {label: "No filter", value: 'FilterByText'},
             {label:"Filter by movie name ", value: 'moviename'},
             {label: "Filter by auditorium name ", value: 'auditname'},
-            {label:"Filter by cinema name ", value :'cinemaname'},
+            {label:"Filter by cinnpema name ", value :'cinemaname'},
             {label: "Filter by projection time " , value: 'dates'}],
           filter: "",
           searchString: "",
@@ -106,7 +106,7 @@ class FilterProjections extends Component {
           })
           .then(data => {
             if (data) {
-              this.setState({ projections: data, isLoading: false });
+              this.setState({ projections: data.projections, isLoading: false });
               }
           })
           .catch(response => {
@@ -130,7 +130,7 @@ class FilterProjections extends Component {
         })
         .then(data => {
           if (data) {
-            this.setState({ projections: data, isLoading: false });
+            this.setState({ projections: data.projections, isLoading: false });
             }
         })
         .catch(response => {
@@ -198,10 +198,10 @@ class FilterProjections extends Component {
         return this.state.projections.map(projection => {
             return <tr key={projection.id}>
               
-                        <td width="22.5%">{projection.projection.movieTitle}</td>
-                        <td width="22.5%">{projection.projection.cinemaName}</td>
-                        <td width="22.5%">{projection.projection.aditoriumName}</td>
-                        <td width="22.5%">{projection.projection.projectionTime}</td>
+                        <td width="22.5%">{projection.movieTitle}</td>
+                        <td width="22.5%">{projection.cinemaName}</td>
+                        <td width="22.5%">{projection.aditoriumName}</td>
+                        <td width="22.5%">{projection.projectionTime}</td>
                         <td width="5%" className="text-center cursor-pointer" onClick={() => this.editProjection(projection.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
                         <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeProjection(projection.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
                         
