@@ -35,7 +35,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         }
 
         [TestMethod]
-        public void GetAsync_Return_All_Cinemas()
+        public void CinemasController_GetAsync_Return_All_Cinemas()
         {
             //Arrange
             CinemaDomainModel cinemaDomainModel = _cinemaDomainModel;
@@ -61,7 +61,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedStatusCode, ((OkObjectResult)result).StatusCode);
         }
         [TestMethod]
-        public void GetAsync_Return_NotFoundObject() 
+        public void CinemasController_GetAsync_Return_NotFoundObject() 
         {
             IEnumerable<CinemaDomainModel> cinemaDomainModels = null;
             Task<IEnumerable<CinemaDomainModel>> responseTask = Task.FromResult(cinemaDomainModels);
@@ -80,5 +80,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
             Assert.AreEqual(expectedStatusCode, ((NotFoundObjectResult)resultAction).StatusCode);
         }
+
+
     }
 }

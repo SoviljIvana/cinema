@@ -44,54 +44,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(cinemaDomainModels);
         }
 
-        /// <summary>
-        /// Adds a new cinema
-        /// </summary>
-        /// <param name="cinemaModel"></param>
-        /// <returns></returns>
-        [Authorize(Roles = "admin")]
-        [HttpPost]
-        [Route("create_empty_cinema")]
-        public async Task<ActionResult> Post([FromBody]CreateCinemaModel cinemaModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            CinemaDomainModel domainModel = new CinemaDomainModel
-            {
-                Name = cinemaModel.Name
-            };
-
-            CreateCinemaResultModel createCinemaResultModel;
-
-            try
-            {
-                createCinemaResultModel = await _cinemaService.AddCinema(domainModel);
-            }
-            catch (DbUpdateException e)
-            {
-                ErrorResponseModel errorResponse = new ErrorResponseModel
-                {
-                    ErrorMessage = e.InnerException.Message ?? e.Message,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
-                };
-                return BadRequest(errorResponse);
-            }
-            if (!createCinemaResultModel.IsSuccessful)
-            {
-                ErrorResponseModel errorResponse = new ErrorResponseModel()
-                {
-                    ErrorMessage = createCinemaResultModel.ErrorMessage,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
-                };
-
-                return BadRequest(errorResponse);
-            }
-
-            return Created("auditoriums//" + createCinemaResultModel.Cinema.Id, createCinemaResultModel);
-        }
-
         [Authorize(Roles = "admin")]
         [HttpPost]
         [Route("create_complete_cinema")]
@@ -117,7 +69,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 });
             }
 
-            CreateCinemaResultModel createCinemaResultModel;
+            CinemaResultModel createCinemaResultModel;
 
             try
             {
@@ -173,7 +125,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            CreateCinemaResultModel deletedCinema;
+            CinemaResultModel deletedCinema;
             try
             {
                 deletedCinema = await _cinemaService.DeleteCinema(id);
