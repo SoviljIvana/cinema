@@ -47,7 +47,7 @@ class ProjectionDetails extends Component {
         };
 
         this.setState({ isLoading: true });
-        fetch(`${serviceConfig.baseURL}/api/Movies/allForProjection/` + projectionId, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/Seats/allForProjection/` + projectionId, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);

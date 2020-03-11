@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Navbar, Nav, Form, FormControl, Button, } from 'react-bootstrap';
+import { Navbar, Nav, Form, FormControl, Button, Container, NavDropdown } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../appSettings';
 import { FaUserAlt } from "react-icons/fa";
@@ -58,17 +58,22 @@ class Header extends Component {
         this.setState({ submitted: false });
       });
   }
+
   render() {
     const { username } = this.state;
     return (
-      <Navbar bg="white" expand="lg">
-        <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/projectionlist'>Cinema</Link></Navbar.Brand>
-        <Navbar.Brand className="text-info font-weight-bold text-capitalize"><Link className="text-decoration-none" to='/dashboard'>Dashboard</Link></Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className="text-white" />
+      <Navbar fixed="top" expand="lg" variant="light" bg="light">
+        <Nav justify variant="tabs" defaultActiveKey="/projectionlist" className="mr-auto">
+          <Container>
+            <Navbar.Brand><Nav.Link href='/projectionlist'>What's on</Nav.Link></Navbar.Brand>
+            <Navbar.Brand><Nav.Link href='/comingsoon'>Coming soon</Nav.Link></Navbar.Brand>
+            <Navbar.Brand><Nav.Link href='/dashboard'>Dashboard</Nav.Link></Navbar.Brand>
+            <Navbar.Brand><Nav.Link href='/userProfile'>User profile</Nav.Link></Navbar.Brand>
+          </Container>
+        </Nav>
+        <Navbar.Toggle className="text-white" />
         <Navbar.Collapse id="basic-navbar-nav" className="text-white">
-          <Nav className="mr-auto text-white" >
-          </Nav>
-          <Link className="text-decoration-none" to='/userProfile'><FaUserAlt className="mr-sm-2" /></Link>
+          <Nav className="mr-auto"></Nav>
           <Form inline onSubmit={this.handleSubmit}>
             <FormControl
               type="text"
@@ -77,7 +82,7 @@ class Header extends Component {
               value={username}
               onChange={this.handleChange}
               className="mr-sm-2" />
-            <Button type="submit" variant="outline-success" className="mr-1">Log In</Button>
+            <Button type="submit" variant="outline-danger" className="mr-1">Log In</Button>
           </Form>
         </Navbar.Collapse>
       </Navbar>

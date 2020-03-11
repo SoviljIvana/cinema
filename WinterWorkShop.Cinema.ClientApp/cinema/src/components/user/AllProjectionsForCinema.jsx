@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { Container, Col, Card, Button,ButtonToolbar, ListGroupItem, CardBody, CardDeck } from 'react-bootstrap';
+import { Container, Card, Button, Form, FormControl, Nav, Navbar, Row } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { Row, Table } from 'react-bootstrap';
 import Spinner from '../Spinner';
 import ReactStars from 'react-stars';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -14,11 +12,12 @@ import Image2 from './movie2.jpg';
 import Image3 from './movie3.png';
 import './App.css';
 import { Link } from 'react-router-dom';
-
+import { MDBCol, MDBBtn, MDBFormInline } from "mdbreact";
 const fadeImages = [
   Image2,
   Image3,
 ];
+
 const fadeProperties = {
   duration: 5000,
   transitionDuration: 500,
@@ -35,25 +34,16 @@ class AllProjectionsForCinema extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      projections: [],
       movies: [],
       isLoading: true,
-      projectionTime: '',
-      movieId: '',
-      auditoriumId: '',
-      auditoriumName: '',
       searchData: ''
-
     };
-    //    this.details = this.details.bind(this);
     this.seatsForProjection = this.seatsForProjection.bind(this);
     this.renderProjectionButtons = this.renderProjectionButtons.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTopTen = this.handleTopTen.bind(this);
     this.handleShowAll = this.handleShowAll.bind(this);
-
-    //this.fillTableWithDaata = this.fillTableWithDaata.bind(this);
   }
 
   handleChange(e) {
@@ -72,7 +62,7 @@ class AllProjectionsForCinema extends Component {
       this.setState({ submitted: false });
     }
   }
-  
+
   handleTopTen(e) {
     e.preventDefault();
     this.setState({ submitted: true });
@@ -98,7 +88,6 @@ class AllProjectionsForCinema extends Component {
         'Authorization': 'Bearer ' + localStorage.getItem('jwt')
       }
     };
-
     this.setState({ isLoading: true });
     fetch(`${serviceConfig.baseURL}/api/Movies/search/${searchData}`, requestOptions)
       .then(response => {
@@ -204,9 +193,9 @@ class AllProjectionsForCinema extends Component {
         <div class="movie" style={{ width: '100rem' }} key={movie.id}>
           <Card.Header class="sub-section-title" as="h5">{movie.title}</Card.Header>
           <ListGroup class="movie-details" variant="flush">
-          <ListGroup.Item > Year: {movie.year}</ListGroup.Item>
-          <ListGroup.Item > Rating:<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'black'} color2={'#ffd700'} /></ListGroup.Item >
-          <ListGroup.Item > Projections:{this.renderProjectionButtons(movie.listOfProjections)}</ListGroup.Item>
+            <ListGroup.Item > Year: {movie.year}</ListGroup.Item>
+            <ListGroup.Item > Rating:<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'black'} color2={'#ffd700'} /></ListGroup.Item >
+            <ListGroup.Item > Projections:{this.renderProjectionButtons(movie.listOfProjections)}</ListGroup.Item>
           </ListGroup>
         </div>
         <br />
@@ -214,25 +203,6 @@ class AllProjectionsForCinema extends Component {
     })
   }
 
-  // details(id) {
-  //   this.props.history.push(`projectiondetails/${id}`);
-  // }
-
-  renderRows(rows, seats) {
-    const rowsRendered = [];
-    for (let i = 0; i < rows; i++) {
-      rowsRendered.push(<tr key={i}> {this.renderSeats(seats, i)}</tr>);
-    }
-    return rowsRendered;
-  }
-
-  renderSeats(seats, row) {
-    let renderedSeats = [];
-    for (let i = 0; i < seats; i++) {
-      renderedSeats.push(<button key={'row: ' + row + ', seat: ' + i}>{row}, {i}</button>);
-    }
-    return renderedSeats;
-  }
   render() {
     const { isLoading, searchData } = this.state;
     const rowsData = this.fillTableWithDaata();
@@ -243,7 +213,6 @@ class AllProjectionsForCinema extends Component {
     </table>);
     const showTable = isLoading ? <Spinner></Spinner> : table;
     return (
-
       <Row className="no-gutters pr-5 pl-5">
         <p className="slide-container">
           <Fade {...fadeProperties}>
@@ -253,31 +222,39 @@ class AllProjectionsForCinema extends Component {
             <div className="each-fade">
               <img src={fadeImages[1]} />
             </div>
-           
           </Fade>
         </p>
-        <p>
-          <Button onClick={this.handleShowAll}>Show all</Button>
-        </p>
-        <p>
-          <button onClick={this.handleTopTen}>Show Top 10</button>
-        </p>
-          <p>
-            <label for='searchData'>Search for a movie by tags OR movie title:</label>
-            <input
-              id='searchData'
-              type='text'
-              value={searchData}
-              placeholder="Insert search data"
-              onChange={this.handleChange}
-            />
-            <Button onClick={this.handleSubmit}>Search</Button>
-            <Link className="text-decoration-none" to='/ProjectionsFilterForCinema'><Button >Filter projections</Button></Link>
-            <br></br>
-             </p>
-       
-    <div>
-          {showTable}</div>
+        <Navbar className="slide-container"  expand="lg" variant="light" bg="light">
+          <Nav justify variant="tabs" className="mr-auto">
+            <Container>
+              <Navbar.Brand><Button size= "lg" variant="outline-dark" onClick={this.handleShowAll}>Show all movies</Button> </Navbar.Brand>
+              <Navbar.Brand><Button  size= "lg" variant="outline-dark" onClick={this.handleTopTen}>Show Top 10 movies</Button> </Navbar.Brand>
+              <Navbar.Brand><Link to='/ProjectionsFilterForCinema'><Button  size= "lg" variant="outline-dark">Filter projections</Button></Link></Navbar.Brand>
+           
+            <Navbar.Toggle className="text-white" />
+          <Navbar.Collapse id="basic-navbar-nav" className="text-white">
+          </Navbar.Collapse>
+          </Container>
+          </Nav>
+            
+            <Form inline onSubmit={this.handleSubmit}>
+              <FormControl  size= "lg"
+                type="text" className="form-control mr-sm-2" placeholder="Search movie" aria-label="Search" for='searchData'
+                className="mr-sm-2"
+                id='searchData'
+                type='text'
+                value={searchData}
+                onChange={this.handleChange} />
+              <Button  size= "lg" type="submit" variant="outline-dark" className="mr-1">Search</Button>
+            </Form>
+          
+           
+         
+         
+        </Navbar>
+        <div>
+          {showTable}
+        </div>
       </Row>
     );
   }
