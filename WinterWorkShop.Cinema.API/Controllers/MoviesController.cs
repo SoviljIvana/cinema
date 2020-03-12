@@ -76,7 +76,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
             }
             return Ok(projectionDomainModels);
         }
-        //TODO: checkStatusCode
         [HttpGet]
         [Route("search/{searchData}")]
         public async Task<ActionResult<IEnumerable<MovieDomainModel>>> SearchByTag(string searchData)

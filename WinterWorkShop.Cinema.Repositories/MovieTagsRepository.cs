@@ -39,7 +39,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public async Task<IEnumerable<MovieTag>> GetAllForSpecificMovie(Guid id)
         {
-            var data = await _cinemaContext.MovieTags.Include(m => m.Movie).Where(m=>m.MovieId == id).ToListAsync();
+            var data = await _cinemaContext.MovieTags.Include(m=>m.Tag).Include(m => m.Movie).Where(m=>m.MovieId == id).ToListAsync();
             return data;
         }
 
