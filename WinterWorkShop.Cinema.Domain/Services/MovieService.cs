@@ -618,6 +618,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
             MovieDomainModel model;
             foreach (var item in data)
             {
+                TagsMovieModel tagsMovieModel = new TagsMovieModel();
+
                 model = new MovieDomainModel
                 {
                     Current = item.Current,
@@ -627,9 +629,12 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     Year = item.Year,
                     listOfProjections = new List<ProjectionDomainModel>()
                 };
+
                 IEnumerable<Projection> lista = new List<Projection>();
+
                 var dayToday = DateTime.Now.DayOfYear;
                 var yearToday = DateTime.Now.Year;
+
                 var projectionsForThisMovieAll = _projectionsRepository.GetAllFromOneMovie(item.Id);
                 var projectionsForThisMovieToday = projectionsForThisMovieAll.Where(x => x.DateTime.DayOfYear == dayToday && x.DateTime.Year == yearToday).ToList();
                 if (projectionsForThisMovieToday != null && projectionsForThisMovieToday.Count>0)
@@ -642,6 +647,40 @@ namespace WinterWorkShop.Cinema.Domain.Services
                             ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
                             AuditoriumName = projection.Auditorium.Name
                         });
+
+                        var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+                        foreach (var tag in TagsForMovie)
+                        {
+                            if (tag.Tag.Type.Equals("director"))
+                            {
+                                tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
+                            }
+                            if (tag.Tag.Type.Equals("genre"))
+                            {
+                                tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
+                            }
+                            if (tag.Tag.Type.Equals("duration"))
+                            {
+                                tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
+                            }
+                            if (tag.Tag.Type.Equals("aword"))
+                            {
+                                tagsMovieModel.Awords = tagsMovieModel.Awords + " " + tag.Tag.Name;
+                            }
+                            if (tag.Tag.Type.Equals("language"))
+                            {
+                                tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
+                            }
+                            if (tag.Tag.Type.Equals("state"))
+                            {
+                                tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
+                            }
+                            if (tag.Tag.Type.Equals("actor"))
+                            {
+                                tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
+                            }
+                        }
+                        model.tagsMoviModel = tagsMovieModel;
                     }
                     result.Add(model);
                 }

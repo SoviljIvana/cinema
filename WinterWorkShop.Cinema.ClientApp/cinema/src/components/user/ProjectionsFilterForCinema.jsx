@@ -202,7 +202,7 @@ class ProjectionsFilterForCinema extends Component {
                         <td width="23.75%">{projection.movieTitle}</td>
                         <td width="23.75%">{projection.cinemaName}</td>
                         <td width="23.75%">{projection.auditoriumName}</td>
-                        <td width="23.75%">{projection.projectionTime}</td>
+                        <td width="23.75%">{projection.projectionTimeString}</td>
                         <td width="5%" className="text-center cursor-pointer" onClick={() => 
                             this.reserveTickets(projection.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>                        
                     </tr>

@@ -26,6 +26,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         private MovieDomainModel _movieDomainModel;
         private Movie _movie;
         private DeleteMovieModel _deleteMovieModel;
+        private TagDomainModel _tagDomainModel;
         private MovieCreateTagDomainModel _movieCreateTagDomainModel;
         private CreateMovieModel _createMovieModel;
         private UpdateMovieModel _updateMovieModel;
@@ -69,6 +70,14 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 Rating = 9.5,
                 Title = "New Title",
                 Year = 2010
+            };
+            _tagDomainModel = new TagDomainModel()
+            {
+                actores = new List<TagForMovieDomainModel>(),
+                awords = new List<TagForMovieDomainModel>(),
+                genres = new List<TagForMovieDomainModel>(),
+                languages = new List<TagForMovieDomainModel>(),
+                states = new List<TagForMovieDomainModel>()
             };
             _listOfMovieDomainModels = new List<MovieDomainModel>();
             _listOfMovieDomainModels.Add(_movieDomainModel);
@@ -211,7 +220,6 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedStatusCode, ((NotFoundObjectResult)resultAction).StatusCode);
             Assert.AreEqual(errorMessageExpected, result);
         }
-        //SearchByTag
         [TestMethod]
         public void MoviesController_SearchByTag_ReturnOkObjectResult()
         {
@@ -260,7 +268,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         }
 
         [TestMethod]
-        public void MoviesController_GetCurrent_ReturnOkObjectResult()
+        public void MoviesController_GetCurrentWithProjections_ReturnOkObjectResult()
         {
             //Arrange
             int expectedCount = 1;
@@ -271,7 +279,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             _mockMoviesService.Setup(x => x.GetCurrentMovies()).Returns(responseTask);
             MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
             //Act
-            var resultAction = moviesController.GetCurrent().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultAction = moviesController.GetCurrentWithProjections().ConfigureAwait(false).GetAwaiter().GetResult().Result;
             var result = ((OkObjectResult)resultAction).Value;
             var resultList = ((List<MovieDomainModel>)result);
             //Assert
@@ -283,7 +291,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         }
 
         [TestMethod]
-        public void MoviesController_GetCurrent_ReturnStatusCodeObjectResult()
+        public void MoviesController_GetCurrentWithProjections_ReturnStatusCodeObjectResult()
         {
             //Arrange
             int expectedStatusCode = 404;
@@ -295,7 +303,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             _mockMoviesService.Setup(x => x.GetCurrentMovies()).Returns(responseTask);
             MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
             //Act
-            var resultAction = moviesController.GetCurrent().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultAction = moviesController.GetCurrentWithProjections().ConfigureAwait(false).GetAwaiter().GetResult().Result;
             var result = ((ObjectResult)resultAction).Value;
             var resultErrorResponseModel = ((ErrorResponseModel)result).ErrorMessage;
 
@@ -307,7 +315,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         }
 
         [TestMethod]
-        public void MoviesController_GetCurrent_ReturnBadRequestObjectResult()
+        public void MoviesController_GetCurrentWithProjections_ReturnBadRequestObjectResult()
         {
             //Arrange
             int expectedStatusCode = 400;
@@ -319,7 +327,150 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             _mockMoviesService.Setup(x => x.GetCurrentMovies()).Throws(dbUpdateException);
             MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
             //Act
-            var resultAction = moviesController.GetCurrent().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultAction = moviesController.GetCurrentWithProjections().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultResponse = (BadRequestObjectResult)resultAction;
+            var badObjectResult = ((BadRequestObjectResult)resultAction).Value;
+            var errorResult = (ErrorResponseModel)badObjectResult;
+
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedErrorMessage, errorResult.ErrorMessage);
+            Assert.IsInstanceOfType(resultAction, typeof(BadRequestObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
+        }
+
+        [TestMethod]
+        public void MoviesController_CommingSoon_ReturnOkObjectResult()
+        {
+            //Arrange
+            int expectedCount = 1;
+            int expectedStatusCode = 200;
+            IEnumerable<MovieDomainModel> movieDomainModels = _listOfMovieDomainModels;
+            Task<IEnumerable<MovieDomainModel>> responseTask = Task.FromResult(movieDomainModels);
+            _mockMoviesService = new Mock<IMovieService>();
+            _mockMoviesService.Setup(x => x.GetCurrentMoviesWithoutProjections()).Returns(responseTask);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.CommingSoon().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((OkObjectResult)resultAction).Value;
+            var resultList = ((List<MovieDomainModel>)result);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)resultAction).StatusCode);
+            Assert.AreEqual(expectedCount, resultList.Count);
+            Assert.AreEqual(_movieDomainModel.Id, resultList[0].Id);
+        }
+
+        [TestMethod]
+        public void MoviesController_CommingSoon_ReturnStatusCodeObjectResult()
+        {
+            //Arrange
+            int expectedStatusCode = 404;
+            string expectedErrorMessage = "Movie does not exist.";
+
+            IEnumerable<MovieDomainModel> movieDomainModels = null;
+            Task<IEnumerable<MovieDomainModel>> responseTask = Task.FromResult(movieDomainModels);
+            _mockMoviesService = new Mock<IMovieService>();
+            _mockMoviesService.Setup(x => x.GetCurrentMoviesWithoutProjections()).Returns(responseTask);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.CommingSoon().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((ObjectResult)resultAction).Value;
+            var resultErrorResponseModel = ((ErrorResponseModel)result).ErrorMessage;
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(ObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((ObjectResult)resultAction).StatusCode);
+            Assert.AreEqual(expectedErrorMessage, resultErrorResponseModel);
+        }
+
+        [TestMethod]
+        public void MoviesController_CommingSoon_ReturnBadRequestObjectResult()
+        {
+            //Arrange
+            int expectedStatusCode = 400;
+            string expectedErrorMessage = "Inner exception error message.";
+            Exception exception = new Exception("Inner exception error message.");
+            DbUpdateException dbUpdateException = new DbUpdateException("Error.", exception);
+
+            _mockMoviesService = new Mock<IMovieService>();
+            _mockMoviesService.Setup(x => x.GetCurrentMoviesWithoutProjections()).Throws(dbUpdateException);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.CommingSoon().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultResponse = (BadRequestObjectResult)resultAction;
+            var badObjectResult = ((BadRequestObjectResult)resultAction).Value;
+            var errorResult = (ErrorResponseModel)badObjectResult;
+
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedErrorMessage, errorResult.ErrorMessage);
+            Assert.IsInstanceOfType(resultAction, typeof(BadRequestObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
+        }
+        [TestMethod]
+        public void MoviesController_GetCurrentWithProjectionsForToday_ReturnOkObjectResult()
+        {
+            //Arrange
+            int expectedCount = 1;
+            int expectedStatusCode = 200;
+            IEnumerable<MovieDomainModel> movieDomainModels = _listOfMovieDomainModels;
+            Task<IEnumerable<MovieDomainModel>> responseTask = Task.FromResult(movieDomainModels);
+            _mockMoviesService = new Mock<IMovieService>();
+            _mockMoviesService.Setup(x => x.GetCurrentMoviesForToday()).Returns(responseTask);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.GetCurrentWithProjectionsForToday().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((OkObjectResult)resultAction).Value;
+            var resultList = ((List<MovieDomainModel>)result);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)resultAction).StatusCode);
+            Assert.AreEqual(expectedCount, resultList.Count);
+            Assert.AreEqual(_movieDomainModel.Id, resultList[0].Id);
+        }
+
+        [TestMethod]
+        public void MoviesController_GetCurrentWithProjectionsForToday_ReturnStatusCodeObjectResult()
+        {
+            //Arrange
+            int expectedStatusCode = 404;
+            string expectedErrorMessage = "Movie does not exist.";
+
+            IEnumerable<MovieDomainModel> movieDomainModels = null;
+            Task<IEnumerable<MovieDomainModel>> responseTask = Task.FromResult(movieDomainModels);
+            _mockMoviesService = new Mock<IMovieService>();
+            _mockMoviesService.Setup(x => x.GetCurrentMoviesForToday()).Returns(responseTask);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.GetCurrentWithProjectionsForToday().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((ObjectResult)resultAction).Value;
+            var resultErrorResponseModel = ((ErrorResponseModel)result).ErrorMessage;
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(ObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((ObjectResult)resultAction).StatusCode);
+            Assert.AreEqual(expectedErrorMessage, resultErrorResponseModel);
+        }
+
+        [TestMethod]
+        public void MoviesController_GetCurrentWithProjectionsForToday_ReturnBadRequestObjectResult()
+        {
+            //Arrange
+            int expectedStatusCode = 400;
+            string expectedErrorMessage = "Inner exception error message.";
+            Exception exception = new Exception("Inner exception error message.");
+            DbUpdateException dbUpdateException = new DbUpdateException("Error.", exception);
+
+            _mockMoviesService = new Mock<IMovieService>();
+            _mockMoviesService.Setup(x => x.GetCurrentMoviesForToday()).Throws(dbUpdateException);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.GetCurrentWithProjectionsForToday().ConfigureAwait(false).GetAwaiter().GetResult().Result;
             var resultResponse = (BadRequestObjectResult)resultAction;
             var badObjectResult = ((BadRequestObjectResult)resultAction).Value;
             var errorResult = (ErrorResponseModel)badObjectResult;
@@ -434,7 +585,6 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedStatusCode, ((CreatedResult)resultAction).StatusCode);
         }
 
-        //UpdateMovie
 
         [TestMethod]
         public void MoviesController_UpdateMovie_Returns_BadRequeest_InvalidModelState()
@@ -710,8 +860,45 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(_movieDomainModel.Year, resultMovieDomainModel.MovieDomainModel.Year);
             Assert.AreEqual(expectedStatusCode, statusCode);
         }
-
-        //GetTopList
+        [TestMethod]
+        public void MoviesController_GetAllTagsForMovieCreate_Returns_Tags()
+        {
+            //Arrange
+            var expectedStatusCode = 200;
+            TagDomainModel tagDomainModel = _tagDomainModel;
+            Task<TagDomainModel> responseTask = Task.FromResult(tagDomainModel);
+            _mockTagService = new Mock<ITagService>();
+            _mockTagService.Setup(x => x.GetAllTags()).Returns(responseTask);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.GetAllTagsForMovieCreate().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultList = ((OkObjectResult)resultAction).Value;
+            var model = (TagDomainModel)resultList;
+            //Assert
+            Assert.IsNotNull(model);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)resultAction).StatusCode);
+        }
+        [TestMethod]
+        public void MoviesController__GetAllTagsForMovieCreate_Returns_NotFoundObjectResult()
+        {
+            //Arrange
+            var expectedStatusCode = 404;
+            var expectedMessage = "Error occured while finding tags, please try again.";
+            TagDomainModel tagDomainModel = null;
+            Task<TagDomainModel> responseTask = Task.FromResult(tagDomainModel);
+            _mockTagService = new Mock<ITagService>();
+            _mockTagService.Setup(x => x.GetAllTags()).Returns(responseTask);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.GetAllTagsForMovieCreate().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((NotFoundObjectResult)resultAction).Value;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(expectedMessage, result);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((NotFoundObjectResult)resultAction).StatusCode);
+        }
         [TestMethod]
         public void MoviesController_GetTopList_Returns_OkObjectResult()
         {
@@ -725,14 +912,11 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
             //Act
             var resultAction = moviesController.GetTopList().ConfigureAwait(false).GetAwaiter().GetResult().Result;
-            var resultList = ((OkObjectResult)resultAction).Value;
-            var moviesDomainModelResultList = (List<MovieDomainModel>)resultList;
+            var result = ((ObjectResult)resultAction).Value;
             //Assert
-            Assert.IsNotNull(moviesDomainModelResultList);
-            Assert.AreEqual(expectedResultCount, moviesDomainModelResultList.Count);
-            Assert.AreEqual(_movieDomainModel.Id, moviesDomainModelResultList[0].Id);
-            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
-            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)resultAction).StatusCode);
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(ObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((ObjectResult)resultAction).StatusCode);
         }
 
         [TestMethod]
@@ -753,7 +937,6 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedStatusCode, ((ObjectResult)resultAction).StatusCode);
         }
 
-        //UpdateMovieCurrentStatus
 
         [TestMethod]
         public void MoviesController_UpdateMovieCurrentStatus_Returns_NotFound()
@@ -872,6 +1055,8 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(createMovieResultModel.ErrorMessage, resultErrorResponseModel);
             Assert.AreEqual(statusCodeExpected, resultStatusCodeIntoInt);
         }
+
+
 
 
     }

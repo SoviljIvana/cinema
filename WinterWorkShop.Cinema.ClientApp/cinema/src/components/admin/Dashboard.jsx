@@ -22,6 +22,7 @@ import FilterProjections from './ProjectionActions/FilterProjections';
 
 // higher order component
 import { PrivateRouteAdmin } from '../hoc/privateRouteAdmin';
+import {PrivateRouteSuperUser} from '../hoc/privateRouteSuperUser';
 
 
 class Dashboard extends Component {
@@ -79,20 +80,20 @@ class Dashboard extends Component {
                 </Col>
                 <Col className="pt-2 app-content-main">
                     <Switch>
-                        <PrivateRouteAdmin path="/dashboard/NewMovie" component={NewMovie} />
-                        <PrivateRouteAdmin path="/dashboard/AllMovies" component={ShowAllMovies} />
-                        <PrivateRouteAdmin path="/dashboard/ShowCurrentMovies" component={ShowCurrentMovies} />
-                        <PrivateRouteAdmin path="/dashboard/TopTenMovies" component={TopTenMovies} />
-                        <PrivateRouteAdmin path="/dashboard/EditMovie/:id" component={EditMovie} />
+                        <PrivateRouteSuperUser path="/dashboard/NewMovie" component={NewMovie} />
+                        <PrivateRouteSuperUser path="/dashboard/AllMovies" component={ShowAllMovies} />
+                        <PrivateRouteSuperUser path="/dashboard/ShowCurrentMovies" component={ShowCurrentMovies} />
+                        <PrivateRouteSuperUser path="/dashboard/TopTenMovies" component={TopTenMovies} />
+                        <PrivateRouteSuperUser path="/dashboard/EditMovie/:id" component={EditMovie} />
                         <PrivateRouteAdmin path="/dashboard/NewCinema" component={NewCinema} />
                         <PrivateRouteAdmin path="/dashboard/EditCinema/:id" component={EditCinema} />
-                        <PrivateRouteAdmin path="/dashboard/AllCinemas" component={ShowAllCinemas} />
+                        <PrivateRouteSuperUser path="/dashboard/AllCinemas" component={ShowAllCinemas} />
                         <PrivateRouteAdmin path="/dashboard/NewAuditorium" component={NewAuditorium} />
                         <PrivateRouteAdmin path="/dashboard/EditAuditorium/:id" component={EditAuditorium} />
-                        <PrivateRouteAdmin path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
-                        <PrivateRouteAdmin path="/dashboard/AllProjections" component={ShowAllProjections} />
-                        <PrivateRouteAdmin path="/dashboard/FilterProjections" component={FilterProjections} />
-                        <PrivateRouteAdmin path="/dashboard/NewProjection" component={NewProjection} />
+                        <PrivateRouteSuperUser path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
+                        <PrivateRouteSuperUser path="/dashboard/AllProjections" component={ShowAllProjections} />
+                        <PrivateRouteSuperUser path="/dashboard/FilterProjections" component={FilterProjections}/>
+                        <PrivateRouteSuperUser path="/dashboard/NewProjection" component={NewProjection} />
                     </Switch>
                 </Col>
             </Row>

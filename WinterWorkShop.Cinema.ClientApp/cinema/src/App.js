@@ -20,6 +20,7 @@ import Dashboard from './components/admin/Dashboard';
 
 // higher order component
 import { PrivateRouteAdmin } from './components/hoc/privateRouteAdmin';
+import {PrivateRouteSuperUser} from './components/hoc/privateRouteSuperUser';
 
 function App() {
   return (
@@ -35,8 +36,8 @@ function App() {
         <Route path="/userProfile" component={UserProfile} />
         <Route path="/comingsoon" component={ComingSoon} />
         <Route path ="/ProjectionsFilterForCinema" component={ProjectionsFilterForCinema}/>
-        <PrivateRouteAdmin path="/dashboard" component={Dashboard} />
-        <PrivateRouteAdmin path="/tickets" component={Tickets} />
+        <PrivateRouteSuperUser path="/dashboard" component={Dashboard} />
+        <PrivateRouteSuperUser path="/tickets" component={Tickets} />
 
       </Switch>
       <NotificationContainer />

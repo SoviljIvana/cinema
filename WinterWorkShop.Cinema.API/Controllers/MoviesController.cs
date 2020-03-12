@@ -76,7 +76,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
             }
             return Ok(projectionDomainModels);
         }
-        //TODO: checkStatusCode
         [HttpGet]
         [Route("search/{searchData}")]
         public async Task<ActionResult<IEnumerable<MovieDomainModel>>> SearchByTag(string searchData)
@@ -94,42 +93,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 };
                 return NotFound(errorResponse);
             }
-            return Ok(movieDomainModels);
-        }
-
-        /// <summary>
-        /// Gets all current movies
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("current")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetCurrent()
-        {
-            IEnumerable<MovieDomainModel> movieDomainModels;
-            try
-            {
-                movieDomainModels = await _movieService.GetCurrentMovies();
-            }
-            catch (DbUpdateException e)
-            {
-                ErrorResponseModel errorResponse = new ErrorResponseModel
-                {
-                    ErrorMessage = e.InnerException.Message ?? e.Message,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
-                };
-                return BadRequest(errorResponse);
-            }
-
-            if (movieDomainModels == null)
-            {
-                ErrorResponseModel errorResponse = new ErrorResponseModel()
-                {
-                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
-                    StatusCode = System.Net.HttpStatusCode.NotFound
-                };
-                return NotFound(errorResponse);
-            }
-
             return Ok(movieDomainModels);
         }
 
@@ -485,8 +448,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Accepted("movies//" + createMovieResultModel.Movie.Id, createMovieResultModel.Movie);
         }
 
-       
-        //trebaDaSeTestira
         [HttpGet]
         [Route("allTags")]
         public async Task<ActionResult<TagDomainModel>> GetAllTagsForMovieCreate()
@@ -496,8 +457,44 @@ namespace WinterWorkShop.Cinema.API.Controllers
             {
                 return NotFound(Messages.TAGS_NOT_FOUND);
             }
-            return data;   
+            return Ok(data);   
 
+        }
+
+        /// <summary>
+        /// Gets all current movies
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("current")]
+        public async Task<ActionResult<IEnumerable<Movie>>> GetCurrent()
+        {
+            IEnumerable<MovieDomainModel> movieDomainModels;
+            try
+            {
+                movieDomainModels = await _movieService.GetCurrentMovies();
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return BadRequest(errorResponse);
+            }
+
+            if (movieDomainModels == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.NotFound
+                };
+                return NotFound(errorResponse);
+            }
+
+            return Ok(movieDomainModels);
         }
     }
 }
