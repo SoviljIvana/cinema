@@ -38,41 +38,36 @@ class UserProfile extends Component {
     };
     this.setState({ isLoading: true });
     fetch(`${serviceConfig.baseURL}/api/users/byusername/${userNameFromJWT}`, requestOptions)
-        .then(response => {
-            if (!response.ok) {
-                return Promise.reject(response);
-                
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data) {
-                this.setState({ users: data, isLoading: false, tickets: data.tickets});
-            }
-            console.log(this.state.users);
-            console.log(this.state.tickets);
-            
-        })
-        
-        .catch(response => {
-            this.setState({ isLoading: false });
-            NotificationManager.error("You are not logged in! Please log in to view your profile!");
-            this.setState({ submitted: false });
-        });
-}
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({ users: data, isLoading: false, tickets: data.tickets });
+        }
+        console.log(this.state.users);
+        console.log(this.state.tickets);
+      })
+      .catch(response => {
+        this.setState({ isLoading: false });
+        NotificationManager.error("You are not logged in! Please log in to view your profile!");
+        this.setState({ submitted: false });
+      });
+  }
 
   fillTableWithDaata() {
-    console.log();
+
     return this.state.tickets.map(ticket => {
       return <div key={ticket.id}>
         <br></br>
         <ListGroup variant="flush">
-          <ListGroup.Item variant="primary" > Cinema:     {ticket.cinemaName}</ListGroup.Item>
-          <ListGroup.Item variant="secondary"> Auditorium: {ticket.auditoriumName} </ListGroup.Item >
-          <ListGroup.Item variant="success"> Movie:      {ticket.movieName} </ListGroup.Item>
-          <ListGroup.Item variant="danger"> Seat row:   {ticket.seatRow}</ListGroup.Item>
-          <ListGroup.Item variant="warning"> Seat number:{ticket.seatNumber}</ListGroup.Item>
-          <ListGroup.Item variant="info"> Time:       {ticket.projectionTime} </ListGroup.Item>
+        <ListGroup.Item variant="info"> TITLE - {ticket.movieName} </ListGroup.Item>
+        <ListGroup.Item variant="info"> TIME - {ticket.projectionTime} </ListGroup.Item>
+        <ListGroup.Item STYLE="text-transform:uppercase" variant="info">  {ticket.auditoriumName} / row {ticket.seatRow}, number {ticket.seatNumber} </ListGroup.Item >
+          <ListGroup.Item variant="info" > CINEMA- {ticket.cinemaName}</ListGroup.Item>
         </ListGroup>
         <br />
       </div>
@@ -91,16 +86,16 @@ class UserProfile extends Component {
     const showTable = isLoading ? <Spinner /> : table;
     return (
       <Container>
-          <Col>
-            <Card bg="light" text="white" >
-              <Card.Body>
-                <Card.Title><span className="card-title-font">Name: {users.firstName} {users.lastName}</span></Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">Username: <span className="float-right">{users.userName}</span></Card.Subtitle>
-                <Card.Text><h3>Tickets:{showTable}</h3></Card.Text>
-                <Card.Text>Bonus points:{users.bonusPoints}</Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
+        <Col>
+          <Card bg="light" text="white" >
+            <Card.Body>
+              <Card.Title > <h3 align="left" style={{color: 'black'}}>Name: {users.firstName} {users.lastName}</h3></Card.Title>
+              <Card.Subtitle><h3  align="left" style={{color: 'black'}}>Username: {users.userName}</h3></Card.Subtitle>
+              <Card.Text><h3 align="left" style={{color: 'black'}}>Bonus points: {users.bonusPoints}</h3></Card.Text>
+              <Card.Text><h4 align="center" style={{color: 'black'}}>Tickets:{showTable}</h4></Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
       </Container>
     );
   }

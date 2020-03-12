@@ -8,6 +8,7 @@ import { NotificationContainer } from 'react-notifications';
 
 // components
 import Header from './components/Header';
+import ComingSoon from './components/ComingSoon';
 import UserProfile from './components/UserProfile';
 import ProjectionDetails from './components/user/ProjectionDetails';
 import AllProjectionsForCinema from './components/user/AllProjectionsForCinema';
@@ -32,6 +33,7 @@ function App() {
         <Route path="/projectionlist" component={AllProjectionsForCinema} />
         <Route path="/projectiondetails/allForProjection/:id" component={AllForProjection} />
         <Route path="/userProfile" component={UserProfile} />
+        <Route path="/comingsoon" component={ComingSoon} />
         <Route path ="/ProjectionsFilterForCinema" component={ProjectionsFilterForCinema}/>
         <PrivateRouteAdmin path="/dashboard" component={Dashboard} />
         <PrivateRouteAdmin path="/tickets" component={Tickets} />

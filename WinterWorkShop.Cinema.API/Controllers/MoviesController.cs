@@ -166,7 +166,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         [HttpGet]
-        [Route("commingSoon")]
+        [Route("comingsoon")]
         public async Task<ActionResult<IEnumerable<MovieDomainModel>>> CommingSoon()
         {
             IEnumerable<MovieDomainModel> movieDomainModels;

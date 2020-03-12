@@ -554,8 +554,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     listOfProjections = new List<ProjectionDomainModel>()
                 };
                 IEnumerable<Projection> lista = new List<Projection>();
-                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
-                if (projectionsForThisMovie == null)
+                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id).ToList();
+                if (projectionsForThisMovie == null || projectionsForThisMovie.Count==0)
                 {
                     result.Add(model);
                 }

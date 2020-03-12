@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { Switch, NavLink } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faList, faFilm, faVideo, faTicketAlt, faBinoculars } from '@fortawesome/free-solid-svg-icons';
+import { Switch, NavLink, } from 'react-router-dom';
+import { NavbarBrand, Badge } from 'react-bootstrap';
 
 // Admin actions
 import NewMovie from './MovieActions/NewMovie';
@@ -31,49 +30,51 @@ class Dashboard extends Component {
             <Row className="justify-content-center no-gutters">
                 <Col lg={2} className="dashboard-navigation">
                     <Row className="justify-content-center mt-2">
-                        <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faFilm}/>Movie</span>
+                        <h2><Badge pill variant="dark">
+                            MOVIE</Badge></h2> </Row>
+                    <Row className="justify-content-center mt-2">
+                        <NavLink activeClassName="active-link" to='/dashboard/AllMovies'><Badge pill variant="info"> ALL MOVIES</Badge></NavLink>
                     </Row>
                     <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/AllMovies'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Movies</NavLink>
+                        <NavLink activeClassName="active-link" to='/dashboard/NewMovie'><Badge pill variant="info">ADD MOVIE</Badge></NavLink>
                     </Row>
                     <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/NewMovie'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Movie</NavLink>
+                        <NavLink activeClassName="active-link" to='/dashboard/TopTenMovies'><Badge pill variant="info">TOP 10 MOVIES </Badge></NavLink>
                     </Row>
                     <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/TopTenMovies'><FontAwesomeIcon className='text-primary mr-1' />Top 10 Movies</NavLink>
+                        <NavLink activeClassName="active-link" to='/dashboard/ShowCurrentMovies'><Badge pill variant="info">CURRENT MOVIES</Badge></NavLink>
                     </Row>
-                    <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/ShowCurrentMovies'><FontAwesomeIcon className='text-primary mr-1' />Current Movies</NavLink>
-                    </Row>
+                    <br></br>
                     <Row className="justify-content-center">
-                        <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faBinoculars}/>Auditorium</span>
+                        <h2><Badge pill variant="dark"> AUDITORIUM</Badge></h2>
                     </Row>
                     <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/AllAuditoriums'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Auditoriums</NavLink>
+                        <NavLink activeClassName="active-link" to='/dashboard/AllAuditoriums'><Badge pill variant="info">ALL AUDITORIUMS</Badge></NavLink>
                     </Row>
                     <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/NewAuditorium'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Auditorium</NavLink>
+                        <NavLink activeClassName="active-link" to='/dashboard/NewAuditorium'><Badge pill variant="info"> ADD AUDITORIUM</Badge></NavLink>
                     </Row>
+                    <br></br>
                     <Row className="justify-content-center">
-                        <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faTicketAlt}/>Cinema</span>
+                        <h2><Badge pill variant="dark">CINEMA</Badge></h2>
                     </Row>
                     <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/AllCinemas'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Cinemas</NavLink>
+                        <NavLink activeClassName="active-link" to='/dashboard/AllCinemas'><Badge pill variant="info"> ALL CINEMAS</Badge></NavLink>
                     </Row>
                     <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/NewCinema'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Cinema</NavLink>
+                        <NavLink activeClassName="active-link" to='/dashboard/NewCinema'><Badge pill variant="info">ADD CINEMA</Badge></NavLink>
                     </Row>
-                    <Row className="justify-content-center">
-                        <span className="fa-2x text-white"><FontAwesomeIcon className="text-white mr-2 fa-1x" icon={faVideo}/>Projection</span>
-                    </Row>
-                    <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/AllProjections'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>All Projections</NavLink>
+                    <br></br>
+                    <Row className="justify-content-center"> <h2><Badge pill variant="dark"> PROJECTION </Badge></h2>
                     </Row>
                     <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/FilterProjections'><FontAwesomeIcon className='text-primary mr-1' icon={faList}/>Filter Projections</NavLink>
+                        <NavLink activeClassName="active-link" to='/dashboard/AllProjections'><Badge pill variant="info"> ALL PROJECTIONS</Badge></NavLink>
                     </Row>
                     <Row className="justify-content-center mt-2">
-                        <NavLink activeClassName="active-link" to='/dashboard/NewProjection'><FontAwesomeIcon className='text-primary mr-1' icon={faPlus}/>Add Projection</NavLink>
+                        <NavLink activeClassName="active-link" to='/dashboard/FilterProjections'><Badge pill variant="info"> FILTER PROJECTIONS</Badge></NavLink>
+                    </Row>
+                    <Row className="justify-content-center mt-2">
+                        <NavLink activeClassName="active-link" to='/dashboard/NewProjection'><Badge pill variant="info">ADD PROJECTIONS</Badge></NavLink>
                     </Row>
                 </Col>
                 <Col className="pt-2 app-content-main">
@@ -90,13 +91,13 @@ class Dashboard extends Component {
                         <PrivateRouteAdmin path="/dashboard/EditAuditorium/:id" component={EditAuditorium} />
                         <PrivateRouteAdmin path="/dashboard/AllAuditoriums" component={ShowAllAuditoriums} />
                         <PrivateRouteAdmin path="/dashboard/AllProjections" component={ShowAllProjections} />
-                        <PrivateRouteAdmin path="/dashboard/FilterProjections" component={FilterProjections}/>
+                        <PrivateRouteAdmin path="/dashboard/FilterProjections" component={FilterProjections} />
                         <PrivateRouteAdmin path="/dashboard/NewProjection" component={NewProjection} />
                     </Switch>
                 </Col>
             </Row>
         );
-      }
+    }
 }
 
 export default Dashboard;

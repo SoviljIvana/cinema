@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-import { Link, Route } from 'react-router-dom';
-import { Navbar, Nav, Form, FormControl, Button, Container, NavDropdown } from 'react-bootstrap';
+import { Navbar, Nav, Form, FormControl, Button, Container } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../appSettings';
-import { FaUserAlt } from "react-icons/fa";
 import {withRouter} from 'react-router-dom';
-import { Redirect } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
 
 class Header extends React.Component {
   constructor(props) {
@@ -53,6 +49,7 @@ class Header extends React.Component {
     this.getUser(this.state.username);
 
   }
+
   getUser(username){  
       const requestOptions = {
           method: 'GET',
@@ -81,6 +78,7 @@ class Header extends React.Component {
               this.setState({ submitted: false });
           });
   }
+
   guestToken() {
     const requestOptions = {
       method: 'GET',
@@ -105,6 +103,7 @@ class Header extends React.Component {
         this.setState({ submitted: false });
       });
   }
+
   adminLogin() {
     const { username } = this.state;
 
@@ -163,7 +162,7 @@ class Header extends React.Component {
   render() {
     const { username } = this.state;
     return (
-      <Navbar fixed="top" expand="lg" variant="light" bg="light">
+      <Navbar  expand="lg" variant="light" bg="light">
         <Nav justify variant="tabs" defaultActiveKey="/projectionlist" className="mr-auto">
           <Container>
             <Navbar.Brand><Nav.Link href='/projectionlist'>What's on</Nav.Link></Navbar.Brand>
