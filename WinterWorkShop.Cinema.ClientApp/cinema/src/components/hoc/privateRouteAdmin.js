@@ -11,7 +11,7 @@ export const PrivateRouteAdmin = ({ component: Component, ...rest }) => {
       });
     return (
     <Route {...rest} render={ props => localStorage.getItem('jwt') && authCheck.isAdmin() ? ( <Component {...props} />) : 
-            ( <Redirect to={{ pathname: "/", state: { from: props.location } }} />
+            ( <Redirect to={{ pathname: "/dashboard"}} />
         )}/>
     )
 }
