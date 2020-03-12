@@ -118,7 +118,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 MovieId = domainModel.MovieId,
                 AuditoriumId = domainModel.AuditoriumId,
-                DateTime = domainModel.ProjectionTime
+                DateTime = domainModel.ProjectionTime.AddHours(1)
             };
 
             var insertedProjection = _projectionsRepository.Insert(newProjection);

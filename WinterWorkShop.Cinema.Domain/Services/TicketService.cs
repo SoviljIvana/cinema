@@ -151,11 +151,11 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     };
                 }
             }
-
+            var bonusPoints = newListOfTickets.Count;
             Data.User userWithPoints = new Data.User()
             {
                 FirstName = userCheck.FirstName,
-                BonusPoints = userCheck.BonusPoints + 1,
+                BonusPoints = userCheck.BonusPoints + bonusPoints,
                 Id = userCheck.Id,
                 IsAdmin = userCheck.IsAdmin,
                 LastName = userCheck.LastName,

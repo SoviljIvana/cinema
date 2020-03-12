@@ -107,6 +107,38 @@ class AllProjectionsForCinema extends Component {
         this.setState({ submitted: false });
       });
   }
+  getAllMovies() {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+    };
+    this.setState({ isLoading: true });
+    fetch(`${serviceConfig.baseURL}/api/Movies/allMovies`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({
+            movies: data,
+            isLoading: false
+          });
+        }
+
+      })
+      .catch(response => {
+        this.setState({ isLoading: false });
+        NotificationManager.error(response.message || response.statusText);
+        this.setState({ submitted: false });
+      });
+
+  }
 
   getMovies() {
     const requestOptions = {

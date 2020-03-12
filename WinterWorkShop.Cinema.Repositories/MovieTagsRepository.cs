@@ -49,7 +49,7 @@ namespace WinterWorkShop.Cinema.Repositories
         }
         public Tag GetOskarId()
         {
-            var oskarTag = _cinemaContext.Tags.SingleOrDefault(x => x.Name.Equals("oskar"));
+            var oskarTag = _cinemaContext.Tags.SingleOrDefault(x => x.Name.Equals("Oscar"));
             return oskarTag;
         }
 
