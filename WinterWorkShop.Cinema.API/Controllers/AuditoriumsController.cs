@@ -47,6 +47,25 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
+        /// Gets all auditoriums
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("cinema/{id}")]
+        public async Task<ActionResult<IEnumerable<AuditoriumDomainModel>>> GetAuditoriumsForCinema(int id)
+        {
+            IEnumerable<AuditoriumDomainModel> auditoriumDomainModels;
+
+            auditoriumDomainModels = _auditoriumService.GetAllOfSpecificCinema(id);
+
+            if (auditoriumDomainModels == null)
+            {
+                return NotFound(Messages.AUDITORIUM_NOT_FOUND);
+            }
+            return Ok(auditoriumDomainModels);
+        }
+
+        /// <summary>
         /// Adds a new auditorium
         /// </summary>
         /// <param name="createAuditoriumModel"></param>
@@ -113,6 +132,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             return Ok(auditorium);
         }
+
+
 
         /// <summary>
         /// Updates an auditorium
