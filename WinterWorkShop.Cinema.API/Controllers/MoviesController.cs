@@ -165,6 +165,70 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(movieDomainModels);
         }
 
+        [HttpGet]
+        [Route("commingSoon")]
+        public async Task<ActionResult<IEnumerable<MovieDomainModel>>> CommingSoon()
+        {
+            IEnumerable<MovieDomainModel> movieDomainModels;
+            try
+            {
+                movieDomainModels = await _movieService.GetCurrentMoviesWithoutProjections();
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return BadRequest(errorResponse);
+            }
+
+            if (movieDomainModels == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.NotFound
+                };
+                return NotFound(errorResponse);
+            }
+
+            return Ok(movieDomainModels);
+        }
+
+        [HttpGet]
+        [Route("currentMoviesWithProjectionsForToday")]
+        public async Task<ActionResult<IEnumerable<MovieDomainModel>>> GetCurrentWithProjectionsForToday()
+        {
+            IEnumerable<MovieDomainModel> movieDomainModels;
+            try
+            {
+                movieDomainModels = await _movieService.GetCurrentMoviesForToday();
+            }
+            catch (DbUpdateException e)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel
+                {
+                    ErrorMessage = e.InnerException.Message ?? e.Message,
+                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                };
+                return BadRequest(errorResponse);
+            }
+
+            if (movieDomainModels == null)
+            {
+                ErrorResponseModel errorResponse = new ErrorResponseModel()
+                {
+                    ErrorMessage = Messages.MOVIE_DOES_NOT_EXIST,
+                    StatusCode = System.Net.HttpStatusCode.NotFound
+                };
+                return NotFound(errorResponse);
+            }
+
+            return Ok(movieDomainModels);
+        }
+
         /// <summary>
         /// Gets all movies
         /// </summary>

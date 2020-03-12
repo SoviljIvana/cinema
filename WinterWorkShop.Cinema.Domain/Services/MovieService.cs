@@ -531,6 +531,40 @@ namespace WinterWorkShop.Cinema.Domain.Services
             return result;
         }
 
+        public async Task<IEnumerable<MovieDomainModel>> GetCurrentMoviesWithoutProjections()
+        {
+            var data = await _moviesRepository.GetCurrent();
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<MovieDomainModel> result = new List<MovieDomainModel>();
+            MovieDomainModel model;
+            foreach (var item in data)
+            {
+                model = new MovieDomainModel
+                {
+                    Current = item.Current,
+                    Id = item.Id,
+                    Rating = item.Rating ?? 0,
+                    Title = item.Title,
+                    Year = item.Year,
+                    listOfProjections = new List<ProjectionDomainModel>()
+                };
+                IEnumerable<Projection> lista = new List<Projection>();
+                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+                if (projectionsForThisMovie == null)
+                {
+                    result.Add(model);
+                }
+            }
+
+            return result;
+
+        }
+
         public async Task<IEnumerable<MovieDomainModel>> GetCurrentMovies()
         {
             var data = await _moviesRepository.GetCurrent();
@@ -560,12 +594,57 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     model.listOfProjections.Add(new ProjectionDomainModel()
                     {
                         Id = projection.Id,
-                        ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                        ProjectionTimeString = projection.DateTime.ToString("MM/dd/yyyy HH:mm"),
                         AuditoriumName = projection.Auditorium.Name
                     });
 
                 }
                 result.Add(model);
+            }
+
+            return result;
+
+        }
+        public async Task<IEnumerable<MovieDomainModel>> GetCurrentMoviesForToday()
+        {
+            var data = await _moviesRepository.GetCurrentMoviesWithProjectionsForToday();
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<MovieDomainModel> result = new List<MovieDomainModel>();
+            MovieDomainModel model;
+            foreach (var item in data)
+            {
+                model = new MovieDomainModel
+                {
+                    Current = item.Current,
+                    Id = item.Id,
+                    Rating = item.Rating ?? 0,
+                    Title = item.Title,
+                    Year = item.Year,
+                    listOfProjections = new List<ProjectionDomainModel>()
+                };
+                IEnumerable<Projection> lista = new List<Projection>();
+                var dayToday = DateTime.Now.DayOfYear;
+                var yearToday = DateTime.Now.Year;
+                var projectionsForThisMovieAll = _projectionsRepository.GetAllFromOneMovie(item.Id);
+                var projectionsForThisMovieToday = projectionsForThisMovieAll.Where(x => x.DateTime.DayOfYear == dayToday && x.DateTime.Year == yearToday).ToList();
+                if (projectionsForThisMovieToday != null && projectionsForThisMovieToday.Count>0)
+                {
+                    foreach (var projection in projectionsForThisMovieToday)
+                    {
+                        model.listOfProjections.Add(new ProjectionDomainModel()
+                        {
+                            Id = projection.Id,
+                            ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                            AuditoriumName = projection.Auditorium.Name
+                        });
+                    }
+                    result.Add(model);
+                }
             }
 
             return result;
