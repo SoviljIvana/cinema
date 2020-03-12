@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { MDBBtn, MDBModal, MDBRow, MDBCol } from 'mdbreact'
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Row, Container, ToggleButton, ToggleButtonGroup, Button, Card } from 'react-bootstrap';
@@ -223,15 +224,15 @@ class ProjectionDetails extends Component {
     renderRowsInProjections(seatsInRow) {
         return seatsInRow.map((seat) => {
 
-            return <Button type="button" id={seat.id}
+            return <MDBBtn color="danger" outline="true" rounded="true"  mdbWavesEffect  type="button" id={seat.id}
                 disabled={seat.reserved === true ? true : false} 
-                onClick={() => this.handleClick(seat)}>{seat.row},{seat.number}</Button>
+                onClick={() => this.handleClick(seat)}>+</MDBBtn>
         })
     }
 
     fillTableWithDaata() {
         return this.state.seats.map(seat => {
-            return <Row className="justify-content-center" style={{ width: '100rem' }}>{this.renderRowsInProjections(seat.seatsInRow)}<br></br></Row>
+            return <MDBRow className="justify-content-center" style={{ width: '100rem' }}>{this.renderRowsInProjections(seat.seatsInRow)}<br></br></MDBRow>
         })
     }
 
@@ -241,12 +242,10 @@ class ProjectionDetails extends Component {
         return (
             <Container>
                 <Row className="justify-content-center">
-                    <br></br>
                     {rowsData}
                     <br></br>
+                    <Link className="text-decoration-none" to='/tickets'> <Button variant="dark" onClick={this.addTickets} > Create ticket </Button></Link>
                 </Row>
-                <Link className="text-decoration-none" to='/tickets'>  <Button onClick={this.addTickets} > Create ticket </Button></Link>
-
             </Container>
         );
     }

@@ -17,7 +17,6 @@ import ProjectionsFilterForCinema from './components/user/ProjectionsFilterForCi
 import Tickets from './components/user/Tickets';
 
 import Dashboard from './components/admin/Dashboard';
-
 // higher order component
 import { PrivateRouteAdmin } from './components/hoc/privateRouteAdmin';
 import {PrivateRouteSuperUser} from './components/hoc/privateRouteSuperUser';

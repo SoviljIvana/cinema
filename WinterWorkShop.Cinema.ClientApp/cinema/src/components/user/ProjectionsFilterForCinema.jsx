@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { FormControl, Row, Table, FormGroup } from 'react-bootstrap';
+import { FormControl, Container,Row, Table, FormGroup, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../Spinner';
@@ -199,12 +199,12 @@ class ProjectionsFilterForCinema extends Component {
         return this.state.projections.map(projection => {
             return <tr key={projection.id}>
               
-                        <td width="23.75%">{projection.movieTitle}</td>
-                        <td width="23.75%">{projection.cinemaName}</td>
-                        <td width="23.75%">{projection.auditoriumName}</td>
-                        <td width="23.75%">{projection.projectionTimeString}</td>
-                        <td width="5%" className="text-center cursor-pointer" onClick={() => 
-                            this.reserveTickets(projection.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>                        
+                        <td className="text-center cursor-pointer">{projection.movieTitle}</td>
+                        <td className="text-center cursor-pointer">{projection.cinemaName}</td>
+                        <td className="text-center cursor-pointer">{projection.auditoriumName}</td>
+                        <td className="text-center cursor-pointer">{projection.projectionTimeString}</td>
+                       <td> <Button variant="dark" className="text-center cursor-pointer" onClick={() => 
+                            this.reserveTickets(projection.id)}>reservation</Button> </td>                       
                     </tr>
         })
     }
@@ -269,13 +269,14 @@ class ProjectionsFilterForCinema extends Component {
     render() {
         const {isLoading, searchData, auditoriums, cinemas, filterList, selectedOption} = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="sm" variant="dark">
+        const table = (<Table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
                             <thead>
                             <tr>
-                                <th>Movie Title</th>
-                                <th>Cinema Name</th>
-                                <th>Auditorium Name</th>
-                                <th>Projection Time</th>
+                                <th className="text-center cursor-pointer">Movie Title</th>
+                                <th className="text-center cursor-pointer">Cinema Name</th>
+                                <th className="text-center cursor-pointer">Auditorium Name</th>
+                                <th className="text-center cursor-pointer">Projection Time</th>
+
                             </tr>
                             </thead>
                             <tbody>
@@ -284,26 +285,31 @@ class ProjectionsFilterForCinema extends Component {
                         </Table>);
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
-            <React.Fragment>
-                <FormGroup class = "set-overflow-y:auto">
-                        <Select
-                            id = 'filterOptions'
-                            options= {filterList}
-                            value = {selectedOption}
-                            onChange={this.change}
-                            placeholder="Choose filter"
-                        />
-                        <div>{this.switchFunction(selectedOption, auditoriums, cinemas, searchData)}</div>
-                        <button onClick = {this.handleSubmit}>Confirm</button>           
-                </FormGroup>
-                <Row className="no-gutters pt-2">
-                    <h1 className="form-header ml-2">Search Results</h1>
-                </Row>
-                <Row className="no-gutters pr-5 pl-5">
-                    {showTable}
-                </Row>
-            </React.Fragment>
-        );
+          <React.Fragment>
+            <Container>
+          <FormGroup inline onSubmit={this.handleSubmit}>
+              <Select
+                  type="text" className="form-control mr-sm-2" placeholder="Search movie" aria-label="Search" for='searchData'
+                  className="mr-sm-2"
+                  id='filterOptions'
+                  options={filterList}
+                  value={selectedOption}
+                  onChange={this.change}
+                  placeholder="Choose filter"
+              />
+              <br></br>
+              <div>{this.switchFunction(selectedOption, auditoriums, cinemas, searchData)}</div>
+              <br></br>
+              <Button  size="lg" type="submit" variant="secondary" onClick={this.handleSubmit}>Search</Button>
+
+              <br></br>
+      </FormGroup>
+          <Row className="no-gutters pr-5 pl-5">
+              {showTable}
+          </Row>
+          </Container>
+      </React.Fragment>
+  );
       }
 }
 
