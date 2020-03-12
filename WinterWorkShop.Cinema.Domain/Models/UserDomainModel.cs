@@ -16,6 +16,7 @@ namespace WinterWorkShop.Cinema.Domain.Models
 
         public bool IsAdmin { get; set; }
         public int BonusPoints { get; set; }
+        public bool IsSuperUser { get; set; }
         public List<TicketDomainModel> Tickets { get; set; }
     }
 }
