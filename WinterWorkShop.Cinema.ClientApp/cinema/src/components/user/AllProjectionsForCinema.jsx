@@ -12,7 +12,6 @@ import Image2 from './movie2.jpg';
 import Image3 from './movie3.png';
 import './App.css';
 import { Link } from 'react-router-dom';
-import { MDBCol, MDBBtn, MDBFormInline } from "mdbreact";
 const fadeImages = [
   Image2,
   Image3,
@@ -30,6 +29,7 @@ const fadeProperties = {
 const ratingChanged = (newRating) => {
   console.log(newRating)
 }
+
 class AllProjectionsForCinema extends Component {
   constructor(props) {
     super(props);
@@ -107,6 +107,7 @@ class AllProjectionsForCinema extends Component {
         this.setState({ submitted: false });
       });
   }
+
   getAllMovies() {
     const requestOptions = {
       method: 'GET',
@@ -211,7 +212,6 @@ class AllProjectionsForCinema extends Component {
   }
 
   renderProjectionButtons(listOfProjections) {
-
     return listOfProjections.map((list) => {
       return <ListGroup.Item key={list.id}><Button variant="dark" onClick={() => this.seatsForProjection(list.id)}>{list.projectionTimeString}</Button></ListGroup.Item>
     })
@@ -256,33 +256,27 @@ class AllProjectionsForCinema extends Component {
             </div>
           </Fade>
         </p>
-        <Navbar className="slide-container"  expand="lg" variant="light" bg="light">
+        <Navbar className="slide-container" expand="lg" variant="light" bg="light">
           <Nav justify variant="tabs" className="mr-auto">
             <Container>
-              <Navbar.Brand><Button size= "lg" variant="outline-dark" onClick={this.handleShowAll}>Show all movies</Button> </Navbar.Brand>
-              <Navbar.Brand><Button  size= "lg" variant="outline-dark" onClick={this.handleTopTen}>Show Top 10 movies</Button> </Navbar.Brand>
-              <Navbar.Brand><Link to='/ProjectionsFilterForCinema'><Button  size= "lg" variant="outline-dark">Filter projections</Button></Link></Navbar.Brand>
-           
-            <Navbar.Toggle className="text-white" />
-          <Navbar.Collapse id="basic-navbar-nav" className="text-white">
-          </Navbar.Collapse>
-          </Container>
+              <Navbar.Brand><Button size="lg" variant="outline-dark" onClick={this.handleShowAll}>Show Current movies</Button> </Navbar.Brand>
+              <Navbar.Brand><Button size="lg" variant="outline-dark" onClick={this.handleTopTen}>Show Top 10 Movies</Button> </Navbar.Brand>
+              <Navbar.Brand><Link to='/ProjectionsFilterForCinema'><Button size="lg" variant="outline-dark">Filter projections</Button></Link></Navbar.Brand>
+              <Navbar.Toggle className="text-white" />
+              <Navbar.Collapse id="basic-navbar-nav" className="text-white">
+              </Navbar.Collapse>
+            </Container>
           </Nav>
-            
-            <Form inline onSubmit={this.handleSubmit}>
-              <FormControl  size= "lg"
-                type="text" className="form-control mr-sm-2" placeholder="Search movie" aria-label="Search" for='searchData'
-                className="mr-sm-2"
-                id='searchData'
-                type='text'
-                value={searchData}
-                onChange={this.handleChange} />
-              <Button  size= "lg" type="submit" variant="outline-dark" className="mr-1">Search</Button>
-            </Form>
-          
-           
-         
-         
+          <Form inline onSubmit={this.handleSubmit}>
+            <FormControl size="lg"
+              type="text" className="form-control mr-sm-2" placeholder="Search movie" aria-label="Search" for='searchData'
+              className="mr-sm-2"
+              id='searchData'
+              type='text'
+              value={searchData}
+              onChange={this.handleChange} />
+            <Button size="lg" type="submit" variant="outline-dark" className="mr-1">Search</Button>
+          </Form>
         </Navbar>
         <div>
           {showTable}
@@ -293,5 +287,4 @@ class AllProjectionsForCinema extends Component {
 }
 export default AllProjectionsForCinema;
 
-   
-    
+

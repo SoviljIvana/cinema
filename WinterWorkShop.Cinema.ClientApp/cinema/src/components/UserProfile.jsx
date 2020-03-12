@@ -5,6 +5,7 @@ import { Table } from 'react-bootstrap';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import jwt_decode from 'jwt-decode';
 import Spinner from '../components/Spinner'
+import ListGroup from 'react-bootstrap/ListGroup';
 
 var decoded = jwt_decode(localStorage.getItem('jwt'));
 console.log(decoded);
@@ -15,28 +16,26 @@ class UserProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        users:[],
-        tickets:[],
-        submitted: false,
-        userNameJWT : '',
-        isLoading: true,
+      users: [],
+      tickets: [],
+      submitted: false,
+      userNameJWT: '',
+      isLoading: true,
     };
-}
+  }
 
-componentDidMount() {
+  componentDidMount() {
     this.getUsers();
-}
+  }
 
-
-getUsers() {
+  getUsers() {
     const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-        }
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
     };
-
     this.setState({ isLoading: true });
     fetch(`${serviceConfig.baseURL}/api/users/byusername/${userNameFromJWT}`, requestOptions)
         .then(response => {
@@ -62,58 +61,48 @@ getUsers() {
         });
 }
 
-fillTableWithDaata(){
+  fillTableWithDaata() {
     console.log();
-     return this.state.tickets.map(ticket => {
-        return <div key = {ticket.id}>
-            <ul className="text-center cursor-pointer">
-     <li><b>Cinema: </b>{ticket.cinemaName}, <b>auditorium: </b> {ticket.auditoriumName}, <b>movie:</b> {ticket.movieName} <br></br> <b>seat row: </b>{ticket.seatRow} <b>seat number: </b>{ticket.seatNumber} <br></br> <b>Time: </b>{ticket.projectionTime} </li>
-            </ul>
-        </div>
+    return this.state.tickets.map(ticket => {
+      return <div key={ticket.id}>
+        <br></br>
+        <ListGroup variant="flush">
+          <ListGroup.Item variant="primary" > Cinema:     {ticket.cinemaName}</ListGroup.Item>
+          <ListGroup.Item variant="secondary"> Auditorium: {ticket.auditoriumName} </ListGroup.Item >
+          <ListGroup.Item variant="success"> Movie:      {ticket.movieName} </ListGroup.Item>
+          <ListGroup.Item variant="danger"> Seat row:   {ticket.seatRow}</ListGroup.Item>
+          <ListGroup.Item variant="warning"> Seat number:{ticket.seatNumber}</ListGroup.Item>
+          <ListGroup.Item variant="info"> Time:       {ticket.projectionTime} </ListGroup.Item>
+        </ListGroup>
+        <br />
+      </div>
     })
-}
+  }
 
-
-    render() {
-      const { isLoading } = this.state;
-      const rowsData = this.fillTableWithDaata();
-      const users = this.state.users
-      
-      const table = (<Table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+  render() {
+    const { isLoading } = this.state;
+    const rowsData = this.fillTableWithDaata();
+    const users = this.state.users
+    const table = (<Table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
       <tbody>
-          {rowsData}
+        {rowsData}
       </tbody>
-  </Table>);
-          const showTable = isLoading ? <Spinner/> : table;
-        return (
-        <Container>
-        <Row className="justify-content-center">
+    </Table>);
+    const showTable = isLoading ? <Spinner /> : table;
+    return (
+      <Container>
           <Col>
-            <Card className="mt-5 card-width">
+            <Card bg="light" text="white" >
               <Card.Body>
                 <Card.Title><span className="card-title-font">Name: {users.firstName} {users.lastName}</span></Card.Title>
-                  <hr/>
                 <Card.Subtitle className="mb-2 text-muted">Username: <span className="float-right">{users.userName}</span></Card.Subtitle>
-                  <hr/>
-                <Card.Text>
-                
-                <h4>Tickets:</h4>
-                      {showTable}
-                <hr/>
-                </Card.Text>
-                <Row className="justify-content-center font-weight-bold">
-                <h5>Bonus points: {users.bonusPoints}</h5>
-                </Row>
-                <Row className="no-gutters pr-5 pl-5">
-                </Row>
+                <Card.Text><h3>Tickets:{showTable}</h3></Card.Text>
+                <Card.Text>Bonus points:{users.bonusPoints}</Card.Text>
               </Card.Body>
             </Card>
           </Col>
-        </Row>
       </Container>
-            
-        );
-      }
+    );
+  }
 }
-
 export default UserProfile;
