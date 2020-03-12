@@ -28,7 +28,7 @@ class Header extends React.Component {
     var jwtDecoder = require('jwt-decode');
     const decodedToken = jwtDecoder(token);
     var role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-    if((role != 'user') && (role != 'admin')){
+    if((role != 'user') && (role != 'admin') && (role != 'superUser')){
     this.guestToken();}
 
   }
@@ -49,9 +49,7 @@ class Header extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     this.setState({ submitted: true });
-    //const { username,user } = this.state;
     this.getUser(this.state.username);
-
   }
   getUser(username){  
       const requestOptions = {
@@ -71,7 +69,9 @@ class Header extends React.Component {
               this.setState({user:data, isLoading: false})
               if (this.state.user.isAdmin == true) {
                 this.adminLogin();
-              }else if(this.state.user.isAdmin == false) {
+              }else if(this.state.user.isSuperUser == true) {
+                  this.superUserLogin();
+              }else if((this.state.user.isAdmin == false) && (this.state.user.isSuperUser == false)) {
                 this.userLogin();
               }
               }
@@ -128,7 +128,34 @@ class Header extends React.Component {
         }
       })
       .catch(response => {
-        NotificationManager.error(response.message || response.statusText);
+        NotificationManager.error("Unable to sign in. ");
+        this.setState({ submitted: false });
+      });
+  }
+  superUserLogin() {
+    const { username } = this.state;
+
+    const requestOptions = {
+      method: 'GET',
+      headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+    };
+
+    fetch(`${serviceConfig.baseURL}/get-token?name=${username}&superUser=true`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        NotificationManager.success('Signed in as '+ this.state.user.firstName + '!');
+        if (data.token) {
+          localStorage.setItem("jwt", data.token);
+        }
+      })
+      .catch(response => {
+        NotificationManager.error("Unable to sign in. ");
         this.setState({ submitted: false });
       });
   }
