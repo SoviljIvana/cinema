@@ -38,28 +38,28 @@ class UserProfile extends Component {
     };
     this.setState({ isLoading: true });
     fetch(`${serviceConfig.baseURL}/api/users/byusername/${userNameFromJWT}`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          return Promise.reject(response);
-
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data) {
-          this.setState({ users: data, isLoading: false, tickets: data.tickets });
-        }
-        console.log(this.state.users);
-        console.log(this.state.tickets);
-
-      })
-
-      .catch(response => {
-        this.setState({ isLoading: false });
-        NotificationManager.error(response.message || response.statusText);
-        this.setState({ submitted: false });
-      });
-  }
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+                
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data) {
+                this.setState({ users: data, isLoading: false, tickets: data.tickets});
+            }
+            console.log(this.state.users);
+            console.log(this.state.tickets);
+            
+        })
+        
+        .catch(response => {
+            this.setState({ isLoading: false });
+            NotificationManager.error("You are not logged in! Please log in to view your profile!");
+            this.setState({ submitted: false });
+        });
+}
 
   fillTableWithDaata() {
     console.log();

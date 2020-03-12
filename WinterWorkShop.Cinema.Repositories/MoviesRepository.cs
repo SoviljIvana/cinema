@@ -16,6 +16,8 @@ namespace WinterWorkShop.Cinema.Repositories
         Task<IEnumerable<Movie>> GetCurrent();
         Task<IEnumerable<Movie>> GetAllWithMovieTags();
         IEnumerable<Movie> SearchMoviesByTitle(string searchData);
+        Task<IEnumerable<Movie>> GetCurrentMoviesWithProjectionsForToday();
+        Task<IEnumerable<Movie>> CommingSoon();
     }
 
     public class MoviesRepository : IMoviesRepository
@@ -64,6 +66,19 @@ namespace WinterWorkShop.Cinema.Repositories
             var data = await _cinemaContext.Movies.Include(x => x.Projections)
                 .Where(x => x.Current).ToListAsync();
 
+            return data;
+        }
+        public async Task<IEnumerable<Movie>> CommingSoon()
+        {
+            var data = await _cinemaContext.Movies.Include(x => x.Projections)
+                .Where(x => x.Current).ToListAsync();
+
+            return data;
+        }
+        public async Task<IEnumerable<Movie>> GetCurrentMoviesWithProjectionsForToday()
+        {
+            var data = await _cinemaContext.Movies.Include(x => x.Projections)
+                .Where(x => x.Current).ToListAsync();
             return data;
         }
 
