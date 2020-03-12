@@ -13,6 +13,6 @@ namespace WinterWorkShop.Cinema.Domain.Models
         public double Rating { get; set; }
         public int Year { get; set; }
         public List<ProjectionDomainModel> listOfProjections { get; set; }
-        public TagsMovieModel tagsMoviModel { get; set; }
+        public TagsMovieModel tagsMovieModel { get; set; }
     }
 }

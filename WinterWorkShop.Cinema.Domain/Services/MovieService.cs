@@ -704,7 +704,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     Title = item.Title,
                     Year = item.Year,
                     listOfProjections = new List<ProjectionDomainModel>(),
-                    tagsMoviModel = new TagsMovieModel()
+                    tagsMovieModel = new TagsMovieModel()
+
                 };
 
                 IEnumerable<Projection> lista = new List<Projection>();
@@ -742,7 +743,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                             }
                             if (tag.Tag.Type.Equals("aword"))
                             {
-                                tagsMovieModel.Awords = tagsMovieModel.Awords + " " + tag.Tag.Name;
+                                tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
                             }
                             if (tag.Tag.Type.Equals("language"))
                             {
@@ -757,7 +758,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                                 tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
                             }
                         }
-                        model.tagsMoviModel = tagsMovieModel;
+                        model.tagsMovieModel = tagsMovieModel;
                     }
                     result.Add(model);
                 }

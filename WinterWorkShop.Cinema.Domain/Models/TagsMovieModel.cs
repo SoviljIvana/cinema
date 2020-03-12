@@ -11,7 +11,7 @@ namespace WinterWorkShop.Cinema.Domain.Models
         public string States { get; set; }
         public string Actores { get; set; }
         public string Generes { get; set; }
-        public string Awords { get; set; }
+        public string Awards { get; set; }
         public string Directores { get; set; }
     }
 }

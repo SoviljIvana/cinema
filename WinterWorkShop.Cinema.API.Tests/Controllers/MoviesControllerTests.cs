@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WinterWorkShop.Cinema.Tests.Controllers
 {
     [TestClass]
-    public class MoviesControllerClassTests
+    public class MoviesControllerTests
     {
         private Mock<IMovieService> _mockMoviesService;
         private Mock<IProjectionService> _mockProjectionsService;
@@ -1056,7 +1056,76 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(statusCodeExpected, resultStatusCodeIntoInt);
         }
 
+        public void MoviesController_GetCurrent_ReturnOkObjectResult()
+        {
+            //Arrange
+            int expectedCount = 1;
+            int expectedStatusCode = 200;
+            IEnumerable<MovieDomainModel> movieDomainModels = _listOfMovieDomainModels;
+            Task<IEnumerable<MovieDomainModel>> responseTask = Task.FromResult(movieDomainModels);
+            _mockMoviesService = new Mock<IMovieService>();
+            _mockMoviesService.Setup(x => x.GetCurrentMovies()).Returns(responseTask);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.GetCurrent().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((OkObjectResult)resultAction).Value;
+            var resultList = ((List<MovieDomainModel>)result);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)resultAction).StatusCode);
+            Assert.AreEqual(expectedCount, resultList.Count);
+            Assert.AreEqual(_movieDomainModel.Id, resultList[0].Id);
+        }
 
+        [TestMethod]
+        public void MoviesController_GetCurrent_ReturnStatusCodeObjectResult()
+        {
+            //Arrange
+            int expectedStatusCode = 404;
+            string expectedErrorMessage = "Movie does not exist.";
+
+            IEnumerable<MovieDomainModel> movieDomainModels = null;
+            Task<IEnumerable<MovieDomainModel>> responseTask = Task.FromResult(movieDomainModels);
+            _mockMoviesService = new Mock<IMovieService>();
+            _mockMoviesService.Setup(x => x.GetCurrentMovies()).Returns(responseTask);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.GetCurrent().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((ObjectResult)resultAction).Value;
+            var resultErrorResponseModel = ((ErrorResponseModel)result).ErrorMessage;
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(ObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((ObjectResult)resultAction).StatusCode);
+            Assert.AreEqual(expectedErrorMessage, resultErrorResponseModel);
+        }
+
+        [TestMethod]
+        public void MoviesController_GetCurrent_ReturnBadRequestObjectResult()
+        {
+            //Arrange
+            int expectedStatusCode = 400;
+            string expectedErrorMessage = "Inner exception error message.";
+            Exception exception = new Exception("Inner exception error message.");
+            DbUpdateException dbUpdateException = new DbUpdateException("Error.", exception);
+
+            _mockMoviesService = new Mock<IMovieService>();
+            _mockMoviesService.Setup(x => x.GetCurrentMovies()).Throws(dbUpdateException);
+            MoviesController moviesController = new MoviesController(_mockILogger.Object, _mockMoviesService.Object, _mockProjectionsService.Object, _mockTagService.Object, _mockSeatService.Object);
+            //Act
+            var resultAction = moviesController.GetCurrent().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultResponse = (BadRequestObjectResult)resultAction;
+            var badObjectResult = ((BadRequestObjectResult)resultAction).Value;
+            var errorResult = (ErrorResponseModel)badObjectResult;
+
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedErrorMessage, errorResult.ErrorMessage);
+            Assert.IsInstanceOfType(resultAction, typeof(BadRequestObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
+        }
 
 
     }
