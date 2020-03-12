@@ -268,7 +268,7 @@ class AllProjectionsForCinema extends Component {
           </Nav>
           <Form inline onSubmit={this.handleSubmit}>
             <FormControl size="lg"
-              type="text" className="form-control mr-sm-2" placeholder="Search movie" aria-label="Search" for='searchData'
+              type="text" className="form-control mr-sm-2" placeholder="Search for a movie by tags or movie title" aria-label="Search" for='searchData'
               className="mr-sm-2"
               id='searchData'
               type='text'
