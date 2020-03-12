@@ -72,7 +72,7 @@ class AllProjectionsForCinema extends Component {
   handleShowAll(e) {
     e.preventDefault();
     this.setState({ submitted: true });
-    this.getMovies();
+    this.getAllMovies();
   }
 
   componentDidMount() {
@@ -117,7 +117,7 @@ class AllProjectionsForCinema extends Component {
       }
     };
     this.setState({ isLoading: true });
-    fetch(`${serviceConfig.baseURL}/api/Movies/allMovies`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/Movies/currentMoviesWithProjections`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
@@ -150,7 +150,7 @@ class AllProjectionsForCinema extends Component {
       }
     };
     this.setState({ isLoading: true });
-    fetch(`${serviceConfig.baseURL}/api/Movies/currentMoviesWithProjections`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/Movies/currentMoviesWithProjectionsForToday`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
@@ -171,7 +171,6 @@ class AllProjectionsForCinema extends Component {
         NotificationManager.error(response.message || response.statusText);
         this.setState({ submitted: false });
       });
-
   }
 
   getTopTenMovies() {

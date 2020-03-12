@@ -1,23 +1,13 @@
 .slide-container {
   width: 70%;
-
   margin: auto;
   }
-
 .each-slide > div {
   display: flex;
   align-items: center;
   justify-content: center;
   background-size: cover;
   height: 300px;
-}
-.btn-group Button {
-  background-color: #4CAF50; /* Green background */
-  border: 1px solid green; /* Green border */
-  color: white; /* White text */
-  padding: 10px 24px; /* Some padding */
-  cursor: pointer; /* Pointer/hand icon */
-  float: left; /* Float the buttons side by side */
 }
 .container {
   padding: 2px 16px;
@@ -47,6 +37,7 @@
 .movie-details {
   display: table;
   width: 100%;}
+  
 .sub-section-title {
   font-family: "Roboto condensed", "Arial Narrow", Arial, sans-serif;
   font-size: 34px;

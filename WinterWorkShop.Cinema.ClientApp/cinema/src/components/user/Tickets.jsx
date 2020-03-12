@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
-import { Redirect } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Spinner, Table} from 'react-bootstrap';
+import { Container, Col, Card, Button, Spinner, Table} from 'react-bootstrap';
 import jwt_decode from 'jwt-decode';
 import { serviceConfig } from '../../appSettings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 var decoded = jwt_decode(localStorage.getItem('jwt'));
 console.log(decoded);
@@ -166,13 +166,18 @@ class Tickets extends Component {
   }
 
   fillTableWithDaata() {
+
     return this.state.tickets.map(ticket => {
       return <div key={ticket.id}>
-        <ul className="text-center cursor-pointer">
-          <li><b>Cinema: </b>{ticket.cinemaName}, <b>auditorium: </b> {ticket.auditoriumName}, <b>movie:</b> {ticket.movieName} <br></br> <b>seat row: </b>{ticket.seatRow} <b>seat number: </b>{ticket.seatNumber} <br></br> <b>Time: </b>{ticket.projectionTime}
-            <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeTicket(ticket.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash} /></td>
-                     </li>
-        </ul>
+        <br></br>
+        <ListGroup variant="flush">
+        <ListGroup.Item variant="info"> TITLE - {ticket.movieName} </ListGroup.Item>
+        <ListGroup.Item variant="info"> TIME - {ticket.projectionTime} </ListGroup.Item>
+        <ListGroup.Item STYLE="text-transform:uppercase" variant="info">  {ticket.auditoriumName} / row {ticket.seatRow}, number {ticket.seatNumber} </ListGroup.Item >
+        <ListGroup.Item variant="info" > CINEMA- {ticket.cinemaName}</ListGroup.Item>
+        <ListGroup.Item  width="7%" className="text-center cursor-pointer" onClick={() => this.removeTicket(ticket.id)}><FontAwesomeIcon  icon={faTrash}/></ListGroup.Item>
+        </ListGroup>
+        <br />
       </div>
     })
   }
@@ -184,18 +189,18 @@ class Tickets extends Component {
     <tbody>
         {rowsData}
     </tbody>
-</Table>);
-        const showTable = isLoading ? <Spinner/> : table;
+      </Table>);
+      const showTable = isLoading ? <Spinner/> : table;
     return (
       <Container>
-        <Row className="justify-content-center">
-          <Col>
-            <h4>Unpaid tickets:</h4>
-            {showTable}
-            <Button onClick={this.payment} >Pay </Button>
-          </Col>
-        
-        </Row>
+        <Col>
+          <Card bg="light" text="white" >
+            <Card.Body>
+              <Card.Text><h4 align="center" style={{color: 'black'}}>Unpaid tickets:{showTable}</h4></Card.Text>
+               <Button size="lg"  variant="info" block onClick={this.payment}>Pay</Button> 
+            </Card.Body>
+          </Card>
+        </Col>
       </Container>
     );
   }
