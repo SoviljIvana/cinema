@@ -166,7 +166,6 @@ class EditMovie extends React.Component {
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Edit Existing Movie</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <FormControl
@@ -211,19 +210,15 @@ class EditMovie extends React.Component {
                                     <option value="10">10</option>
                                 </FormControl>
                             </FormGroup>
-                            <FormGroup>
-                            <td className="text-center cursor-pointer">{<ReactStars count={10} onChange={ratingChanged} edit = {false} size={37} value={rating} color1 = {'grey'} color2={'#ffd700'} />}</td>
-                            </FormGroup>
+                           
                             <FormGroup>
                                 <FormControl as="select" placeholder="Current" id="current" value={current} onChange={this.change}>
                                     <option value="true">Current</option>
                                     <option value="false">Not Current</option>
                                 </FormControl>
                             </FormGroup>
-                            <FormGroup>
-                                <td className >{current === 'true' ? <Switch onChange={this.handleChange} checked={true} /> : <Switch onChange={this.handleChange} checked={false} />}      </td>
-                            </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Edit Movie</Button>
+                         
+                            <Button  variant="info" type="submit" disabled={submitted || !canSubmit} block>Edit Movie</Button>
                         </form>
                     </Col>
                 </Row>

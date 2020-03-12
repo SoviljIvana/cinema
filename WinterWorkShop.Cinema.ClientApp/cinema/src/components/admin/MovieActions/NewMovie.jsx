@@ -168,7 +168,6 @@ class NewMovie extends React.Component {
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Add New Movie</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <FormControl
@@ -281,7 +280,7 @@ class NewMovie extends React.Component {
                                 <option value="false">Not Current</option>
                                 </FormControl>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Add Movie</Button>
+                            <Button  variant="info" type="submit" disabled={submitted || !canSubmit} block>Add Movie</Button>
                         </form>
                     </Col>
                 </Row>

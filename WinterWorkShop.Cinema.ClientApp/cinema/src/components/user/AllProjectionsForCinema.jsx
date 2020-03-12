@@ -287,3 +287,5 @@ class AllProjectionsForCinema extends Component {
 export default AllProjectionsForCinema;
 
 
+
+               

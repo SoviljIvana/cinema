@@ -228,7 +228,6 @@ class NewProjection extends React.Component {
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Add Projection</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <Typeahead
@@ -268,7 +267,7 @@ class NewProjection extends React.Component {
                                     />
                                 <FormText className="text-danger">{projectionTimeError}</FormText>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Add Projection</Button>
+                            <Button variant="secondary" type="submit" disabled={submitted || !canSubmit} block>Add Projection</Button>
                         </form>
                     </Col>
                 </Row>
