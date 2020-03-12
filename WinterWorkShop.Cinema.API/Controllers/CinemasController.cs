@@ -58,17 +58,19 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 CinemaName = createCinemaWithAuditoriumAndSeatsModel.CinemaName,
                 listOfAuditoriums = new List<AuditoriumDomainModel>()
             };
-            var listofAuditoriums = createCinemaWithAuditoriumAndSeatsModel.listOfAuditoriums;
-            foreach (var item in listofAuditoriums)
+            if (createCinemaWithAuditoriumAndSeatsModel.listOfAuditoriums.Count>0 && createCinemaWithAuditoriumAndSeatsModel!=null)
             {
-                domainModel.listOfAuditoriums.Add(new AuditoriumDomainModel
+                var listofAuditoriums = createCinemaWithAuditoriumAndSeatsModel.listOfAuditoriums;
+                foreach (var item in listofAuditoriums)
                 {
-                    Name = item.name,
-                    SeatRows = item.seatRows,
-                    NumberOfSeats = item.numberOfSeats
-                });
+                    domainModel.listOfAuditoriums.Add(new AuditoriumDomainModel
+                    {
+                        Name = item.name,
+                        SeatRows = item.seatRows,
+                        NumberOfSeats = item.numberOfSeats
+                    });
+                }
             }
-
             CinemaResultModel createCinemaResultModel;
 
             try
@@ -98,7 +100,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Created("cinemas//" + createCinemaResultModel.Cinema.Id, createCinemaResultModel);
         }
 
-        //Gets cinema by id
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<CinemaDomainModel>> GetAsync(int id)
@@ -166,6 +167,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Accepted("cinemas//" + deletedCinema.Cinema.Id, deletedCinema);
         }
 
+
+        //sta se desava ako je izadat ticket za tu cinemu i onda se menja njen naziv!
         /// <summary>
         /// Updates a cinema
         /// </summary>
