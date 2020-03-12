@@ -14,7 +14,7 @@ class NewMovie extends React.Component {
             year: 0,
             rating: '',
             current: false,
-            duration: 0,
+            duration: '',
             genre: [],
             actores: [],
             awords: [],
@@ -203,13 +203,14 @@ class NewMovie extends React.Component {
                                 <FormControl
                                     id="duration"
                                     type="number"
-                                    placeholder="duration"
+                                    placeholder="Insert movie duration"
                                     value={duration}
                                     onChange={this.handleChange}
                                 />
                             </FormGroup>
                             <FormGroup>
-                                <FormControl as="select" placeholder="Rating" id="rating" value={rating} onChange={this.handleChange}>
+                                <FormControl as="select" placeholder="Select movie rating..." id="rating" value={rating} onChange={this.handleChange}>
+                                    <option>Select movie rating...</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
