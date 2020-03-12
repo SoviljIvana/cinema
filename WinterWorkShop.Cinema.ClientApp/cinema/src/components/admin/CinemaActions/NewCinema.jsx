@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { FormGroup, FormControl, Button, Container, Row, Col, FormText, } from 'react-bootstrap';
+import { FormGroup, FormControl, Button, Container, Row, Col, FormText,Card, CardGroup } from 'react-bootstrap';
 import { serviceConfig } from '../../../appSettings';
 import { NotificationManager } from 'react-notifications';
 
@@ -114,7 +114,6 @@ class NewCinema extends React.Component {
       <Container>
         <Row>
           <Col>
-            <h1 className="form-header">Add New Cinema</h1>
             <form onSubmit={this.handleSubmit}>
               <FormGroup>
                 <FormControl
@@ -125,13 +124,17 @@ class NewCinema extends React.Component {
                   onChange={this.handleChange}
                 />
                 <FormGroup>
-                  <Button onClick={this.addAuditorium}>Add new auditorium</Button>
+                  <Row><br></br>
+                    </Row>
+                  <Button variant="dark" onClick={this.addAuditorium}>Add new auditorium</Button>
+                  <Row><br></br>
+                    </Row>
                   {
                     listOfAuditoriums.map((val, idx) => {
                       let auditoriumId = 'auditorium-${idx}', seatRowsId = 'seatRows-${idx}', numberofSeatsID = 'seatRows-${idx}'
                       return (
-                        <div key={idx}>
-                          <label htmlFor={auditoriumId}>{idx+1}. New auditorium name: </label>
+                        <Card border="dark"  key={idx}>
+                          <p htmlFor={auditoriumId}></p> <b>New auditorium name:</b> 
                           <input 
                             type = 'text'
                             name = {auditoriumId}
@@ -140,9 +143,8 @@ class NewCinema extends React.Component {
                             value = {listOfAuditoriums[idx].name}
                             onChange = {this.change}
                             className = "name"
-                            />
-
-                          <label htmlFor={seatRowsId}> Seat rows: </label>
+                            /> <Row><br></br> </Row>
+                          <label htmlFor={seatRowsId}></label><b>Seat rows:</b> 
                           <input 
                             type = 'number'
                             name = {seatRowsId}
@@ -151,9 +153,8 @@ class NewCinema extends React.Component {
                             value = {listOfAuditoriums[idx].seatRows}
                             onChange = {this.change}
                             className = "seatRows"
-                            />   
-
-                            <label htmlFor={numberofSeatsID}> Number of seats: </label>
+                            />  <Row><br></br> </Row>
+                            <label htmlFor={numberofSeatsID}> </label><b> Number of seats: </b>
                             <input 
                               type = 'number'
                               name = {numberofSeatsID}
@@ -163,13 +164,15 @@ class NewCinema extends React.Component {
                               onChange = {this.change}
                               className = "numberOfSeats"
                               />
-                        </div>
+                        </Card>
                       ) 
                     })
                   }
                 </FormGroup>
               </FormGroup>
-              <Button type="submit" disabled={submitted || !canSubmit} block>Add Cinema</Button>
+              <Row><br></br>
+                    </Row>
+              <Button variant="dark" type="submit" disabled={submitted || !canSubmit} block>Add Cinema</Button>
             </form>
           </Col>
         </Row>

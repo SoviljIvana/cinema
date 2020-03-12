@@ -192,7 +192,6 @@ class EditAuditorium extends React.Component {
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Edit Auditorium</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <FormControl
@@ -202,7 +201,6 @@ class EditAuditorium extends React.Component {
                                     value={name}
                                     onChange={this.handleChange}
                                 />
-
                                 <FormText className="text-danger">{auditNameError}</FormText>
                             </FormGroup>
                             <FormGroup>
@@ -226,7 +224,7 @@ class EditAuditorium extends React.Component {
                                 />
                                 <FormText className="text-danger">{numOfSeatsError}</FormText>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Edit Auditorium</Button>
+                            <Button  variant="danger" type="submit" disabled={submitted || !canSubmit} block>Edit Auditorium</Button>
                         </form>
                     </Col>
                 </Row>

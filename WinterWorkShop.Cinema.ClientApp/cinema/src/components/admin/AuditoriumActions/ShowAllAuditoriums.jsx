@@ -79,12 +79,11 @@ class ShowAllAuditoriums extends Component {
     fillTableWithDaata() {
         return this.state.auditoriums.map(auditorium => {
             return <tr key={auditorium.id}>
-                        <td width="30%">{auditorium.id}</td>
-                        <td width="30%">{auditorium.cinemaId}</td>
-                        <td width="30%">{auditorium.name}</td>
-                        <td width="5%" className="text-center cursor-pointer" onClick={() => this.editAuditorium(auditorium.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
-                        <td width="5%" className="text-center cursor-pointer" onClick={() => this.removeAuditorium(auditorium.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
-                    </tr>
+                        <td>{auditorium.name}</td>
+                        <td >{auditorium.cinemaName}</td>
+                        <td width = "1%" className="text-center cursor-pointer"  onClick={() => this.editAuditorium(auditorium.id)}><FontAwesomeIcon className="text-info mr-2 fa-1x" icon={faEdit}/></td>
+                        <td  width = "1%" className="text-center cursor-pointer" onClick={() => this.removeAuditorium(auditorium.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
+                     </tr>
         })
     }
 
@@ -95,15 +94,12 @@ class ShowAllAuditoriums extends Component {
     render() {
         const {isLoading} = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="sm" variant="dark">
+        const table = (<Table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
                             <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Cinema Id</th>
                                 <th>Name</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
+                                <th >Cinema Name</th>
+                                <th className="text-center cursor-pointer">Edit</th>
+                                <th className="text-center cursor-pointer">Delete</th>
                             </thead>
                             <tbody>
                                 {rowsData}
@@ -112,9 +108,6 @@ class ShowAllAuditoriums extends Component {
         const showTable = isLoading ? <Spinner></Spinner> : table;
         return (
             <React.Fragment>
-                <Row className="no-gutters pt-2">
-                    <h1 className="form-header ml-2">All Auditoriums</h1>
-                </Row>
                 <Row className="no-gutters pr-5 pl-5">
                     {showTable}
                 </Row>

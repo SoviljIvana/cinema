@@ -213,7 +213,6 @@ class NewAuditorium extends React.Component {
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Add Auditorium</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <FormControl
@@ -257,7 +256,7 @@ class NewAuditorium extends React.Component {
                                 />
                                 <FormText className="text-danger">{numOfSeatsError}</FormText>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Add Auditorium</Button>
+                            <Button  variant="danger" type="submit" disabled={submitted || !canSubmit} block>Add Auditorium</Button>
                         </form>
                     </Col>
                 </Row>
@@ -266,9 +265,7 @@ class NewAuditorium extends React.Component {
                         <h1>Auditorium Preview</h1>
                         <div>
                             <Row className="justify-content-center mb-4">
-                                <div className="text-center text-white font-weight-bold cinema-screen">
-                                    CINEMA SCREEN
-                            </div>
+                                <div className="text-center text-white  cinema-screen"></div>
                             </Row>
                             <Row className="justify-content-center">
                                 <table className="table-cinema-auditorium">

@@ -48,7 +48,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 {
                     Id = item.Id,
                     CinemaId = item.CinemaId,
-                    Name = item.Name
+                    Name = item.Name,
+                    CinemaName = item.Cinema.Name
                 };
                 result.Add(model);
             }
