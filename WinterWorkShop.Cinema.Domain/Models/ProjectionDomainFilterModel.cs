@@ -11,6 +11,7 @@ namespace WinterWorkShop.Cinema.Domain.Models
         public string CinemaName { get; set; }
         public string AuditoriumName { get; set; }
         public DateTime ProjectionTime { get; set; }
+        public string ProjectionTimeString { get; set; }
 
 
     }
