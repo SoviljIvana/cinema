@@ -45,7 +45,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     AuditoriumId = item.AuditoriumId,
                     ProjectionTime = item.DateTime,
                     MovieTitle = item.Movie.Title,
-                    AuditoriumName = item.Auditorium.Name
+                    AuditoriumName = item.Auditorium.Name,
+                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
                 };
                 result.Add(model);
             }
@@ -194,7 +195,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         AuditoriumName = item.Auditorium.Name,
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
-                        CinemaName = item.Auditorium.Cinema.Name
+                        CinemaName = item.Auditorium.Cinema.Name,
+                        ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
@@ -254,7 +256,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         AuditoriumName = item.Auditorium.Name,
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
-                        CinemaName = item.Auditorium.Cinema.Name
+                        CinemaName = item.Auditorium.Cinema.Name,
+                        ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
@@ -315,7 +318,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     AuditoriumName = item.Auditorium.Name,
                     MovieTitle = item.Movie.Title,
                     ProjectionTime = item.DateTime,
-                    CinemaName = item.Auditorium.Cinema.Name
+                    CinemaName = item.Auditorium.Cinema.Name,
+                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
@@ -376,7 +380,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     AuditoriumName = item.Auditorium.Name,
                     MovieTitle = item.Movie.Title,
                     ProjectionTime = item.DateTime,
-                    CinemaName = item.Auditorium.Cinema.Name
+                    CinemaName = item.Auditorium.Cinema.Name,
+                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
@@ -436,7 +441,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     AuditoriumName = item.Auditorium.Name,
                     MovieTitle = item.Movie.Title,
                     ProjectionTime = item.DateTime,
-                    CinemaName = item.Auditorium.Cinema.Name
+                    CinemaName = item.Auditorium.Cinema.Name,
+                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
@@ -480,7 +486,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         MovieId = existingProjections.MovieId,
                         AuditoriumName = existingProjections.Auditorium.Name, 
                         MovieTitle = existingProjections.Movie.Title, 
-                        ProjectionTime = existingProjections.DateTime
+                        ProjectionTime = existingProjections.DateTime,
                     }
                 };
                 return errorModel;

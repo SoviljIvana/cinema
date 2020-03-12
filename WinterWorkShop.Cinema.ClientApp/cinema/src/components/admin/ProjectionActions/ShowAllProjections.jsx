@@ -82,7 +82,7 @@ class ShowAllProjections extends Component {
               
                         <td width="30%">{projection.movieTitle}</td>
                         <td width = '30%'>{projection.auditoriumName}</td>
-                        <td width="30%">{projection.projectionTime}</td>
+                        <td width="30%">{projection.projectionTimeString}</td>
                         <td width="10%" className="text-center cursor-pointer" onClick={() => this.removeProjection(projection.id)}><FontAwesomeIcon className="text-danger mr-2 fa-1x" icon={faTrash}/></td>
                     </tr>
         })
@@ -101,8 +101,8 @@ class ShowAllProjections extends Component {
                             <tr>
                                 <th>Movie Title</th>
                                 <th>Projection Time</th>
-                                <th></th>
-                                <th></th>
+                                <th>Projection Time</th>
+                                <th>Delete</th>
                             </tr>
                             </thead>
                             <tbody>
