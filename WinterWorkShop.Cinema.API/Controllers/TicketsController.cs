@@ -28,25 +28,25 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         }
 
-        /// <summary>
-        /// Returns all tickets
-        /// </summary>
-        /// <returns></returns>
-        [Authorize(Roles = "superUser, admin")]
-        [HttpGet]
-        [Route("all")]
-        public async Task<ActionResult<IEnumerable<TicketDomainModel>>> GetAsync()
-        {
-            IEnumerable<TicketDomainModel> ticketDomainModels;
-            ticketDomainModels = await _ticketService.GetAllTickets();
+        ///// <summary>
+        ///// Returns all tickets
+        ///// </summary>
+        ///// <returns></returns>
+        //[Authorize(Roles = "superUser, admin")]
+        //[HttpGet]
+        //[Route("all")]
+        //public async Task<ActionResult<IEnumerable<TicketDomainModel>>> GetAsync()
+        //{
+        //    IEnumerable<TicketDomainModel> ticketDomainModels;
+        //    ticketDomainModels = await _ticketService.GetAllTickets();
 
-            if (ticketDomainModels == null)
-            {
-                ticketDomainModels = new List<TicketDomainModel>();
-            }
+        //    if (ticketDomainModels == null)
+        //    {
+        //        ticketDomainModels = new List<TicketDomainModel>();
+        //    }
 
-            return Ok(ticketDomainModels);
-        }
+        //    return Ok(ticketDomainModels);
+        //}
 
         /// <summary>
         /// Adds a ticket
@@ -109,7 +109,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 createTicketResultModels.Add(createTicketResultModel);
             }
 
-            return createTicketResultModels;
+            return Ok(createTicketResultModels);
         }
 
         [HttpPost]

@@ -353,5 +353,112 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedStatusCode, statusCode);
         }
 
+        [TestMethod]
+        public void CinemasController_Put_Returns_BadRequeest_InvalidModelState()
+        {
+            //Arrange
+            string expectedMessage = "Invalid Model State";
+            int expectedStatusCode = 400;
+            _cinemaService = new Mock<ICinemaService>();
+            CinemasController cinemasController = new CinemasController(_cinemaService.Object);
+            cinemasController.ModelState.AddModelError("key", "Invalid Model State");
+            //Act
+            var result = cinemasController.Put(It.IsAny<int>(), It.IsAny<CreateCinemaModel>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultResponse = (BadRequestObjectResult)result;
+            var createdResult = ((BadRequestObjectResult)result).Value;
+            var errorResponse = ((SerializableError)createdResult).GetValueOrDefault("key");
+            var message = (string[])errorResponse;
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedMessage, message[0]);
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
+        }
+        [TestMethod]
+        public void CinemasController_Put_Returns_Returns_NotFound()
+        {
+            //Arrange
+            int expectedStatusCode = 404;
+            string expectedErrorMessage = "Cinema does not exist.";
+            CinemaDomainModel cinemaDomainModel = null;
+            Task<CinemaDomainModel> responseTask = Task.FromResult(cinemaDomainModel);
+            _cinemaService = new Mock<ICinemaService>();
+            _cinemaService.Setup(x => x.GetCinemaByIdAsync(It.IsAny<int>())).Returns(responseTask);
+            CinemasController cinemasController = new CinemasController(_cinemaService.Object);
+            //Act
+            var resultAction = cinemasController.Put(It.IsAny<int>(), It.IsAny<CreateCinemaModel>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            var result = ((ObjectResult)resultAction).Value;
+            var resultErrorResponseModel = ((ErrorResponseModel)result).ErrorMessage;
+            var resultStatusCode = ((ErrorResponseModel)result).StatusCode;
+            var resultStatusCodeIntoInt = ((int)resultStatusCode);
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(expectedErrorMessage, resultErrorResponseModel);
+            Assert.IsInstanceOfType(resultAction, typeof(ObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultStatusCodeIntoInt);
+        }
+        [TestMethod]
+        public void CinemasController_Put_Returns_BadRequest_DbUpdateException()
+        {
+            //Arrange
+            int expectedStatusCode = 400;
+            string expectedErrorMessage = "Inner exception error message.";
+            CinemaDomainModel cinemaDomainModel = _cinemaDomainModel;
+            CreateCinemaModel createCinemaModel = new CreateCinemaModel()
+            {
+                Name = "newName"
+            };
+            Task<CinemaDomainModel> responseTask = Task.FromResult(cinemaDomainModel);
+            _cinemaService = new Mock<ICinemaService>();
+            _cinemaService.Setup(x => x.GetCinemaByIdAsync(It.IsAny<int>())).Returns(responseTask);
+            Exception exception = new Exception("Inner exception error message.");
+            DbUpdateException dbUpdateException = new DbUpdateException("Error.", exception);
+            _cinemaService.Setup(x => x.UpdateCinema(It.IsAny<CinemaDomainModel>())).Throws(dbUpdateException);
+            CinemasController cinemasController = new CinemasController(_cinemaService.Object);
+            //Act
+            var resultAction = cinemasController.Put(It.IsAny<int>(), createCinemaModel).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultResponse = (BadRequestObjectResult)resultAction;
+            var badObjectResult = ((BadRequestObjectResult)resultAction).Value;
+            var errorResult = (ErrorResponseModel)badObjectResult;
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedErrorMessage, errorResult.ErrorMessage);
+            Assert.IsInstanceOfType(resultAction, typeof(BadRequestObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
+        }
+        [TestMethod]
+        public void CinemasController_Put_Returns_Accepted()
+        {
+            //Arrange
+            var expectedStatusCode = 202;
+            CinemaDomainModel cinemaDomainModel = _cinemaDomainModel;
+            CinemaDomainModel newCinema = _cinemaDomainModel;
+            CreateCinemaModel createCinemaModel = new CreateCinemaModel()
+            {
+                Name = "newName"
+            };
+            newCinema.Name = createCinemaModel.Name;
+
+            Task<CinemaDomainModel> responseTask = Task.FromResult(cinemaDomainModel);
+            Task<CinemaDomainModel> responseTaskUpdatedCinema = Task.FromResult(newCinema);
+
+            _cinemaService = new Mock<ICinemaService>();
+            _cinemaService.Setup(x => x.GetCinemaByIdAsync(It.IsAny<int>())).Returns(responseTask);
+            _cinemaService.Setup(x => x.UpdateCinema(It.IsAny<CinemaDomainModel>())).Returns(responseTaskUpdatedCinema);
+            CinemasController cinemasController = new CinemasController(_cinemaService.Object);
+            //Act
+            var resultAction = cinemasController.Put(It.IsAny<int>(), createCinemaModel).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultResponse = ((AcceptedResult)resultAction).Value;
+            var statusCode = ((AcceptedResult)resultAction).StatusCode;
+            var cinemaDomainModelResult = (CinemaDomainModel)resultResponse;
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.IsInstanceOfType(resultAction, typeof(AcceptedResult));
+            Assert.AreEqual(createCinemaModel.Name, cinemaDomainModelResult.Name);
+            Assert.AreEqual(expectedStatusCode, statusCode);
+        }
+
+
+
     }
 }

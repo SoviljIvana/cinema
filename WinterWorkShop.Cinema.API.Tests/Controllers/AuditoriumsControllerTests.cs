@@ -14,7 +14,7 @@ using WinterWorkShop.Cinema.Domain.Models;
 namespace WinterWorkShop.Cinema.Tests.Controllers
 {
     [TestClass]
-    public class AuditoriumControllerTests
+    public class AuditoriumsControllerTests
     {
         private Mock<IAuditoriumService> _mockAuditoriumService;
         private AuditoriumDomainModel _auditoriumDomainModel;
@@ -103,6 +103,50 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
             Assert.AreEqual(expectedStatusCode, ((NotFoundObjectResult)resultAction).StatusCode);
+        }
+
+        [TestMethod]
+        public void AuditoriumController_GetAuditoriumsForCinema_Return_NotFoundObject()
+        {
+            //Arrange
+            IEnumerable<AuditoriumDomainModel> auditoriumDomainModels = null;
+            int expectedStatusCode = 404;
+
+            _mockAuditoriumService = new Mock<IAuditoriumService>();
+            _mockAuditoriumService.Setup(x => x.GetAllOfSpecificCinema(It.IsAny<int>())).Returns(auditoriumDomainModels);
+            AuditoriumsController auditoriumsController = new AuditoriumsController(_mockAuditoriumService.Object);
+            //ACT
+            var resultAction = auditoriumsController.GetAuditoriumsForCinema(It.IsAny<int>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((NotFoundObjectResult)resultAction).Value;
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((NotFoundObjectResult)resultAction).StatusCode);
+        }
+        [TestMethod]
+        public void AuditoriumController_GetAuditoriumsForCinema_Return_All_Auditoriums()
+        {
+            //Arrange
+            AuditoriumDomainModel auditoriumDomainModel = _auditoriumDomainModel;
+            IEnumerable<AuditoriumDomainModel> auditoriumDomainModels = _listOfAuditoriumDomainModels;
+            int expectedResultCount = 1;
+            int expectedStatusCode = 200;
+
+            _mockAuditoriumService = new Mock<IAuditoriumService>();
+            _mockAuditoriumService.Setup(x => x.GetAllOfSpecificCinema(It.IsAny<int>())).Returns(auditoriumDomainModels);
+            AuditoriumsController auditoriumsController = new AuditoriumsController(_mockAuditoriumService.Object);
+            //ACT
+            var result = auditoriumsController.GetAuditoriumsForCinema(It.IsAny<int>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var resultList = ((OkObjectResult)result).Value;
+            var auditoriumDomainModelResultList = (List<AuditoriumDomainModel>)resultList;
+
+            //Assert
+            Assert.IsNotNull(auditoriumDomainModelResultList);
+            Assert.AreEqual(expectedResultCount, auditoriumDomainModelResultList.Count);
+            Assert.AreEqual(auditoriumDomainModel.Id, auditoriumDomainModelResultList[0].Id);
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)result).StatusCode);
         }
 
         [TestMethod]

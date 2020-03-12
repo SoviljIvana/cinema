@@ -197,10 +197,10 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
                     ErrorMessage = Messages.CINEMA_DOES_NOT_EXIST,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                    StatusCode = System.Net.HttpStatusCode.NotFound
                 };
 
-                return BadRequest(errorResponse);
+                return NotFound(errorResponse);
             }
 
             cinemaToUpdate.Name = cinemaModel.Name;

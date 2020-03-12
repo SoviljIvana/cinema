@@ -22,26 +22,26 @@ namespace WinterWorkShop.Cinema.API.Controllers
             _userService = userService;
         }
 
-        /// <summary>
-        /// Gets all users
-        /// </summary>
-        /// <returns></returns>
-        [Authorize(Roles = "guest, user, superUser, admin")]
-        [HttpGet]
-        [Route("all")]
-        public async Task<ActionResult<IEnumerable<UserDomainModel>>> GetAsync()
-        {
-            IEnumerable<UserDomainModel> userDomainModels;
+        ///// <summary>
+        ///// Gets all users
+        ///// </summary>
+        ///// <returns></returns>
+        //[Authorize(Roles = "guest, user, superUser, admin")]
+        //[HttpGet]
+        //[Route("all")]
+        //public async Task<ActionResult<IEnumerable<UserDomainModel>>> GetAll()
+        //{
+        //    IEnumerable<UserDomainModel> userDomainModels;
 
-            userDomainModels = await _userService.GetAllAsync();
+        //    userDomainModels = await _userService.GetAllAsync();
 
-            if (userDomainModels == null)
-            {
-                userDomainModels = new List<UserDomainModel>();
-            }
+        //    if (userDomainModels == null)
+        //    {
+        //        userDomainModels = new List<UserDomainModel>();
+        //    }
 
-            return Ok(userDomainModels);
-        }
+        //    return Ok(userDomainModels);
+        //}
 
         /// <summary>
         /// Gets User by Id
@@ -65,7 +65,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(model);
         }
 
-        // <summary>
+        /// <summary>
         /// Gets User by UserName
         /// </summary>
         /// <param name="username"></param>
@@ -83,7 +83,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
             {
                 return NotFound(Messages.USER_NOT_FOUND);
             }
-
             return Ok(model);
         }
     }
