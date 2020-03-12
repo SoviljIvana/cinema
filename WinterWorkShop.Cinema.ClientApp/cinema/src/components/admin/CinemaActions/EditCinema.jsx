@@ -118,7 +118,6 @@ class EditCinema extends React.Component {
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Edit Existing Cinema</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <FormControl
@@ -130,7 +129,7 @@ class EditCinema extends React.Component {
                                 />
                                 <FormText className="text-danger">{titleError}</FormText>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Edit Cinema</Button>
+                            <Button   variant="dark"type="submit" disabled={submitted || !canSubmit} block>Edit Cinema</Button>
                         </form>
                     </Col>
                 </Row>
