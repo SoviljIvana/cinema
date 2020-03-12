@@ -17,9 +17,9 @@ class Header extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount(){
-    this.guestToken();
-  }
+  // componentDidMount(){
+  //   this.guestToken();
+  // }
 
   handleChange(e) {
     const { id, value } = e.target;
