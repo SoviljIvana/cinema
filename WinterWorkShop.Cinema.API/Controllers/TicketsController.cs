@@ -32,7 +32,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// Returns all tickets
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "superUser, admin")]
         [HttpGet]
         [Route("all")]
         public async Task<ActionResult<IEnumerable<TicketDomainModel>>> GetAsync()
@@ -55,6 +55,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
+        [Authorize(Roles = "user, superUser, admin")]
+
         public async Task<ActionResult<IEnumerable<TicketResultModel>>> CreateTicket([FromBody]CreateTicketModel createTicketModel)
         {
             if (!ModelState.IsValid)
@@ -112,6 +114,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         [HttpPost]
         [Route("payValue")]
+        [Authorize(Roles = "user, superUser, admin")]
+
         public async Task<ActionResult<PaymentResponse>> ConfirmPayment(TicketPaymentConfirm ticketPaymentConfirm)
         {
             if (!ModelState.IsValid)
@@ -156,7 +160,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "user, superUser, admin")]
         [HttpGet]
         [Route("allTickets/{username}")]
         public async Task<ActionResult<IEnumerable<TicketDomainModel>>> GetAllUnpaidTicketsForUser(string username)
@@ -172,7 +176,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Ok(ticketDomainModels);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "user, superUser, admin")]
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult> Delete(Guid id)
