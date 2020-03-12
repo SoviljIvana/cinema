@@ -10,7 +10,7 @@ using WinterWorkShop.Cinema.Domain.Models;
 
 namespace WinterWorkShop.Cinema.API.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
@@ -26,7 +26,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// Gets all users
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "admin")]
+       // [Authorize(Roles = "admin")]
         [HttpGet]
         [Route("all")]
         public async Task<ActionResult<IEnumerable<UserDomainModel>>> GetAsync()
@@ -48,7 +48,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Roles = "admin")]
+       // [Authorize(Roles = "admin")]
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<UserDomainModel>> GetbyIdAsync(Guid id)
@@ -70,7 +70,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        [Authorize(Roles = "guest, admin")]
+       // [Authorize(Roles = "guest, admin")]
         [HttpGet]
         [Route("byusername/{username}")]
         public async Task<ActionResult<UserDomainModel>> GetbyUserNameAsync(string username)

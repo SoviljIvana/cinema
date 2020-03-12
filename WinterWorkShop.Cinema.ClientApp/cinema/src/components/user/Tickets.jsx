@@ -192,8 +192,9 @@ class Tickets extends Component {
           <Col>
             <h4>Unpaid tickets:</h4>
             {showTable}
+            <Button onClick={this.payment} >Pay </Button>
           </Col>
-        <Col><Button onClick={this.payment} >Pay </Button></Col>
+        
         </Row>
       </Container>
     );
