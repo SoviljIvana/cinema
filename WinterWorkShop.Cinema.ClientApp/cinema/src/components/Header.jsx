@@ -22,6 +22,7 @@ class Header extends React.Component {
     this.handleLogOut = this.handleLogOut.bind(this);
   }
 
+
   componentDidMount(){
     const token = localStorage.getItem('jwt');
     var jwtDecoder = require('jwt-decode');
