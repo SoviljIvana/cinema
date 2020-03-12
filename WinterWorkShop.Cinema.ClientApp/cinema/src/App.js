@@ -31,9 +31,9 @@ function App() {
         <Route path="/projectiondetails/:id" component={ProjectionDetails} />
         <Route path="/projectionlist" component={AllProjectionsForCinema} />
         <Route path="/projectiondetails/allForProjection/:id" component={AllForProjection} />
+        <Route path="/userProfile" component={UserProfile} />
         <Route path ="/ProjectionsFilterForCinema" component={ProjectionsFilterForCinema}/>
         <PrivateRouteAdmin path="/dashboard" component={Dashboard} />
-        <PrivateRouteAdmin path="/userProfile" component={UserProfile} />
         <PrivateRouteAdmin path="/tickets" component={Tickets} />
 
       </Switch>

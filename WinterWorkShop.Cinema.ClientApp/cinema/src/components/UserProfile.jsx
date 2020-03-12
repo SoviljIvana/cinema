@@ -57,7 +57,7 @@ getUsers() {
         
         .catch(response => {
             this.setState({ isLoading: false });
-            NotificationManager.error(response.message || response.statusText);
+            NotificationManager.error("You are not logged in! Please log in to view your profile!");
             this.setState({ submitted: false });
         });
 }

@@ -1,24 +1,43 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 import { Navbar, Nav, Form, FormControl, Button, Container, NavDropdown } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../appSettings';
 import { FaUserAlt } from "react-icons/fa";
+import {withRouter} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-class Header extends Component {
+class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       username: '',
       user:[],
-      submitted: false
+      submitted: false,
+      
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleLogOut = this.handleLogOut.bind(this);
   }
 
   componentDidMount(){
+    const token = localStorage.getItem('jwt');
+    var jwtDecoder = require('jwt-decode');
+    const decodedToken = jwtDecoder(token);
+    var role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    if((role != 'user') && (role != 'admin')){
+    this.guestToken();}
+
+  }
+
+  handleLogOut(e){
+    e.preventDefault();
+    this.props.history.push('/projectionlist')
+    NotificationManager.warning("Logged out!");
     this.guestToken();
+
   }
 
   handleChange(e) {
@@ -63,7 +82,9 @@ class Header extends Component {
   }
   guestToken() {
     const requestOptions = {
-      method: 'GET'
+      method: 'GET',
+      headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
 
     fetch(`${serviceConfig.baseURL}/get-token?name=gost&guest=true&admin=false&superUser=false`, requestOptions)
@@ -74,7 +95,6 @@ class Header extends Component {
         return response.json();
       })
       .then(data => {
-        NotificationManager.success('Singed in as guest!');
         if (data.token) {
           localStorage.setItem("jwt", data.token);
         }
@@ -115,10 +135,12 @@ class Header extends Component {
     const { username } = this.state;
 
     const requestOptions = {
-      method: 'GET'
+      method: 'GET',
+      headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
     };
 
-    fetch(`${serviceConfig.baseURL}/get-token?name=${username}`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/get-token?name=${username}&user=true`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
@@ -126,7 +148,7 @@ class Header extends Component {
         return response.json();
       })
       .then(data => {
-        NotificationManager.success('Successfully signed in as'+ this.state.user.firstName + '!');
+        NotificationManager.success('Successfully signed in as '+ this.state.user.firstName + '!');
         if (data.token) {
           localStorage.setItem("jwt", data.token);
         }
@@ -161,6 +183,7 @@ class Header extends Component {
               onChange={this.handleChange}
               className="mr-sm-2" />
             <Button type="submit" variant="outline-danger" className="mr-1">Log In</Button>
+            <Button type="submit" onClick={this.handleLogOut} variant="outline-danger" className="mr-1">Log Out</Button>
           </Form>
         </Navbar.Collapse>
       </Navbar>
@@ -168,4 +191,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default withRouter(Header);

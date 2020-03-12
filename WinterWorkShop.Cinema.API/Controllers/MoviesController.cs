@@ -189,7 +189,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// </summary>
         /// <param name="movieModel"></param>
         /// <returns></returns>
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "superUser, admin")]
         [HttpPost]
         public async Task<ActionResult> CreateNewMovieWithHisTags([FromBody]CreateMovieModel movieModel)
         {
@@ -248,7 +248,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// <param name="id"></param>
         /// <param name="movieModel"></param>
         /// <returns></returns>
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "superUser, admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<ActionResult> UpdateMovie(Guid id, [FromBody]UpdateMovieModel movieModel)
@@ -357,7 +357,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
             return Accepted("movies//" + deletedMovie.MovieDomainModel.Id, deletedMovie);
         }
 
-        [Authorize(Roles = "admin")]
         [HttpGet]
         [Route("top")]
         public async Task<ActionResult<IEnumerable<MovieDomainModel>>> GetTopList() 
@@ -373,6 +372,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         [HttpPut]
         [Route("currentstatus/{id}")]
+        [Authorize(Roles = "superUser, admin")]
+
         public async Task<ActionResult> UpdateMovieCurrentStatus(Guid id)
         {
             MovieDomainModel movieToUpdate;
