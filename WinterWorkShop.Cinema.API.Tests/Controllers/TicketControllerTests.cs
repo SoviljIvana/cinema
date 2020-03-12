@@ -21,6 +21,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         private CreateTicketModel _createTicketModel;
         private TicketDomainModel _ticketDomainModel;
         private SeatDomainModel _seatDomainModel;
+        private List<TicketDomainModel> _listOfTicketDomainModels;
 
         [TestInitialize]
         public void TestInitialize()
@@ -36,6 +37,11 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             {
                 Id = Guid.NewGuid()
             };
+            _ticketDomainModel = new TicketDomainModel()
+            {
+                Paid = false,
+                Id = Guid.NewGuid()
+            };
             _createTicketModel.seatModels.Add(_seatDomainModel);
             _ticketResultModel = new TicketResultModel() 
             {
@@ -43,6 +49,8 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 IsSuccessful = true,
                 Ticket = _ticketDomainModel
             };
+            _listOfTicketDomainModels = new List<TicketDomainModel>();
+            _listOfTicketDomainModels.Add(_ticketDomainModel);
             _mockTicketService = new Mock<ITicketService>();
         }
 
@@ -144,6 +152,143 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.IsTrue(resultTicketResultModel[0].IsSuccessful);
         }
 
+        [TestMethod]
+        public void TicketsController_GetAllUnpaidTicketsForUser_Returns_ListOfTickets()
+        {
+            //Arrange
+            int expectedStatusCode = 200;
 
+            IEnumerable<TicketDomainModel> ticketDomainModels = _listOfTicketDomainModels;
+            Task<IEnumerable<TicketDomainModel>> responseTask = Task.FromResult(ticketDomainModels);
+            _mockTicketService = new Mock<ITicketService>();
+            _mockTicketService.Setup(x => x.GetAllTicketsForThisUser(It.IsAny<string>())).Returns(responseTask);
+            TicketsController ticketsController = new TicketsController(_mockTicketService.Object);
+
+            //Act
+            var resultAction = ticketsController.GetAllUnpaidTicketsForUser(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((OkObjectResult)resultAction).Value;
+            var resultList = (List<TicketDomainModel>)result;
+            //Assert
+            Assert.IsNotNull(resultList);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)resultAction).StatusCode);
+        }
+        [TestMethod]
+        public void TicketsController_GetAllUnpaidTicketsForUser_Return_NotFoundObject()
+        {
+            //Arrange
+            int expectedStatusCode = 404;
+            var expectedErrorMessage = "Error occured while finding ticket, please try again.";
+
+            IEnumerable<TicketDomainModel> ticketDomainModels = null;
+            Task<IEnumerable<TicketDomainModel>> responseTask = Task.FromResult(ticketDomainModels);
+            _mockTicketService = new Mock<ITicketService>();
+            _mockTicketService.Setup(x => x.GetAllTicketsForThisUser(It.IsAny<string>())).Returns(responseTask);
+            TicketsController ticketsController = new TicketsController(_mockTicketService.Object);
+
+            //Act
+            var resultAction = ticketsController.GetAllUnpaidTicketsForUser(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((NotFoundObjectResult)resultAction).Value;
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((NotFoundObjectResult)resultAction).StatusCode);
+        }
+
+        [TestMethod]
+        public void TicketsController_Delete_Return_NotFoundObject()
+        {
+            //Arrange
+            string expectedErrorMessage = "Inner exception error message.";
+            int expectedStatusCode = 400;
+            Exception exception = new Exception("Inner exception error message.");
+            DbUpdateException dbUpdateException = new DbUpdateException("Error.", exception);
+            _mockTicketService = new Mock<ITicketService>();
+            _mockTicketService.Setup(x => x.DeleteTicketById(It.IsAny<Guid>())).Throws(dbUpdateException);
+            TicketsController ticketsController = new TicketsController(_mockTicketService.Object);
+            //Act
+            var resultAction = ticketsController.Delete(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultResponse = (BadRequestObjectResult)resultAction;
+            var badObjectResult = ((BadRequestObjectResult)resultAction).Value;
+            var errorResult = (ErrorResponseModel)badObjectResult;
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedErrorMessage, errorResult.ErrorMessage);
+            Assert.IsInstanceOfType(resultAction, typeof(BadRequestObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
+        }
+        [TestMethod]
+        public void TicketsController_Delete_Returns_StatusCode_TICKET_DOES_NOT_EXIST()
+        {
+            //Arrange
+            string expectedErrorMessage = "Ticket does not exist. ";
+            int expectedStatusCode = 500;
+            TicketResultModel ticketResultModel = null;
+            Task<TicketResultModel> responseTask = Task.FromResult(ticketResultModel);
+            _mockTicketService = new Mock<ITicketService>();
+            _mockTicketService.Setup(x => x.DeleteTicketById(It.IsAny<Guid>())).Returns(responseTask);
+            TicketsController ticketsController = new TicketsController(_mockTicketService.Object);
+            //Act
+            var resultAction = ticketsController.Delete(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultResponse = ((ObjectResult)resultAction).Value;
+            var resultErrorResponseModel = ((ErrorResponseModel)resultResponse).ErrorMessage;
+            var statusCode = ((ErrorResponseModel)resultResponse).StatusCode;
+            var resultStatusCodeIntoInt = ((int)statusCode);
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedErrorMessage, resultErrorResponseModel);
+            Assert.IsInstanceOfType(resultAction, typeof(ObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultStatusCodeIntoInt);
+        }
+        [TestMethod]
+        public void TicketsController_Delete_Returns_StatusCode_TICKET_NOT_FOUND()
+        {
+            //Arrange
+            string expectedErrorMessage = "Error occured while finding ticket, please try again.";
+            int expectedStatusCode = 500;
+            TicketResultModel ticketResultModel = new TicketResultModel()
+            {
+                Ticket = null
+            };
+            Task<TicketResultModel> responseTask = Task.FromResult(ticketResultModel);
+            _mockTicketService = new Mock<ITicketService>();
+            _mockTicketService.Setup(x => x.DeleteTicketById(It.IsAny<Guid>())).Returns(responseTask);
+            TicketsController ticketsController = new TicketsController(_mockTicketService.Object);
+            //Act
+            var resultAction = ticketsController.Delete(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultResponse = ((ObjectResult)resultAction).Value;
+            var resultErrorResponseModel = ((ErrorResponseModel)resultResponse).ErrorMessage;
+            var statusCode = ((ErrorResponseModel)resultResponse).StatusCode;
+            var resultStatusCodeIntoInt = ((int)statusCode);
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedErrorMessage, resultErrorResponseModel);
+            Assert.IsInstanceOfType(resultAction, typeof(ObjectResult));
+            Assert.AreEqual(expectedStatusCode, resultStatusCodeIntoInt);
+        }
+        [TestMethod]
+        public void TicketsController_Delete_Returns_Accepted()
+        {
+            //Arrange
+            int expectedStatusCode = 202;
+
+            TicketResultModel ticketResultModel = _ticketResultModel;
+            Task<TicketResultModel> responseTask = Task.FromResult(ticketResultModel);
+            _mockTicketService = new Mock<ITicketService>();
+            _mockTicketService.Setup(x => x.DeleteTicketById(It.IsAny<Guid>())).Returns(responseTask);
+            TicketsController ticketsController = new TicketsController(_mockTicketService.Object);
+            //Act
+            var resultAction = ticketsController.Delete(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultResponse = ((AcceptedResult)resultAction).Value;
+            var statusCode = ((AcceptedResult)resultAction).StatusCode;
+            var resultModel = (TicketResultModel) resultResponse;
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.IsInstanceOfType(resultAction, typeof(AcceptedResult));
+            Assert.IsTrue(resultModel.IsSuccessful);
+            Assert.IsNull(resultModel.ErrorMessage);
+            Assert.AreEqual(_ticketDomainModel.Id, resultModel.Ticket.Id);
+            Assert.AreEqual(expectedStatusCode, statusCode);
+        }
     }
 }
