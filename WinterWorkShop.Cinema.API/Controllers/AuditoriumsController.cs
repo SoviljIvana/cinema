@@ -30,7 +30,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// Gets all auditoriums
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "superUser, admin")]
+        [Authorize(Roles = "guest, user, superUser, admin")]
         [HttpGet]
         [Route("all")]
         public async Task<ActionResult<IEnumerable<AuditoriumDomainModel>>> GetAsync()
@@ -98,7 +98,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        [Authorize(Roles = "superUser, admin")]
+        [Authorize(Roles = "guest, user, superUser, admin")]
 
         public async Task<ActionResult<AuditoriumDomainModel>> GetAsync(int id)
         {
