@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../../appSettings';
-import { FormControl, Row, Table, FormGroup, Button } from 'react-bootstrap';
+import { Row, Table, FormGroup, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {  faTrash } from '@fortawesome/free-solid-svg-icons';
 import Spinner from '../../Spinner';
 import 'react-dropdown/style.css'
 import { Typeahead } from 'react-bootstrap-typeahead';

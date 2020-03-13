@@ -8,13 +8,20 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { Fade } from 'react-slideshow-image';
-import Image2 from './movie2.jpg';
-import Image3 from './movie3.png';
+import Image4 from './sliderPictures/movie4.png';
+import Image2 from './sliderPictures/movie2.jpg';
+import Image3 from './sliderPictures/movie3.png';
+import Image1 from './sliderPictures/movie1.png';
+import Image5 from './sliderPictures/movie6.png';
+
 import './App.css';
 import { Link } from 'react-router-dom';
 const fadeImages = [
+  Image1,
   Image2,
   Image3,
+  Image4,
+  Image5
 ];
 
 const fadeProperties = {
@@ -246,7 +253,7 @@ class AllProjectionsForCinema extends Component {
 
   renderProjectionButtons(listOfProjections) {
     return listOfProjections.map((list) => {
-      return <ListGroup.Item key={list.id}><Button variant="dark" onClick={() => this.seatsForProjection(list.id)}>{list.projectionTimeString}</Button></ListGroup.Item>
+    return <ListGroup.Item key={list.id}><Button variant="dark" onClick={() => this.seatsForProjection(list.id)}>{list.cinemaName}-{list.projectionTimeString}</Button></ListGroup.Item>
     })
   }
 
@@ -286,11 +293,25 @@ class AllProjectionsForCinema extends Component {
       <Row className="no-gutters pr-5 pl-5">
         <p className="slide-container">
           <Fade {...fadeProperties}>
+     
             <div className="each-fade">
               <img src={fadeImages[0]} />
             </div>
             <div className="each-fade">
               <img src={fadeImages[1]} />
+              
+            </div>
+            <div className="each-fade">
+              <img src={fadeImages[2]} />
+              
+            </div>
+            <div className="each-fade">
+              <img src={fadeImages[3]} />
+              
+            </div>
+            <div className="each-fade">
+              <img src={fadeImages[4]} />
+              
             </div>
           </Fade>
         </p>

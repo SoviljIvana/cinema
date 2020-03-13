@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { FormGroup, FormControl, Button, Container, Row, Col, FormText,Card, CardGroup } from 'react-bootstrap';
+import { FormGroup, FormControl, Button, Container, Row, Col,Card } from 'react-bootstrap';
 import { serviceConfig } from '../../../appSettings';
 import { NotificationManager } from 'react-notifications';
 

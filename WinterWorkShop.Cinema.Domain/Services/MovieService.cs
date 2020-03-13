@@ -760,7 +760,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         {
                             Id = projection.Id,
                             ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
-                            AuditoriumName = projection.Auditorium.Name
+                            AuditoriumName = projection.Auditorium.Name,
+                            CinemaName = projection.Auditorium.Cinema.Name
                         });
                     }
                     var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
