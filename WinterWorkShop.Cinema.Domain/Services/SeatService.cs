@@ -23,6 +23,10 @@ namespace WinterWorkShop.Cinema.Domain.Services
         public async Task<IEnumerable<SeatDomainModel>> GetAllAsync()
         {
             var data = await _seatsRepository.GetAll();
+            if (data == null)
+            {
+                return null;
+            }
 
             List<SeatDomainModel> result = new List<SeatDomainModel>();
             SeatDomainModel model;
