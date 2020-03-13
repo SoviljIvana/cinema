@@ -16,6 +16,7 @@ class NewMovie extends React.Component {
             current: false,
             duration: '',
             genre: [],
+            directors: [],
             actores: [],
             awords: [],
             languages: [],
@@ -54,7 +55,8 @@ class NewMovie extends React.Component {
             })
             .then(data => {
                 if (data) {
-                    this.setState({ genre: data.genres, actores: data.actores, states: data.states, awords: data.awords, languages: data.languages});
+                    this.setState({ genre: data.genres, actores: data.actores,
+                         states: data.states, awords: data.awords, languages: data.languages, directors: data.directors});
                 }
             })
             .catch(response => {
@@ -163,7 +165,7 @@ class NewMovie extends React.Component {
 
 
     render() {
-        const {duration, languages, awords, states, actores, genre, Name, title, year, current, rating, submitted, titleError, yearError, canSubmit } = this.state;
+        const {duration, languages, awords, directors, states, actores, genre, Name, title, year, current, rating, submitted, titleError, yearError, canSubmit } = this.state;
         return (
             <Container>
                 <Row>
@@ -236,12 +238,22 @@ class NewMovie extends React.Component {
                             </FormGroup>
                             <FormGroup>
                                 <Multiselect
+                                options={directors}
+                                selectedValues ={directors.selectedValues}
+                                onSelect={this.onSelect}
+                                 onRemove={this.onRemove}
+                                 displayValue="name"
+                                 placeholder="Choose a director..."
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <Multiselect
                                 options={actores}
                                 selectedValues ={actores.selectedValues}
                                 onSelect={this.onSelect}
                                  onRemove={this.onRemove}
                                  displayValue="name"
-                                 placeholder="Choose a actore..."
+                                 placeholder="Choose an actor..."
                                 />
                             </FormGroup>
                             <FormGroup>
@@ -261,7 +273,7 @@ class NewMovie extends React.Component {
                                 onSelect={this.onSelect}
                                  onRemove={this.onRemove}
                                  displayValue="name"
-                                 placeholder="Choose a aword..."
+                                 placeholder="Choose an aword..."
                                 />
                             </FormGroup>
                             <FormGroup>
