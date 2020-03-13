@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { MDBBtn, MDBModal, MDBRow, MDBCol } from 'mdbreact'
+import { MDBBtn, MDBRow, MDBCol } from 'mdbreact'
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { Row, Container, ToggleButton, ToggleButtonGroup, Button, Card } from 'react-bootstrap';
+import { Row, Container,  Button, } from 'react-bootstrap';
 import './App.css';
 import jwt_decode from 'jwt-decode';
-import $ from "jquery";
+import { MdEventSeat  } from "react-icons/md";
 var decoded = jwt_decode(localStorage.getItem('jwt'));
 console.log(decoded);
 var userNameFromJWT = decoded.sub;
@@ -29,7 +29,6 @@ class ProjectionDetails extends Component {
         };
         this.handleClick = this.handleClick.bind(this);
         this.addTickets = this.addTickets.bind(this);
-        // this.handleColor = this.handleColor.bind(this);
     }
 
     componentDidMount() {
@@ -62,7 +61,6 @@ class ProjectionDetails extends Component {
                         isLoading: false
                     });
                 }
-                // console.log(data);
             })
             .catch(response => {
                 this.setState({ isLoading: false });
@@ -109,16 +107,14 @@ class ProjectionDetails extends Component {
         seat.counter = seat.counter + 1;
         if (!seat.reserved) {
 
-           // if (seat.counter % 2 != 0) { //dupli klik handle
                 let id = seat.id
                 let element = document.getElementById(id);
                 let buttonTrue = "buttonTrue";
                 let buttonFalse = "buttonFalse";
 
 
-                //element.classList.remove(buttonTrue);
                 
-                 if (this.state.listOfSeats.length == 0) //provera da li je lista prazna, ako jeste dodaje element
+                 if (this.state.listOfSeats.length == 0) 
                 {
                     this.state.listOfSeats.push(seat);
                     element.classList.add(buttonFalse);
@@ -165,12 +161,12 @@ class ProjectionDetails extends Component {
 
                                 }
                                 else {
-                                    return NotificationManager.error("mora biti jedan pored drugog!");
+                                    return NotificationManager.error("seats must be next to each other!");
                                 }
                             }
                             else{
                                 if (seat.number < maxNumber && seat.number > minNumber ) {
-                                    return NotificationManager.error("mora biti krajnji!");
+                                    return NotificationManager.error("seats must be connected!");
                                    
                                     }
                             }
@@ -187,15 +183,14 @@ class ProjectionDetails extends Component {
 
                             }
                             else {
-                                return NotificationManager.error("mora biti jedan pored drugog!");
+                                return NotificationManager.error("seats must be next to each other!");
                             }
                         }
                     }
                     else{
-                        return NotificationManager.error("mora isti red!");
+                        return NotificationManager.error("seats must be in one row!");
                     }
                 }
-            //}
         }
         console.log(this.state.listOfSeats);
     }
@@ -203,9 +198,9 @@ class ProjectionDetails extends Component {
     renderRowsInProjections(seatsInRow) {
         return seatsInRow.map((seat) => {
 
-            return <MDBBtn className="circle"  color="danger" outline="true" rounded="true"  mdbWavesEffect  type="button" id={seat.id}
+            return <MDBBtn size="lg" className="circle"  color="danger" outline="true" rounded="true"  mdbWavesEffect  type="button" id={seat.id}
                 disabled={seat.reserved === true ? true : false} 
-                onClick={() => this.handleClick(seat)}>+</MDBBtn>
+                onClick={() => this.handleClick(seat)}><MdEventSeat/></MDBBtn>
         })
     }
 
@@ -220,11 +215,15 @@ class ProjectionDetails extends Component {
         console.log();
         return (
             <Container>
+                <br></br>
                 <Row className="justify-content-center">
-                    {rowsData}
+                    {rowsData}</Row>
                     <br></br>
-                    <Link className="text-decoration-none" to='/tickets'> <Button variant="dark" onClick={this.addTickets} > Create ticket </Button></Link>
-                </Row>
+                    <Row className="justify-content-center">
+                 <Link className="text-decoration-none" to='/tickets'> <Button variant="dark" onClick={this.addTickets} > Create ticket </Button></Link>
+
+                    </Row>
+                
             </Container>
         );
     }

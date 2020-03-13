@@ -49,7 +49,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public IEnumerable<Projection> GetAllFromOneMovie(object id)
         {
-            var data = _cinemaContext.Projections.Include(x => x.Movie).Include(x => x.Auditorium).ToList();
+            var data = _cinemaContext.Projections.Include(x => x.Movie).Include(x => x.Auditorium).Include(x=>x.Auditorium.Cinema).ToList();
             var projections = data.Where(x => x.MovieId.Equals(id)).ToList();
             return projections;
         }

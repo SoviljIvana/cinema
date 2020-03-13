@@ -58,18 +58,8 @@
   border-radius:20px!important;
 }
 .buttonTrue {
-  /* display: inline-block;
-  padding: 15px 25px;
-  font-size: 24px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none; */
   color: #000;
   background-color: yellow;
-  /* border: none;
-  border-radius: 15px;
-  box-shadow: 0 9px #999; */
 }
 .active-pink-4 input[type="text"]:focus:not([readonly]) {
   border: 1px solid #f48fb1;
@@ -94,17 +84,7 @@
   box-shadow: 0 9px #999;
 }
 .buttonFalse {
-  /* display: inline-block;
-  padding: 15px 25px;
-  font-size: 24px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none; */
   color: rgb(255, 255, 255);
   background-color: white;
-  /* border: none;
-  border-radius: 15px;
-  box-shadow: 0 9px #999; */
 }
 

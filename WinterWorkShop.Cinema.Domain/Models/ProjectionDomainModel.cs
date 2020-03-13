@@ -20,5 +20,6 @@ namespace WinterWorkShop.Cinema.Domain.Models
         public int NumOFRows { get; set; }
         public int NumOFSeatsPerRow { get; set; }
         public string ProjectionTimeString { get; set; }
+        public string CinemaName { get; set; }
     }
 }

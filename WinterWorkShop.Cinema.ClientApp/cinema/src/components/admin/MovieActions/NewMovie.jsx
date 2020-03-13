@@ -34,8 +34,6 @@ class NewMovie extends React.Component {
     
     componentDidMount() {
         this.getGenre();
-        
-
     }
 
     getGenre() {
