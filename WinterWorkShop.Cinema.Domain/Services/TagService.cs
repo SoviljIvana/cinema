@@ -30,7 +30,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 awords = new List<TagForMovieDomainModel>(),
                 genres = new List<TagForMovieDomainModel>(),
                 languages = new List<TagForMovieDomainModel>(),
-                states = new List<TagForMovieDomainModel>()
+                states = new List<TagForMovieDomainModel>(),
+                directors =  new List<TagForMovieDomainModel>()
             };
 
             foreach (var item in data)
@@ -69,6 +70,14 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     {
                         Name = item.Name
                     });
+                }
+                if(item.Type == "director")
+                {
+                    listOfTags.directors.Add(new TagForMovieDomainModel()
+                    {
+                        Name = item.Name
+                    }
+                    );
                 }
             }
 
