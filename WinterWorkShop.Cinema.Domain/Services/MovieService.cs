@@ -527,7 +527,11 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         resultOrder.Add(secondElement);
 
                     }
-                    resultOrder.Add(listaMovie[i]);
+                    else
+                    {
+                        resultOrder.Add(listaMovie[i]);
+                    }
+                    
 
                 }
                 else
@@ -561,7 +565,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     {
                         Id = projection.Id,
                         ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
-                        AuditoriumName = projection.Auditorium.Name
+                        AuditoriumName = projection.Auditorium.Name,
+                        CinemaName = projection.Auditorium.Cinema.Name
                     });
 
                 }
@@ -607,7 +612,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         public async Task<IEnumerable<MovieDomainModel>> GetCurrentMoviesWithoutProjections()
         {
-            var data = await _moviesRepository.GetCurrent();
+            var data = await _moviesRepository.GetAll();
 
             if (data == null)
             {
@@ -711,7 +716,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     {
                         Id = projection.Id,
                         ProjectionTimeString = projection.DateTime.ToString("MM/dd/yyyy HH:mm"),
-                        AuditoriumName = projection.Auditorium.Name
+                        AuditoriumName = projection.Auditorium.Name,
+                        CinemaName = projection.Auditorium.Cinema.Name
                     });
 
                 }
