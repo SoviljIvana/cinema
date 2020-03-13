@@ -36,6 +36,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
             {
                 Id = _seat.Id
             };
+
             _listOfSeats = new List<Seat>();
             _listOfSeats.Add(_seat);
             _listOfSeatDomainModels = new List<SeatDomainModel>();
@@ -49,7 +50,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
         }
 
         [TestMethod]
-        public void SeatsController_GetAllAsync_ReturnNull()
+        public void SeatsService_GetAllAsync_ReturnNull()
         {
             //Arrange
             IEnumerable<Seat> seats = null;
@@ -64,7 +65,7 @@ namespace WinterWorkShop.Cinema.Tests.Services
             Assert.IsNull(resultAction);
         }
         [TestMethod]
-        public void SeatsController_GetAllAsync_ReturnListOfSeats()
+        public void SeatsService_GetAllAsync_ReturnListOfSeats()
         {
             //Arrange
             int expectedResultCount = 1;
@@ -84,6 +85,90 @@ namespace WinterWorkShop.Cinema.Tests.Services
             Assert.AreEqual(_seat.Id, result[0].Id);
             Assert.IsInstanceOfType(result[0], typeof(SeatDomainModel));
 
+        }
+        [TestMethod]
+        public void SeatsService_GetAllSeatsForProjection_ReturnNull()
+        {
+            //Arrange
+            IEnumerable<Seat> seats = null;
+            Task<IEnumerable<Seat>> responseTask = Task.FromResult(seats);
+            _mockSeatRepository = new Mock<ISeatsRepository>();
+            _mockSeatRepository.Setup(x => x.GetAllOfSpecificProjection(It.IsAny<Guid>())).Returns(responseTask);
+            SeatService seatService = new SeatService(_mockSeatRepository.Object, _mockTicketRepository.Object);
+
+            //Act
+            var resultAction = seatService.GetAllSeatsForProjection(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            //Assert
+            Assert.IsNull(resultAction);
+        }
+        [TestMethod]
+        public void SeatsService_GetAllSeatsForProjection_Return_listOfRows()
+        {
+            //Arrange
+            IEnumerable<Seat> seats = _listOfSeats;
+            Task<IEnumerable<Seat>> responseTask = Task.FromResult(seats);
+            IEnumerable<Data.Entities.Ticket> tickets = null;
+            _mockSeatRepository = new Mock<ISeatsRepository>();
+            _mockSeatRepository.Setup(x => x.GetAllOfSpecificProjection(It.IsAny<Guid>())).Returns(responseTask);
+            _mockTicketRepository = new Mock<ITicketRepository>();
+            _mockTicketRepository.Setup(x => x.GetAllForSpecificProjection(It.IsAny<Guid>())).Returns(tickets);
+            SeatService seatService = new SeatService(_mockSeatRepository.Object, _mockTicketRepository.Object);
+
+            //Act
+            var resultAction = seatService.GetAllSeatsForProjection(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            var result = (List<RowsDomainModel>)resultAction;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.IsInstanceOfType(result[0], typeof(RowsDomainModel));
+        }
+        [TestMethod]
+        public void SeatsService_DeleteSeat_Return_null_NoSeats()
+        {
+            //Arrange
+            Data.Seat seat = null;
+            Task<Seat> responseTask = Task.FromResult(seat);
+            _mockSeatRepository = new Mock<ISeatsRepository>();
+            _mockSeatRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).Returns(responseTask);
+            SeatService seatService = new SeatService(_mockSeatRepository.Object, _mockTicketRepository.Object);
+
+            //Act
+            var resultAction = seatService.DeleteSeat(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            //Assert
+            Assert.IsNull(resultAction);
+        }
+        [TestMethod]
+        public void SeatsService_DeleteSeat_Return_null_NoTicket()
+        {
+            //Arrange
+            Data.Seat seat = _seat;
+            seat.Tickets = new List<Data.Entities.Ticket>();
+            Task<Seat> responseTask = Task.FromResult(seat);
+            _mockSeatRepository = new Mock<ISeatsRepository>();
+            _mockSeatRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).Returns(responseTask);
+            SeatService seatService = new SeatService(_mockSeatRepository.Object, _mockTicketRepository.Object);
+
+            //Act
+            var resultAction = seatService.DeleteSeat(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            //Assert
+            Assert.IsNull(resultAction);
+        }
+        [TestMethod]
+        public void SeatsService_DeleteSeat_Return_SeatDomainModel()
+        {
+            //Arrange
+            Data.Seat seat = _seat;
+            seat.Tickets = null;
+            Task<Seat> responseTask = Task.FromResult(seat);
+            _mockSeatRepository = new Mock<ISeatsRepository>();
+            _mockSeatRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).Returns(responseTask);
+            SeatService seatService = new SeatService(_mockSeatRepository.Object, _mockTicketRepository.Object);
+
+            //Act
+            var resultAction = seatService.DeleteSeat(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.IsInstanceOfType(resultAction, typeof(SeatDomainModel));
+            Assert.AreEqual(seat.Id, resultAction.Id);
         }
     }
 }

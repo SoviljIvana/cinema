@@ -49,13 +49,11 @@ namespace WinterWorkShop.Cinema.Domain.Services
         {
             var allSeatsForProjection = await _seatsRepository.GetAllOfSpecificProjection(id);
 
-            var reservedSeatsForThisProjection = _ticketRepository.GetAllForSpecificProjection(id);
-            
-
             if (allSeatsForProjection == null)
             {
                 return null;
             }
+            var reservedSeatsForThisProjection = _ticketRepository.GetAllForSpecificProjection(id);
 
             List<RowsDomainModel> seatsForFrontListsDomain = new List<RowsDomainModel>();
 
@@ -74,30 +72,32 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     Selected = false,
                     Counter = 0
                 };
-
-                foreach (var reservedSeat in reservedSeatsForThisProjection)
+                if (reservedSeatsForThisProjection!=null)
                 {
-                    if (seat.Id == reservedSeat.SeatId)
+                    foreach (var reservedSeat in reservedSeatsForThisProjection)
                     {
-                        model.Reserved = true;
+                        if (seat.Id == reservedSeat.SeatId)
+                        {
+                            model.Reserved = true;
+                        }
+                    }
+
+                    if (countRows == seat.Row)
+                    {
+                        result.Add(model);
+                    }
+                    else
+                    {
+                        seatsForFrontListsDomain.Add(new RowsDomainModel
+                        {
+                            SeatsInRow = result
+                        });
+                        countRows = countRows + 1;
+                        result = new List<SeatDomainModel>();
+                        result.Add(model);
                     }
                 }
-
-                if (countRows == seat.Row)
-                {
-                    result.Add(model);
-                }
-                else
-                {
-                    seatsForFrontListsDomain.Add(new RowsDomainModel 
-                    {
-                        SeatsInRow = result
-                    });
-                    countRows = countRows + 1;
-                    result = new List<SeatDomainModel>();
-                    result.Add(model);
-                }
-
+                
             }
             seatsForFrontListsDomain.Add(new RowsDomainModel
             {
