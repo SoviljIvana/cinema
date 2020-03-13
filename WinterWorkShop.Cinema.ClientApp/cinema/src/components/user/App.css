@@ -54,7 +54,9 @@
 .each-fade {
   display: flex;
 }
-
+.circle{
+  border-radius:20px!important;
+}
 .buttonTrue {
   /* display: inline-block;
   padding: 15px 25px;

@@ -526,42 +526,42 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
                         AuditoriumName = projection.Auditorium.Name
                     });
-                    var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
-
-                    foreach (var tag in TagsForMovie)
-                    {
-                        if (tag.Tag.Type.Equals("director"))
-                        {
-                            tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("genre"))
-                        {
-                            tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("duration"))
-                        {
-                            tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("aword"))
-                        {
-                            tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("language"))
-                        {
-                            tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("state"))
-                        {
-                            tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("actor"))
-                        {
-                            tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
-                        }
-                    }
-                    model.tagsMovieModel = tagsMovieModel;
 
                 }
+                var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+
+                foreach (var tag in TagsForMovie)
+                {
+                    if (tag.Tag.Type.Equals("director"))
+                    {
+                        tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("genre"))
+                    {
+                        tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("duration"))
+                    {
+                        tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("aword"))
+                    {
+                        tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("language"))
+                    {
+                        tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("state"))
+                    {
+                        tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("actor"))
+                    {
+                        tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
+                    }
+                }
+                model.tagsMovieModel = tagsMovieModel;
                 result.Add(model);
 
             }
@@ -581,6 +581,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
             MovieDomainModel model;
             foreach (var item in data)
             {
+                TagsMovieModel tagsMovieModel = new TagsMovieModel();
+
                 model = new MovieDomainModel
                 {
                     Current = item.Current,
@@ -591,12 +593,48 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     listOfProjections = new List<ProjectionDomainModel>(),
                     tagsMovieModel = new TagsMovieModel()
                 };
+                var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+
+                foreach (var tag in TagsForMovie)
+                {
+                    if (tag.Tag.Type.Equals("director"))
+                    {
+                        tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("genre"))
+                    {
+                        tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("duration"))
+                    {
+                        tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("aword"))
+                    {
+                        tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("language"))
+                    {
+                        tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("state"))
+                    {
+                        tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("actor"))
+                    {
+                        tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
+                    }
+                }
+                model.tagsMovieModel = tagsMovieModel;
                 IEnumerable<Projection> lista = new List<Projection>();
+
                 var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id).ToList();
                 if (projectionsForThisMovie == null || projectionsForThisMovie.Count==0)
                 {
                     result.Add(model);
                 }
+
             }
 
             return result;
@@ -639,42 +677,41 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         AuditoriumName = projection.Auditorium.Name
                     });
 
-                    var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
-
-                    foreach (var tag in TagsForMovie)
-                    {
-                        if (tag.Tag.Type.Equals("director"))
-                        {
-                            tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("genre"))
-                        {
-                            tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("duration"))
-                        {
-                            tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("aword"))
-                        {
-                            tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("language"))
-                        {
-                            tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("state"))
-                        {
-                            tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
-                        }
-                        if (tag.Tag.Type.Equals("actor"))
-                        {
-                            tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
-                        }
-                    }
-                    model.tagsMovieModel = tagsMovieModel;
-
                 }
+                var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+
+                foreach (var tag in TagsForMovie)
+                {
+                    if (tag.Tag.Type.Equals("director"))
+                    {
+                        tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("genre"))
+                    {
+                        tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("duration"))
+                    {
+                        tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("aword"))
+                    {
+                        tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("language"))
+                    {
+                        tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("state"))
+                    {
+                        tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("actor"))
+                    {
+                        tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
+                    }
+                }
+                model.tagsMovieModel = tagsMovieModel;
                 result.Add(model);
             }
 
@@ -725,43 +762,43 @@ namespace WinterWorkShop.Cinema.Domain.Services
                             ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
                             AuditoriumName = projection.Auditorium.Name
                         });
-
-                        var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
-                        foreach (var tag in TagsForMovie)
-                        {
-                            if (tag.Tag.Type.Equals("director"))
-                            {
-                                tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
-                            }
-                            if (tag.Tag.Type.Equals("genre"))
-                            {
-                                tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
-                            }
-                            if (tag.Tag.Type.Equals("duration"))
-                            {
-                                tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
-                            }
-                            if (tag.Tag.Type.Equals("aword"))
-                            {
-                                tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
-                            }
-                            if (tag.Tag.Type.Equals("language"))
-                            {
-                                tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
-                            }
-                            if (tag.Tag.Type.Equals("state"))
-                            {
-                                tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
-                            }
-                            if (tag.Tag.Type.Equals("actor"))
-                            {
-                                tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
-                            }
-                        }
-                        model.tagsMovieModel = tagsMovieModel;
                     }
+                    var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+                    foreach (var tag in TagsForMovie)
+                    {
+                        if (tag.Tag.Type.Equals("director"))
+                        {
+                            tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("genre"))
+                        {
+                            tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("duration"))
+                        {
+                            tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("aword"))
+                        {
+                            tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("language"))
+                        {
+                            tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("state"))
+                        {
+                            tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("actor"))
+                        {
+                            tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
+                        }
+                    }
+                    model.tagsMovieModel = tagsMovieModel;
                     result.Add(model);
                 }
+
             }
 
             return result;

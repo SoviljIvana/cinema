@@ -227,6 +227,11 @@ class AllProjectionsForCinema extends Component {
             <ListGroup.Item > Year: {movie.year}</ListGroup.Item>
             <ListGroup.Item > Rating:<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'black'} color2={'#ffd700'} /></ListGroup.Item >
             <ListGroup.Item > Projections:{this.renderProjectionButtons(movie.listOfProjections)}</ListGroup.Item>
+    <ListGroup.Item><b>Genres:</b> {movie.tagsMovieModel.generes}<br></br><b>Directories:</b> {movie.tagsMovieModel.directores}<br></br><b> Duration: </b>{movie.tagsMovieModel.duration} min <br></br><b> Awards:</b> {movie.tagsMovieModel.awards}
+    
+    <br></br> <b>Languages:</b>{movie.tagsMovieModel.languages}<br></br> <b>States:</b> {movie.tagsMovieModel.states}<br></br> <b>Actores:</b> {movie.tagsMovieModel.actores}
+     </ListGroup.Item>
+
           </ListGroup>
         </div>
         <br />
@@ -268,13 +273,13 @@ class AllProjectionsForCinema extends Component {
           </Nav>
           <Form inline onSubmit={this.handleSubmit}>
             <FormControl size="lg"
-              type="text" className="form-control mr-sm-2" placeholder="Search for a movie by tags or movie title" aria-label="Search" for='searchData'
+              type="text" className="form-control mr-sm-2" placeholder="Insert tag or movie title" aria-label="Search" for='searchData'
               className="mr-sm-2"
               id='searchData'
               type='text'
               value={searchData}
               onChange={this.handleChange} />
-            <Button size="lg" type="submit" variant="outline-dark" className="mr-1">Search</Button>
+            <Button size="lg" type="submit" variant="outline-dark" className="mr-1">Search Movies</Button>
           </Form>
         </Navbar>
         <div>

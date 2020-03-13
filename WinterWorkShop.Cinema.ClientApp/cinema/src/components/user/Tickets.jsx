@@ -29,7 +29,9 @@ class Tickets extends Component {
   }
 
   componentDidMount() {
+    
     this.getAllUnpaidTicketsForUser();
+    
   }
 
   getAllUnpaidTicketsForUser() {
@@ -78,6 +80,7 @@ class Tickets extends Component {
           if (!response.ok) {
               return Promise.reject(response);
           }
+          
           return response.statusText;
       })
       .then(result => {
@@ -185,6 +188,7 @@ class Tickets extends Component {
   render() {
     const { isLoading } = this.state;
     const rowsData = this.fillTableWithDaata();
+
     const table = (<Table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
     <tbody>
         {rowsData}

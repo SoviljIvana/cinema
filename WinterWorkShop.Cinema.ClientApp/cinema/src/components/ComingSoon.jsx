@@ -72,7 +72,13 @@ class ComingSoon extends Component {
             <ListGroup class="movie-details" variant="flush">
               <ListGroup.Item> Year: {movie.year}</ListGroup.Item>
               <ListGroup.Item> Rating:<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'black'} color2={'#ffd700'} /></ListGroup.Item >
-            </ListGroup>
+              <ListGroup.Item><b>Genres:</b> {movie.tagsMovieModel.generes}<br></br><b>Directories:</b> {movie.tagsMovieModel.directores}<br></br><b> Duration: </b>{movie.tagsMovieModel.duration} min <br></br><b> Awards:</b> {movie.tagsMovieModel.awards}
+    
+    <br></br> <b>Languages:</b>{movie.tagsMovieModel.languages}<br></br> <b>States:</b> {movie.tagsMovieModel.states}<br></br> <b>Actores:</b> {movie.tagsMovieModel.actores}
+     </ListGroup.Item>
+           </ListGroup>
+         
+
           </div>
           <br />
         </div>
