@@ -117,7 +117,7 @@ class ProjectionsFilterForCinema extends Component {
           })
           .catch(response => {
               this.setState({isLoading: false});
-              NotificationManager.error(response.message || response.statusText);
+              NotificationManager.error("No results, please try again!");
           });
       }
     getSpecificProjections(searchString, filter) {
@@ -141,7 +141,7 @@ class ProjectionsFilterForCinema extends Component {
         })
         .catch(response => {
             this.setState({isLoading: false});
-            NotificationManager.error(response.message || response.statusText);
+            NotificationManager.error("No results, please try again!");
         });
     }
 

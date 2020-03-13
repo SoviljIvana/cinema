@@ -270,7 +270,7 @@ class AllProjectionsForCinema extends Component {
             <ListGroup.Item > Projections:{this.renderProjectionButtons(movie.listOfProjections)}</ListGroup.Item>
     <ListGroup.Item><b>Genres:</b> {movie.tagsMovieModel.generes}<br></br><b>Directories:</b> {movie.tagsMovieModel.directores}<br></br><b> Duration: </b>{movie.tagsMovieModel.duration} min <br></br><b> Awards:</b> {movie.tagsMovieModel.awards}
     
-    <br></br> <b>Languages:</b>{movie.tagsMovieModel.languages}<br></br> <b>States:</b> {movie.tagsMovieModel.states}<br></br> <b>Actores:</b> {movie.tagsMovieModel.actores}
+    <br></br> <b>Languages:</b>{movie.tagsMovieModel.languages}<br></br> <b>States:</b> {movie.tagsMovieModel.states}<br></br> <b>Actors:</b> {movie.tagsMovieModel.actores}
      </ListGroup.Item>
 
           </ListGroup>

@@ -21,7 +21,7 @@ class FilterProjections extends Component {
                 [{ label: "No filter", value: 'FilterByText' },
                 { label: "Filter by movie name ", value: 'moviename' },
                 { label: "Filter by auditorium name ", value: 'auditname' },
-                { label: "Filter by cinnpema name ", value: 'cinemaname' },
+                { label: "Filter by cinema name ", value: 'cinemaname' },
                 { label: "Filter by projection time ", value: 'dates' }],
             filter: "",
             searchString: "",
@@ -111,7 +111,7 @@ class FilterProjections extends Component {
             })
             .catch(response => {
                 this.setState({ isLoading: false });
-                NotificationManager.error(response.message || response.statusText);
+                NotificationManager.error("No results, please try again!");
             });
     }
     getSpecificProjections(searchString, filter) {
@@ -137,7 +137,7 @@ class FilterProjections extends Component {
             })
             .catch(response => {
                 this.setState({ isLoading: false });
-                NotificationManager.error(response.message || response.statusText);
+                NotificationManager.error("No results, please try again!");
             });
     }
 
