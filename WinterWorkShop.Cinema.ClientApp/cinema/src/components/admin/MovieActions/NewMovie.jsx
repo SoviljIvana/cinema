@@ -272,7 +272,7 @@ class NewMovie extends React.Component {
                                 onSelect={this.onSelect}
                                  onRemove={this.onRemove}
                                  displayValue="name"
-                                 placeholder="Choose an aword..."
+                                 placeholder="Choose an award..."
                                 />
                             </FormGroup>
                             <FormGroup>
