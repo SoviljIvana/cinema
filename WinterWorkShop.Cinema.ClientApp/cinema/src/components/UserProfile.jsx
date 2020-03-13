@@ -3,14 +3,9 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../appSettings';
 import { Table } from 'react-bootstrap';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import jwt_decode from 'jwt-decode';
 import Spinner from '../components/Spinner'
 import ListGroup from 'react-bootstrap/ListGroup';
 
-var decoded = jwt_decode(localStorage.getItem('jwt'));
-console.log(decoded);
-var userNameFromJWT = decoded.sub;
-console.log(userNameFromJWT)
 
 class UserProfile extends Component {
   constructor(props) {
@@ -29,6 +24,11 @@ class UserProfile extends Component {
   }
 
   getUsers() {
+        const token = localStorage.getItem('jwt');
+        var jwtDecoder = require('jwt-decode');
+        const decodedToken = jwtDecoder(token);
+        let userNameFromJWT = decodedToken.sub;
+
     const requestOptions = {
       method: 'GET',
       headers: {

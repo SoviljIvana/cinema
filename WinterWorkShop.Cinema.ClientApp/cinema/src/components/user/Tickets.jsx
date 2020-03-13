@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { Container, Col, Card, Button, Spinner, Table} from 'react-bootstrap';
-import jwt_decode from 'jwt-decode';
 import { serviceConfig } from '../../appSettings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-var decoded = jwt_decode(localStorage.getItem('jwt'));
-console.log(decoded);
-var userNameFromJWT = decoded.sub;
-console.log(userNameFromJWT)
 
 class Tickets extends Component {
   constructor(props) {
@@ -33,6 +28,12 @@ class Tickets extends Component {
   }
 
   getAllUnpaidTicketsForUser() {
+
+    const token = localStorage.getItem('jwt');
+    let jwtDecoder = require('jwt-decode');
+    const decodedToken = jwtDecoder(token);
+    let userNameFromJWT = decodedToken.sub;
+
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -59,7 +60,7 @@ class Tickets extends Component {
       })
       .catch(response => {
         this.setState({ isLoading: false });
-        NotificationManager.error(response.message || response.statusText);
+        NotificationManager.error("Please log in to get tickets!");
         this.setState({ submitted: false });
       });
   }
@@ -130,6 +131,12 @@ class Tickets extends Component {
   }
 
   payValue() {
+
+    const token = localStorage.getItem('jwt');
+    let jwtDecoder = require('jwt-decode');
+    const decodedToken = jwtDecoder(token);
+    let userNameFromJWT = decodedToken.sub;
+
     const { response2 } = this.state;
     const data = {
       UserName: userNameFromJWT,
@@ -153,7 +160,7 @@ class Tickets extends Component {
         return response.json();
       })
       .then(result => {
-        NotificationManager.success('Successfuly payed!');
+        NotificationManager.success('Successfuly paid!');
         window.open('../../UserProfile')
       })
       .catch(response => {
