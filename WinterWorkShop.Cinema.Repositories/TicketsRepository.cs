@@ -15,6 +15,7 @@ namespace WinterWorkShop.Cinema.Repositories
         IEnumerable<Ticket> GetAllForSpecificSeat(Guid id);
         IEnumerable<Ticket> GetAllForSpecificUser(Guid id);
         Task<IEnumerable<Ticket>> GetAllUnpaidForSpecificUser(string username);
+        IEnumerable<Ticket> GetAllForCinema(int id);
     }
 
     public class TicketsRepository : ITicketRepository
@@ -58,6 +59,14 @@ namespace WinterWorkShop.Cinema.Repositories
                 .Include(x=>x.Projection.Auditorium.Cinema)
                 .Include(a=>a.Seat).Where(x=>x.UserId.Equals(id))
                 .OrderByDescending(x=>x.Projection.DateTime)
+                .ToList();
+            return data;
+        }
+
+        public IEnumerable<Ticket> GetAllForCinema(int id)
+        {
+            var data = _cinemaContext.Tickets
+                .Include(y => y.Projection).Where(y=>y.Projection.DateTime>DateTime.Now)
                 .ToList();
             return data;
         }
