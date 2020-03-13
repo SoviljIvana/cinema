@@ -298,7 +298,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedStatusCode, ((NotFoundObjectResult)resultAction).StatusCode);
         }
         [TestMethod]
-        public void AuditoriumController_Put_Returns_BadRequeest_InvalidModelState()
+        public void AuditoriumController_Put_Returns_BadRequest_InvalidModelState()
         {
             //Arrange
             string expectedMessage = "Invalid Model State";
@@ -375,7 +375,6 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             //Arrange
             int expectedStatusCode = 500;
             UpdateAuditoriumModel updateAuditoriumModel = new UpdateAuditoriumModel();
-            string expectedErrorMessage = "Inner exception error message.";
             AuditoriumDomainModel auditoriumDomainModel = _auditoriumDomainModel;
             Task<AuditoriumDomainModel> responseTask = Task.FromResult(auditoriumDomainModel);
             _mockAuditoriumService = new Mock<IAuditoriumService>();
@@ -466,7 +465,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             string expectedErrorMessage = "Unable to delete auditorium, please make sure there are no upcoming projections and then try again. ";
             AuditoriumResultModel auditoriumResultModel = new AuditoriumResultModel() 
             {
-                Auditorium = null,
+                Auditorium = null
             };
             Task<AuditoriumResultModel> responseTask = Task.FromResult(auditoriumResultModel);
             _mockAuditoriumService = new Mock<IAuditoriumService>();

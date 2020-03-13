@@ -115,7 +115,6 @@ namespace WinterWorkShop.Cinema.API.Controllers
         [HttpPost]
         [Route("payValue")]
         [Authorize(Roles = "user, superUser, admin")]
-
         public async Task<ActionResult<PaymentResponse>> ConfirmPayment(TicketPaymentConfirm ticketPaymentConfirm)
         {
             if (!ModelState.IsValid)
@@ -170,7 +169,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             if (ticketDomainModels == null)
             {
-                NotFound(Messages.TICKET_NOT_FOUND);
+                return NotFound(Messages.TICKET_NOT_FOUND);
             }
 
             return Ok(ticketDomainModels);
