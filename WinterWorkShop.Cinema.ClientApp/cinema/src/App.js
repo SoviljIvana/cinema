@@ -34,9 +34,9 @@ function App() {
         <Route path="/projectiondetails/allForProjection/:id" component={AllForProjection} />
         <Route path="/userProfile" component={UserProfile} />
         <Route path="/comingsoon" component={ComingSoon} />
+        <Route path="/tickets" component={Tickets} />
         <Route path ="/ProjectionsFilterForCinema" component={ProjectionsFilterForCinema}/>
         <PrivateRouteSuperUser path="/dashboard" component={Dashboard} />
-        <PrivateRouteSuperUser path="/tickets" component={Tickets} />
 
       </Switch>
       <NotificationContainer />

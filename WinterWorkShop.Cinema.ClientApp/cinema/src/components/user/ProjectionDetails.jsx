@@ -5,12 +5,7 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Row, Container, ToggleButton, ToggleButtonGroup, Button, Card } from 'react-bootstrap';
 import './App.css';
-import jwt_decode from 'jwt-decode';
 import $ from "jquery";
-var decoded = jwt_decode(localStorage.getItem('jwt'));
-console.log(decoded);
-var userNameFromJWT = decoded.sub;
-console.log(userNameFromJWT)
 
 
 class ProjectionDetails extends Component {
@@ -72,6 +67,12 @@ class ProjectionDetails extends Component {
 
     addTickets() {
         const { listOfSeats, projectionId } = this.state;
+
+        const token = localStorage.getItem('jwt');
+        let jwtDecoder = require('jwt-decode');
+        const decodedToken = jwtDecoder(token);
+        let userNameFromJWT = decodedToken.sub;
+
 
         const data = {
             seatModels: listOfSeats,
