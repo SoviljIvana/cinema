@@ -5,12 +5,7 @@ import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
 import { Row, Container,  Button, } from 'react-bootstrap';
 import './App.css';
-import jwt_decode from 'jwt-decode';
 import { MdEventSeat  } from "react-icons/md";
-var decoded = jwt_decode(localStorage.getItem('jwt'));
-console.log(decoded);
-var userNameFromJWT = decoded.sub;
-console.log(userNameFromJWT)
 
 class ProjectionDetails extends Component {
 

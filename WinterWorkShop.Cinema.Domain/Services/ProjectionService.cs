@@ -46,7 +46,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     ProjectionTime = item.DateTime,
                     MovieTitle = item.Movie.Title,
                     AuditoriumName = item.Auditorium.Name,
-                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
+                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm tt")
                 };
                 result.Add(model);
             }
@@ -196,7 +196,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
                         CinemaName = item.Auditorium.Cinema.Name,
-                        ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
+                        ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm tt")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
@@ -257,7 +257,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         MovieTitle = item.Movie.Title,
                         ProjectionTime = item.DateTime,
                         CinemaName = item.Auditorium.Cinema.Name,
-                        ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
+                        ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm tt")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
@@ -319,7 +319,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     MovieTitle = item.Movie.Title,
                     ProjectionTime = item.DateTime,
                     CinemaName = item.Auditorium.Cinema.Name,
-                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
+                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm tt")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
@@ -381,7 +381,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     MovieTitle = item.Movie.Title,
                     ProjectionTime = item.DateTime,
                     CinemaName = item.Auditorium.Cinema.Name,
-                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
+                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm tt")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
@@ -442,7 +442,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     MovieTitle = item.Movie.Title,
                     ProjectionTime = item.DateTime,
                     CinemaName = item.Auditorium.Cinema.Name,
-                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm")
+                    ProjectionTimeString = item.DateTime.ToString("dddd, dd MMMM yyyy hh:mm tt")
                 };
                 projectionDomainFilterModels.Add(projection);
             }
