@@ -12,7 +12,6 @@ console.log(decoded);
 var userNameFromJWT = decoded.sub;
 console.log(userNameFromJWT)
 
-
 class ProjectionDetails extends Component {
 
     constructor(props) {
@@ -70,6 +69,12 @@ class ProjectionDetails extends Component {
 
     addTickets() {
         const { listOfSeats, projectionId } = this.state;
+
+        const token = localStorage.getItem('jwt');
+        let jwtDecoder = require('jwt-decode');
+        const decodedToken = jwtDecoder(token);
+        let userNameFromJWT = decodedToken.sub;
+
 
         const data = {
             seatModels: listOfSeats,

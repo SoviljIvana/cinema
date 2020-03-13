@@ -83,8 +83,42 @@ class AllProjectionsForCinema extends Component {
   }
 
   componentDidMount() {
+    const token = localStorage.getItem('jwt');
+    if(!token){this.guestToken();
+    }else{
+      var jwtDecoder = require('jwt-decode');
+      const decodedToken = jwtDecoder(token);
+      var role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      if((role != 'user') && (role != 'admin') && (role != 'superUser')){
+        this.guestToken();}
+    }
     this.getMovies();
 
+  }
+
+  guestToken() {
+    const requestOptions = {
+      method: 'GET',
+      headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+    };
+
+    fetch(`${serviceConfig.baseURL}/get-token?name=gost&guest=true&admin=false&superUser=false`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem("jwt", data.token);
+        }
+      })
+      .catch(response => {
+        NotificationManager.error("Unable to sign in. ");
+        this.setState({ submitted: false });
+      });
   }
 
   getSearch(searchData) {

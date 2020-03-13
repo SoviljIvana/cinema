@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../appSettings';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import jwt_decode from 'jwt-decode';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ReactStars from 'react-stars';
 import Spinner from '../components/Spinner'
@@ -10,10 +9,11 @@ import Spinner from '../components/Spinner'
 const ratingChanged = (newRating) => {
     console.log(newRating)
   }
-var decoded = jwt_decode(localStorage.getItem('jwt'));
-console.log(decoded);
-var userNameFromJWT = decoded.sub;
-console.log(userNameFromJWT)
+    //var jwtDecoder = require('jwt-decode');
+    //const decodedToken = jwtDecoder(token);
+    //var role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    //let userNameFromJWT = decodedToken.sub;
+
 
 class ComingSoon extends Component {
     constructor(props) {

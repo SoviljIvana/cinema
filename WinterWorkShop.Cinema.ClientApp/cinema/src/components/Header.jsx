@@ -21,12 +21,14 @@ class Header extends React.Component {
 
   componentDidMount(){
     const token = localStorage.getItem('jwt');
-    var jwtDecoder = require('jwt-decode');
-    const decodedToken = jwtDecoder(token);
-    var role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-    if((role != 'user') && (role != 'admin') && (role != 'superUser')){
-    this.guestToken();}
-
+    if(!token){this.guestToken();
+    }else{
+      var jwtDecoder = require('jwt-decode');
+      const decodedToken = jwtDecoder(token);
+      var role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      if((role != 'user') && (role != 'admin') && (role != 'superUser')){
+        this.guestToken();}
+    }
   }
 
   handleLogOut(e){
