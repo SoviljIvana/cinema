@@ -154,7 +154,11 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
         public async Task<CinemaDomainModel> UpdateCinema(CinemaDomainModel updateCinema)
         {
-
+            var activeTickets = _ticketService.TicketsForProjectionInFutureForSpecificCinema(updateCinema.Id);
+            if (activeTickets)
+            {
+                return null;
+            }
             Data.Cinema cinema = new Data.Cinema()
             {
                 Id = updateCinema.Id,

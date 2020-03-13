@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WinterWorkShop.Cinema.Data.Entities;
@@ -18,6 +19,16 @@ namespace WinterWorkShop.Cinema.Domain.Services
         {
             _ticketRepository = ticketRepository;
             _usersRepository = usersRepository;
+        }
+
+        public bool TicketsForProjectionInFutureForSpecificCinema(int id)
+        {
+            var tickets = _ticketRepository.GetAllForCinema(id);
+            if (tickets.Any())
+            {
+                return true;
+            }
+            return false;
         }
 
         //nigde se ne koristi
