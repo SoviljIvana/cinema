@@ -132,6 +132,8 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 foreach (var item in listOfFilmByTitle)
                 {
+                    TagsMovieModel tagsMovieModel = new TagsMovieModel();
+
                     MovieDomainModel model = new MovieDomainModel
                     {
                         Title = item.Title,
@@ -139,10 +141,45 @@ namespace WinterWorkShop.Cinema.Domain.Services
                         Id = item.Id,
                         Year = item.Year,
                         Rating = item.Rating ?? 0,
-                        listOfProjections = new List<ProjectionDomainModel>()
+                        listOfProjections = new List<ProjectionDomainModel>(),
+                        tagsMovieModel = tagsMovieModel
+
                     };
                     var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+                    var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
 
+                    foreach (var tagData in TagsForMovie)
+                    {
+                        if (tagData.Tag.Type.Equals("director"))
+                        {
+                            tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("genre"))
+                        {
+                            tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("duration"))
+                        {
+                            tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("aword"))
+                        {
+                            tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("language"))
+                        {
+                            tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("state"))
+                        {
+                            tagsMovieModel.States = tagsMovieModel.States + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("actor"))
+                        {
+                            tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tagData.Tag.Name;
+                        }
+                    }
+                    model.tagsMovieModel = tagsMovieModel;
                     foreach (var projection in projectionsForThisMovie)
                     {
                         model.listOfProjections.Add(new ProjectionDomainModel()
