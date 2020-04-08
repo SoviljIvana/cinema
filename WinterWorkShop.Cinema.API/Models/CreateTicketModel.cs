@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WinterWorkShop.Cinema.Domain.Models;
 
 namespace WinterWorkShop.Cinema.API.Models
 {
@@ -10,7 +11,7 @@ namespace WinterWorkShop.Cinema.API.Models
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public Guid ProjectionId { get; set; }
-
-        public List<SeatModel> seatModels { get; set; }
+        public string UserName { get; set; }
+        public List<SeatDomainModel> seatModels { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WinterWorkShop.Cinema.Domain.Common;
 using WinterWorkShop.Cinema.Domain.Interfaces;
 using WinterWorkShop.Cinema.Domain.Models;
 
@@ -21,24 +22,26 @@ namespace WinterWorkShop.Cinema.API.Controllers
         }
 
         /// <summary>
-        /// Gets all seats
+        /// Returns all seats for a specific projection
         /// </summary>
+        /// <param name="projectionId"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("all")]
-        public async Task<ActionResult<IEnumerable<SeatDomainModel>>> GetAsync()
+        [Route("allForProjection/{projectionId}")]
+        public async Task<ActionResult<IEnumerable<RowsDomainModel>>> GetAllSeatsForSpecificProjection(Guid projectionId)
         {
-            IEnumerable<SeatDomainModel> seatDomainModels;
-            
-            seatDomainModels = await _seatService.GetAllAsync();
+            IEnumerable<RowsDomainModel> rowsDomainModels;
 
-            if (seatDomainModels == null)
+            rowsDomainModels = await _seatService.GetAllSeatsForProjection(projectionId);
+
+            if (rowsDomainModels == null)
             {
-                seatDomainModels = new List<SeatDomainModel>();
+                return NotFound(Messages.SEAT_GET_ALL_SEATS_ERROR);
             }
 
-            return Ok(seatDomainModels);
+            return Ok(rowsDomainModels);
         }
-        
     }
+
+
 }

@@ -1,78 +1,34 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { MDBBtn, MDBRow, MDBCol } from 'mdbreact'
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { FormGroup, Row, Col, Table, Button } from 'react-bootstrap';
-import Spinner from '../Spinner';
-import ReactStars from 'react-stars';
+import { Row, Container,  Button, } from 'react-bootstrap';
 import './App.css';
+import { MdEventSeat  } from "react-icons/md";
 
 class ProjectionDetails extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
-            projections: [],
             seats: [],
             isLoading: true,
-            id: '',
-            title: '',
-            year: 0,
-            rating: '',
-            movieId: '',
-            auditoriumId: '',
-            current: false,
-            titleError: '',
-            yearError: '',
-            submitted: false,
-            canSubmit: true,
-            black: true,
             button: true,
-            auditoriumId: '',
-            row: '',
-            number: '',
+            tickets: [],
+            listOfSeats: [],
+            projectionId: '',
+            submitted: false,
+            projections: []
         };
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.details = this.details.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.addTickets = this.addTickets.bind(this);
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params;
-        this.getProjections(id);
-        this.getMovie(id);
-
-    }
-
-    getProjections(movieId) {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-            }
-        };
-
-        this.setState({ isLoading: true });
-        fetch(`${serviceConfig.baseURL}/api/Movies/allForSpecificMovie/` + movieId, requestOptions)
-            .then(response => {
-                if (!response.ok) {
-                    return Promise.reject(response);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data) {
-                    this.setState({
-                        projections: data,
-                        isLoading: false
-                    });
-                }
-            })
-            .catch(response => {
-                this.setState({ isLoading: false });
-                NotificationManager.error(response.message || response.statusText);
-            });
+        var idProjection = window.location.pathname.split("/").pop();
+        this.getSeats(idProjection);
+        this.state.projectionId = idProjection;
     }
 
     getSeats(projectionId) {
@@ -85,7 +41,7 @@ class ProjectionDetails extends Component {
         };
 
         this.setState({ isLoading: true });
-        fetch(`${serviceConfig.baseURL}/api/Movies/allForProjection/` + projectionId, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/Seats/allForProjection/` + projectionId, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);
@@ -95,7 +51,7 @@ class ProjectionDetails extends Component {
             .then(data => {
                 if (data) {
                     this.setState({
-                        projections: data,
+                        seats: data,
                         isLoading: false
                     });
                 }
@@ -106,144 +62,169 @@ class ProjectionDetails extends Component {
             });
     }
 
+    addTickets() {
+        const { listOfSeats, projectionId } = this.state;
 
-    getMovie(movieId) {
+        const token = localStorage.getItem('jwt');
+        let jwtDecoder = require('jwt-decode');
+        const decodedToken = jwtDecoder(token);
+        let userNameFromJWT = decodedToken.sub;
+
+
+        const data = {
+            seatModels: listOfSeats,
+            ProjectionId: projectionId,
+            UserName: userNameFromJWT,
+        };
+
         const requestOptions = {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-            }
+            },
+            body: JSON.stringify(data)
+
         };
 
-        fetch(`${serviceConfig.baseURL}/api/movies/` + movieId, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/Tickets/add`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return Promise.reject(response);
                 }
                 return response.json();
             })
-            .then(data => {
-                if (data) {
-                    this.setState({
-                        title: data.title,
-                        year: data.year,
-                        rating: Math.round(data.rating) + '',
-                        current: data.current + '',
-                        id: data.id
-                    });
-                }
-            })
             .catch(response => {
                 NotificationManager.error(response.message || response.statusText);
-                this.setState({ submitted: false });
+                this.setState({ subitted: false });
+
             });
+
     }
 
-    details(id) {
+    handleClick(seat) {
+        
+        seat.counter = seat.counter + 1;
+        if (!seat.reserved) {
 
-        this.props.history.push(`allForProjection/` + `${id}`);
-        this.getSeats(id);
-    }
-
-
-    handleSubmit(e) {
-        e.preventDefault();
-        this.setState({ submitted: true });
-        const { title, year, rating } = this.state;
-        if (title && year && rating) {
-            this.updateMovie();
-        } else {
-            NotificationManager.error('Please fill in data');
-            this.setState({ submitted: false });
-        }
-    }
+                let id = seat.id
+                let element = document.getElementById(id);
+                let buttonTrue = "buttonTrue";
+                let buttonFalse = "buttonFalse";
 
 
-    fillTableWithDaata() {
-
-        return this.state.projections.map(projection => {
-
-            return <Button key={projection.id} className="mr-1 mb-2">
-                <br></br>
+                
+                 if (this.state.listOfSeats.length == 0) 
                 {
-                    <Button>
-                        <h3><button onClick={() => this.details(projection.id)}>
-                            <header>{projection.projectionTimeString}</header></button> </h3>
-                        <br></br>
-                        <div>
-                            <h3 className="form-header">{projection.auditoriumName} </h3>
-                        </div>
-                        <br></br>
-                        <br></br>
-                        <button>
-                            {projection.id}
-                        </button>
-                        <div>
-                            {projection.auditoriumId}
-                        </div>
-                        <div>
-                            {projection.row}
-                        </div>
-                        <div>
-                            {projection.number}
-                        </div>
-                        <div>
-                            {this.renderRows(projection.row, projection.number)}
-                        </div>
-                        <tbody>
-                            {this.renderRows(projection.numOFRows, projection.numOFSeatsPerRow, projection.id)}
-                        </tbody>
-                    </Button>
+                    this.state.listOfSeats.push(seat);
+                    element.classList.add(buttonFalse);
 
                 }
-            </Button>
+                else {
+
+                    if (seat.row == this.state.listOfSeats[0].row) 
+                    {
+                        let length = this.state.listOfSeats.length 
+                        let first = this.state.listOfSeats[length - 1].number; 
+                        let second = 1;
+                        if (this.state.listOfSeats.length >= 2) { 
+
+                            let maxNumber = 1;
+                            let minNumber = 1;
+                            for (let index = 0; index < this.state.listOfSeats.length; index++) {
+                                if(this.state.listOfSeats[index].number > maxNumber){
+                                    maxNumber = this.state.listOfSeats[index].number;
+                                }
+                                if(this.state.listOfSeats[index].number < minNumber){
+                                    minNumber = this.state.listOfSeats[index].number;
+                                }
+                            }
+
+                            second = this.state.listOfSeats[length - 2].number; 
+                            let n = 0; 
+                            for (let index = 0; index < this.state.listOfSeats.length; index++) 
+                            {
+                                if (this.state.listOfSeats[index].id == seat.id) 
+                                {
+                                    n = n + 1;
+                                    if (seat.number == maxNumber || seat.number == minNumber ) {
+                                        this.state.listOfSeats.splice(index, 1)
+                                        element.classList.remove(buttonFalse);
+                                        
+                                    }
+                                }
+                            }
+                            if (n == 0) {
+                                if (seat.number - 1 == maxNumber || seat.number + 1 == minNumber ) {
+                                     this.state.listOfSeats.push(seat);
+                                    element.classList.add(buttonFalse);
+
+                                }
+                                else {
+                                    return NotificationManager.error("seats must be next to each other!");
+                                }
+                            }
+                            else{
+                                if (seat.number < maxNumber && seat.number > minNumber ) {
+                                    return NotificationManager.error("seats must be connected!");
+                                   
+                                    }
+                            }
+                        }
+                        else 
+                        {
+                            if (this.state.listOfSeats[0].id == seat.id) {
+                                this.state.listOfSeats.splice(0, 1)
+                                element.classList.remove(buttonFalse)
+                            }
+                           else if (this.state.listOfSeats[0].number == seat.number + 1 || this.state.listOfSeats[0].number == seat.number - 1) {
+                                this.state.listOfSeats.push(seat);
+                                element.classList.add(buttonFalse);
+
+                            }
+                            else {
+                                return NotificationManager.error("seats must be next to each other!");
+                            }
+                        }
+                    }
+                    else{
+                        return NotificationManager.error("seats must be in one row!");
+                    }
+                }
+        }
+        console.log(this.state.listOfSeats);
+    }
+
+    renderRowsInProjections(seatsInRow) {
+        return seatsInRow.map((seat) => {
+
+            return <MDBBtn size="lg" className="circle"  color="danger" outline="true" rounded="true"  mdbWavesEffect  type="button" id={seat.id}
+                disabled={seat.reserved === true ? true : false} 
+                onClick={() => this.handleClick(seat)}><MdEventSeat/></MDBBtn>
         })
     }
 
-    renderRows(rows, seats) {
-        const rowsRendered = [];
-        for (let i = 0; i < rows; i++) {
-            rowsRendered.push(<tr key={i}> {this.renderSeats(seats, i)}</tr>);
-        }
-        return rowsRendered;
-    }
-
-    renderSeats(seats, row) {
-        let renderedSeats = [];
-        for (let i = 0; i < seats; i++) {
-            renderedSeats.push(<button key={'row: ' + row + ', seat: ' + i}>{row}, {i}</button>);
-        }
-        return renderedSeats;
+    fillTableWithDaata() {
+        return this.state.seats.map(seat => {
+            return <MDBRow className="justify-content-center" style={{ width: '100rem' }}>{this.renderRowsInProjections(seat.seatsInRow)}<br></br></MDBRow>
+        })
     }
 
     render() {
-        const { isLoading, title, year, rating } = this.state;
         const rowsData = this.fillTableWithDaata();
-        const table = (<Table striped bordered hover size="sm" variant="link">
-            <tbody>
-                {rowsData}
-            </tbody>
-
-        </Table>);
-        const showTable = isLoading ? <Spinner></Spinner> : table;
+        console.log();
         return (
-            <React.Fragment>
+            <Container>
+                <br></br>
                 <Row className="justify-content-center">
-                    <Col>
-                        <br></br>
-                        <h1>Title: {title} </h1>
-                        <h2>Year: {year} </h2>
-                        <h3>Rating: <FormGroup> <ReactStars count={10} edit={false} size={37} value={rating} color1={'grey'} color2={'#ffd700'} /></FormGroup>
-                        </h3>
-                        <FormGroup >
-                            <br></br>
-                            {showTable}
-                        </FormGroup>
-                        <hr />
-                    </Col>
-                </Row>
-            </React.Fragment>
+                    {rowsData}</Row>
+                    <br></br>
+                    <Row className="justify-content-center">
+                 <Link className="text-decoration-none" to='/tickets'> <Button variant="dark" onClick={this.addTickets} > Create ticket </Button></Link>
+
+                    </Row>
+                
+            </Container>
         );
     }
 }

@@ -19,17 +19,24 @@ class NewProjection extends React.Component {
             auditoriumIdError: '',
             movies: [],
             auditoriums: [],
+            cinemas: [],
             canSubmit: true
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.change = this.change.bind(this);
     }
 
     componentDidMount() {
         this.getProjections();
-        this.getAuditoriums();
+        this.getCinemas();
+        
     }
     
+    change = selectedOption => {
+        this.setState({ selectedOption });
+        }
+
     handleChange(e) {
         const { id, value } = e.target;
         this.setState({ [id]: value });
@@ -135,14 +142,14 @@ class NewProjection extends React.Component {
           });
       }
 
-      getAuditoriums() {
+      getAuditoriums(cinemaId) {
         const requestOptions = {
           method: 'GET',
           headers: {'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
         };
   
-        fetch(`${serviceConfig.baseURL}/api/Auditoriums/all`, requestOptions)
+        fetch(`${serviceConfig.baseURL}/api/Auditoriums/cinema/${cinemaId}`, requestOptions)
           .then(response => {
             if (!response.ok) {
               return Promise.reject(response);
@@ -152,6 +159,30 @@ class NewProjection extends React.Component {
           .then(data => {
             if (data) {
               this.setState({ auditoriums: data });
+              }
+          })
+          .catch(response => {
+              NotificationManager.error(response.message || response.statusText);
+              this.setState({ submitted: false });
+          });
+      }
+      getCinemas() {
+        const requestOptions = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+        };
+  
+        fetch(`${serviceConfig.baseURL}/api/Cinemas/all`, requestOptions)
+          .then(response => {
+            if (!response.ok) {
+              return Promise.reject(response);
+          }
+          return response.json();
+          })
+          .then(data => {
+            if (data) {
+              this.setState({ cinemas: data });
               }
           })
           .catch(response => {
@@ -177,17 +208,26 @@ class NewProjection extends React.Component {
             this.validate('auditoriumId', null);
         }
     }
+    onCinemaChange(cinema) {
+        if(cinema[0]){
+            this.setState({cinemaId: cinema[0].id});
+            let cinemaId = cinema[0].id;
+            this.getAuditoriums(cinemaId);
+            this.validate('cinemaId', cinema[0]);
+        } else {
+            this.validate('cinemaId', null);
+        }
+    }
 
     onDateChange = date => this.setState({ projectionTime: date })
 
     render() {
-        const { auditoriums, movies, submitted, auditoriumIdError, movieIdError, projectionTimeError, canSubmit } = this.state;
+        const { cinemas, auditoriums, movies, submitted, auditoriumIdError, movieIdError, projectionTimeError, canSubmit } = this.state;
         
         return (
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Add Projection</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <Typeahead
@@ -198,6 +238,16 @@ class NewProjection extends React.Component {
                                     onChange={e => {this.onMovieChange(e)}}
                                     />
                                 <FormText className="text-danger">{movieIdError}</FormText>
+                            </FormGroup>
+                            <FormGroup>
+                                <Typeahead
+                                    labelKey='name'
+                                    options={cinemas}
+                                    placeholder="Choose cinema..."
+                                    id="cinemas"
+                                    onChange={e => {this.onCinemaChange(e)}}
+                                />
+                                <FormText className="text-danger">{auditoriumIdError}</FormText>
                             </FormGroup>
                             <FormGroup>
                                 <Typeahead
@@ -217,7 +267,7 @@ class NewProjection extends React.Component {
                                     />
                                 <FormText className="text-danger">{projectionTimeError}</FormText>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Add Projection</Button>
+                            <Button variant="secondary" type="submit" disabled={submitted || !canSubmit} block>Add Projection</Button>
                         </form>
                     </Col>
                 </Row>

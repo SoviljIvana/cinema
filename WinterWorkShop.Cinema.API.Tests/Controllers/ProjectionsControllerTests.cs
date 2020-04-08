@@ -18,7 +18,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
     public class ProjectionsControllerTests
     {
         private Mock<IProjectionService> _projectionService;
-
+        
 
         [TestMethod]
         public void GetAsync_Return_All_Projections()
@@ -61,25 +61,23 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
         public void GetAsync_Return_NewList()
         {
             //Arrange
+            var expectedMessage = "Error occured while getting all projections, please try again.";
             IEnumerable<ProjectionDomainModel> projectionDomainModels = null;
             Task<IEnumerable<ProjectionDomainModel>> responseTask = Task.FromResult(projectionDomainModels);
-            int expectedResultCount = 0;
-            int expectedStatusCode = 200;
-
+            int expectedStatusCode = 404;
             _projectionService = new Mock<IProjectionService>();
             _projectionService.Setup(x => x.GetAllAsync()).Returns(responseTask);
             ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
 
             //Act
-            var result = projectionsController.GetAsync().ConfigureAwait(false).GetAwaiter().GetResult().Result;
-            var resultList = ((OkObjectResult)result).Value;
-            var projectionDomainModelResultList = (List<ProjectionDomainModel>)resultList;
+            var resultAction = projectionsController.GetAsync().ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = ((NotFoundObjectResult)resultAction).Value;
 
             //Assert
-            Assert.IsNotNull(projectionDomainModelResultList);
-            Assert.AreEqual(expectedResultCount, projectionDomainModelResultList.Count);
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-            Assert.AreEqual(expectedStatusCode, ((OkObjectResult)result).StatusCode);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+            Assert.AreEqual(expectedStatusCode, ((NotFoundObjectResult)resultAction).StatusCode);
         }
 
         // if (!ModelState.IsValid) - false
@@ -99,7 +97,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 ProjectionTime = DateTime.Now.AddDays(1),
                 AuditoriumId = 1
             };
-            CreateProjectionResultModel createProjectionResultModel = new CreateProjectionResultModel
+            ProjectionResultModel createProjectionResultModel = new ProjectionResultModel
             {
                 Projection = new ProjectionDomainModel
                 {
@@ -112,7 +110,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 },
                 IsSuccessful = true
             };
-            Task<CreateProjectionResultModel> responseTask = Task.FromResult(createProjectionResultModel);
+            Task<ProjectionResultModel> responseTask = Task.FromResult(createProjectionResultModel);
 
 
             _projectionService = new Mock<IProjectionService>();
@@ -148,7 +146,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 ProjectionTime = DateTime.Now.AddDays(1),
                 AuditoriumId = 1
             };
-            CreateProjectionResultModel createProjectionResultModel = new CreateProjectionResultModel
+            ProjectionResultModel createProjectionResultModel = new ProjectionResultModel
             {
                 Projection = new ProjectionDomainModel
                 {
@@ -161,7 +159,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 },
                 IsSuccessful = true
             };
-            Task<CreateProjectionResultModel> responseTask = Task.FromResult(createProjectionResultModel);
+            Task<ProjectionResultModel> responseTask = Task.FromResult(createProjectionResultModel);
             Exception exception = new Exception("Inner exception error message.");
             DbUpdateException dbUpdateException = new DbUpdateException("Error.", exception);
 
@@ -201,7 +199,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 ProjectionTime = DateTime.Now.AddDays(1),
                 AuditoriumId = 1
             };
-            CreateProjectionResultModel createProjectionResultModel = new CreateProjectionResultModel
+            ProjectionResultModel createProjectionResultModel = new ProjectionResultModel
             {
                 Projection = new ProjectionDomainModel
                 {
@@ -215,7 +213,7 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
                 IsSuccessful = false,
                 ErrorMessage = Messages.PROJECTION_CREATION_ERROR,
             };
-            Task<CreateProjectionResultModel> responseTask = Task.FromResult(createProjectionResultModel);
+            Task<ProjectionResultModel> responseTask = Task.FromResult(createProjectionResultModel);
 
 
             _projectionService = new Mock<IProjectionService>();
@@ -301,6 +299,346 @@ namespace WinterWorkShop.Cinema.Tests.Controllers
             Assert.AreEqual(expectedMessage, message[0]);
             Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
             Assert.AreEqual(expectedStatusCode, resultResponse.StatusCode);
+        }
+
+        [TestMethod]
+        public void ProjectionController_FilterByAll_ReturnNotFound()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = false,
+                ErrorMessage = "Please enter search parameter"
+            };
+
+            var expectedErrorMessage = "Please enter search parameter";
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterAllProjections(It.IsAny<string>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByAll(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (NotFoundObjectResult)resultAction;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(expectedErrorMessage, (result).Value);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+        }
+        [TestMethod]
+        public void ProjectionController_FilterByAll_Return_CreateProjectionFilterResultModel()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = new List<ProjectionDomainFilterModel>()
+            };
+            ProjectionDomainFilterModel projectionDomainFilterModel = new ProjectionDomainFilterModel()
+            {
+                AuditoriumName = "AuditoriumName"
+            };
+            createProjectionFilterResultModel.Projections.Add(projectionDomainFilterModel);
+
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterAllProjections(It.IsAny<string>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByAll(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (OkObjectResult)resultAction;
+            var okObjectResultmodel = ((OkObjectResult)resultAction).Value;
+            var resultModel = (CreateProjectionFilterResultModel)okObjectResultmodel;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.IsTrue(resultModel.IsSuccessful);
+            Assert.IsNull(resultModel.ErrorMessage);
+            Assert.AreEqual(projectionDomainFilterModel.AuditoriumName, resultModel.Projections[0].AuditoriumName);
+        }
+
+        [TestMethod]
+        public void ProjectionController_FilterByMovieName_ReturnNotFound()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = false,
+                ErrorMessage = "Please enter search parameter"
+            };
+
+            var expectedErrorMessage = "Please enter search parameter";
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterProjectionsByMovieName(It.IsAny<string>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByMovieName(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (NotFoundObjectResult)resultAction;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(expectedErrorMessage, (result).Value);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+        }
+        [TestMethod]
+        public void ProjectionController_FilterByMovieName_Return_CreateProjectionFilterResultModel()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = new List<ProjectionDomainFilterModel>()
+            };
+            ProjectionDomainFilterModel projectionDomainFilterModel = new ProjectionDomainFilterModel()
+            {
+                AuditoriumName = "AuditoriumName"
+            };
+            createProjectionFilterResultModel.Projections.Add(projectionDomainFilterModel);
+
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterProjectionsByMovieName(It.IsAny<string>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByMovieName(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (OkObjectResult)resultAction;
+            var okObjectResultmodel = ((OkObjectResult)resultAction).Value;
+            var resultModel = (CreateProjectionFilterResultModel)okObjectResultmodel;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.IsTrue(resultModel.IsSuccessful);
+            Assert.IsNull(resultModel.ErrorMessage);
+            Assert.AreEqual(projectionDomainFilterModel.AuditoriumName, resultModel.Projections[0].AuditoriumName);
+        }
+        [TestMethod]
+        public void ProjectionController_FilterByCinemaName_ReturnNotFound()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = false,
+                ErrorMessage = "Please enter search parameter"
+            };
+
+            var expectedErrorMessage = "Please enter search parameter";
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterProjectionsByCinemaName(It.IsAny<string>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByCinemaName(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (NotFoundObjectResult)resultAction;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(expectedErrorMessage, (result).Value);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+        }
+        [TestMethod]
+        public void ProjectionController_FilterByCinemaName_Return_CreateProjectionFilterResultModel()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = new List<ProjectionDomainFilterModel>()
+            };
+            ProjectionDomainFilterModel projectionDomainFilterModel = new ProjectionDomainFilterModel()
+            {
+                AuditoriumName = "AuditoriumName"
+            };
+            createProjectionFilterResultModel.Projections.Add(projectionDomainFilterModel);
+
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterProjectionsByCinemaName(It.IsAny<string>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByCinemaName(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (OkObjectResult)resultAction;
+            var okObjectResultmodel = ((OkObjectResult)resultAction).Value;
+            var resultModel = (CreateProjectionFilterResultModel)okObjectResultmodel;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.IsTrue(resultModel.IsSuccessful);
+            Assert.IsNull(resultModel.ErrorMessage);
+            Assert.AreEqual(projectionDomainFilterModel.AuditoriumName, resultModel.Projections[0].AuditoriumName);
+        }
+        [TestMethod]
+        public void ProjectionController_FilterByAuditoriumName_ReturnNotFound()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = false,
+                ErrorMessage = "Please enter search parameter"
+            };
+
+            var expectedErrorMessage = "Please enter search parameter";
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterProjectionsByAuditoriumName(It.IsAny<string>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByAuditoriumName(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (NotFoundObjectResult)resultAction;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(expectedErrorMessage, (result).Value);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+        }
+        [TestMethod]
+        public void ProjectionController_FilterByAuditoriumName_Return_CreateProjectionFilterResultModel()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = new List<ProjectionDomainFilterModel>()
+            };
+            ProjectionDomainFilterModel projectionDomainFilterModel = new ProjectionDomainFilterModel()
+            {
+                AuditoriumName = "AuditoriumName"
+            };
+            createProjectionFilterResultModel.Projections.Add(projectionDomainFilterModel);
+
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterProjectionsByAuditoriumName(It.IsAny<string>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByAuditoriumName(It.IsAny<string>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (OkObjectResult)resultAction;
+            var okObjectResultmodel = ((OkObjectResult)resultAction).Value;
+            var resultModel = (CreateProjectionFilterResultModel)okObjectResultmodel;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.IsTrue(resultModel.IsSuccessful);
+            Assert.IsNull(resultModel.ErrorMessage);
+            Assert.AreEqual(projectionDomainFilterModel.AuditoriumName, resultModel.Projections[0].AuditoriumName);
+        }
+        [TestMethod]
+        public void ProjectionController_FilterByDates_ReturnNotFound()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = false,
+                ErrorMessage = "Please enter search parameter"
+            };
+
+            var expectedErrorMessage = "Please enter search parameter";
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterProjectionsByDates(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByDates(It.IsAny<DateTime>(), It.IsAny<DateTime>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (NotFoundObjectResult)resultAction;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(expectedErrorMessage, (result).Value);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(NotFoundObjectResult));
+        }
+        [TestMethod]
+        public void ProjectionController_FilterByDates_Return_CreateProjectionFilterResultModel()
+        {
+            //Arrange
+            CreateProjectionFilterResultModel createProjectionFilterResultModel = new CreateProjectionFilterResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projections = new List<ProjectionDomainFilterModel>()
+            };
+            ProjectionDomainFilterModel projectionDomainFilterModel = new ProjectionDomainFilterModel()
+            {
+                AuditoriumName = "AuditoriumName"
+            };
+            createProjectionFilterResultModel.Projections.Add(projectionDomainFilterModel);
+
+            Task<CreateProjectionFilterResultModel> reponseTask = Task.FromResult(createProjectionFilterResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.FilterProjectionsByDates(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.FilterByDates(It.IsAny<DateTime>(), It.IsAny<DateTime>()).ConfigureAwait(false).GetAwaiter().GetResult().Result;
+            var result = (OkObjectResult)resultAction;
+            var okObjectResultmodel = ((OkObjectResult)resultAction).Value;
+            var resultModel = (CreateProjectionFilterResultModel)okObjectResultmodel;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(OkObjectResult));
+            Assert.IsTrue(resultModel.IsSuccessful);
+            Assert.IsNull(resultModel.ErrorMessage);
+            Assert.AreEqual(projectionDomainFilterModel.AuditoriumName, resultModel.Projections[0].AuditoriumName);
+        }
+        [TestMethod]
+        public void ProjectionController_DeleteProjection_Return_Accepted()
+        {
+            //Arrange
+            ProjectionDomainModel projectionDomainModel = new ProjectionDomainModel()
+            {
+                AuditoriumName = "AuditoriumName"
+            };
+            ProjectionResultModel projectionResultModel = new ProjectionResultModel()
+            {
+                IsSuccessful = true,
+                ErrorMessage = null,
+                Projection = projectionDomainModel
+            };
+            
+            Task<ProjectionResultModel> reponseTask = Task.FromResult(projectionResultModel);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.DeleteProjection(It.IsAny<Guid>())).Returns(reponseTask);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.DeleteProjection(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            var result = (AcceptedResult)resultAction;
+            var acceptedResultmodel = ((AcceptedResult)resultAction).Value;
+            var resultModel = (ProjectionResultModel)acceptedResultmodel;
+            //Assert
+            Assert.IsNotNull(resultAction);
+            Assert.AreEqual(202, result.StatusCode);
+            Assert.IsInstanceOfType(resultAction, typeof(AcceptedResult));
+            Assert.IsTrue(resultModel.IsSuccessful);
+            Assert.IsNull(resultModel.ErrorMessage);
+            Assert.AreEqual(projectionDomainModel.AuditoriumName, resultModel.Projection.AuditoriumName);
+        }
+        [TestMethod]
+        public void ProjectionController_DeleteProjection_Return_DbUpdateException()
+        {
+            //Arrange
+            string expectedErrorMessage = "Inner exception error message.";
+            Exception exception = new Exception("Inner exception error message.");
+            DbUpdateException dbUpdateException = new DbUpdateException("Error.", exception);
+            _projectionService = new Mock<IProjectionService>();
+            _projectionService.Setup(x => x.DeleteProjection(It.IsAny<Guid>())).Throws(dbUpdateException);
+            ProjectionsController projectionsController = new ProjectionsController(_projectionService.Object);
+            //Act
+            var resultAction = projectionsController.DeleteProjection(It.IsAny<Guid>()).ConfigureAwait(false).GetAwaiter().GetResult();
+            var resultResponse = (BadRequestObjectResult)resultAction;
+            var badObjectResult = ((BadRequestObjectResult)resultAction).Value;
+            var errorResult = (ErrorResponseModel)badObjectResult;
+            //Assert
+            Assert.IsNotNull(resultResponse);
+            Assert.AreEqual(expectedErrorMessage, errorResult.ErrorMessage);
+            Assert.IsInstanceOfType(resultAction, typeof(BadRequestObjectResult));
+            Assert.AreEqual(400, resultResponse.StatusCode);
         }
     }
 }

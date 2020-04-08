@@ -13,6 +13,9 @@ namespace WinterWorkShop.Cinema.Repositories
     {
         IEnumerable<Ticket> GetAllForSpecificProjection(Guid id);
         IEnumerable<Ticket> GetAllForSpecificSeat(Guid id);
+        IEnumerable<Ticket> GetAllForSpecificUser(Guid id);
+        Task<IEnumerable<Ticket>> GetAllUnpaidForSpecificUser(string username);
+        IEnumerable<Ticket> GetAllForCinema(int id);
     }
 
     public class TicketsRepository : ITicketRepository
@@ -34,7 +37,11 @@ namespace WinterWorkShop.Cinema.Repositories
             var data = await _cinemaContext.Tickets.Include(x=>x.Seat.Auditorium.Cinema).Include(x=>x.Projection.Movie).Include(x=>x.User).ToListAsync();
             return data;
         }
-
+        public async Task<IEnumerable<Ticket>> GetAllUnpaidForSpecificUser(string username)
+        {
+            var data = await _cinemaContext.Tickets.Include(x => x.Seat.Auditorium.Cinema).Include(x => x.Projection.Movie).Include(x => x.User).Where(x=>x.User.UserName.Equals(username) && x.Paid.Equals(false)).ToListAsync();
+            return data;
+        }
         public IEnumerable<Ticket> GetAllForSpecificProjection(Guid id)
         {
             var data = _cinemaContext.Tickets.Include(x => x.Seat).Include(x => x.Projection).Where(x=>x.ProjectionId == id).ToList();
@@ -43,6 +50,24 @@ namespace WinterWorkShop.Cinema.Repositories
         public IEnumerable<Ticket> GetAllForSpecificSeat(Guid id)
         {
             var data = _cinemaContext.Tickets.Include(x => x.Seat).Include(x => x.Projection).Where(x => x.SeatId == id).ToList();
+            return data;
+        }
+        public IEnumerable<Ticket> GetAllForSpecificUser(Guid id)
+        {
+            var data = _cinemaContext.Tickets
+                .Include(y=>y.Projection.Movie)
+                .Include(x=>x.Projection.Auditorium.Cinema)
+                .Include(a=>a.Seat).Where(x=>x.UserId.Equals(id))
+                .OrderByDescending(x=>x.Projection.DateTime)
+                .ToList();
+            return data;
+        }
+
+        public IEnumerable<Ticket> GetAllForCinema(int id)
+        {
+            var data = _cinemaContext.Tickets
+                .Include(y => y.Projection).Where(y=>y.Projection.DateTime>DateTime.Now)
+                .ToList();
             return data;
         }
 

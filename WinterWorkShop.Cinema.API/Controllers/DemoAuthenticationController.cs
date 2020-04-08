@@ -24,10 +24,10 @@ namespace WinterWorkShop.Cinema.API.Controllers
         // you will need a robust auth implementation for production
         // i.e. try IdentityServer4
         [Route("/get-token")]
-        public IActionResult GenerateToken(string name = "aspnetcore-workshop-demo", bool admin = false, bool superUser = false)
+        public IActionResult GenerateToken(string name = "aspnetcore-workshop-demo", bool guest = false, bool user = false, bool superUser = false, bool admin = false)
         {
             var jwt = JwtTokenGenerator
-                .Generate(name, admin, superUser, _configuration["Tokens:Issuer"], _configuration["Tokens:Key"]);
+                .Generate(name, guest, user, superUser, admin, _configuration["Tokens:Issuer"], _configuration["Tokens:Key"]);
 
             return Ok(new {token = jwt});
         }

@@ -1,36 +1,90 @@
+.slide-container {
+  width: 70%;
+  margin: auto;
+  }
+.each-slide > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  height: 300px;
+}
 .container {
-    display: flex;
-     flex-direction: row;
-     align-items: center;
-     justify-content: center;
-  }
-  .buttonTrue {
-    display: inline-block;
-    padding: 15px 25px;
-    font-size: 24px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    outline: none;
-    color: #000;
-    background-color: yellow;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 9px #999;
-  }
+  padding: 2px 16px;
+}
+.each-slide span {
+  padding: 20px;
+  font-size: 20px;
+  background: #efefef;
+  text-align: center;
+}
+.movie-poster {
+  width: 200px;
+  height: auto;
+}
+.vrstaselect {
+  float: none;
+  display: block;
+  clear: both;
+  margin-bottom: 26px;}
+
+  .sub-section-title::before {
+    color: 
+    red;
+    content: "*";
+    margin-right: 8px;
+}
+.movie-details {
+  display: table;
+  width: 100%;}
   
-  .buttonFalse {
-    display: inline-block;
-    padding: 15px 25px;
-    font-size: 24px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    outline: none;
-    color: #fff;
-    background-color: red;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 9px #999;
-  }
-  
+.sub-section-title {
+  font-family: "Roboto condensed", "Arial Narrow", Arial, sans-serif;
+  font-size: 34px;
+  font-weight: normal;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  display: inline-block;
+}
+.movie {
+  padding: 48px 20;
+  border-top: 1px dotted 
+  #333;
+}
+.each-fade {
+  display: flex;
+}
+.circle{
+  border-radius:20px!important;
+}
+.buttonTrue {
+  color: #000;
+  background-color: yellow;
+}
+.active-pink-4 input[type="text"]:focus:not([readonly]) {
+  border: 1px solid #f48fb1;
+  box-shadow: 0 0 0 1px #f48fb1;
+}
+.active-pink-3 input[type="text"] {
+  border: 1px solid #f48fb1;
+  box-shadow: 0 0 0 1px #f48fb1;
+}
+.buttonTrue1 {
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #000!important;
+  background-color: yellow!important;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+.buttonFalse {
+  color: rgb(255, 255, 255);
+  background-color: white;
+}
+

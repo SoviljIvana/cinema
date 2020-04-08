@@ -14,8 +14,9 @@ class NewMovie extends React.Component {
             year: 0,
             rating: '',
             current: false,
-            duration: 0,
+            duration: '',
             genre: [],
+            directors: [],
             actores: [],
             awords: [],
             languages: [],
@@ -33,8 +34,6 @@ class NewMovie extends React.Component {
     
     componentDidMount() {
         this.getGenre();
-        
-
     }
 
     getGenre() {
@@ -54,7 +53,8 @@ class NewMovie extends React.Component {
             })
             .then(data => {
                 if (data) {
-                    this.setState({ genre: data.genres, actores: data.actores, states: data.states, awords: data.awords, languages: data.languages});
+                    this.setState({ genre: data.genres, actores: data.actores,
+                         states: data.states, awords: data.awords, languages: data.languages, directors: data.directors});
                 }
             })
             .catch(response => {
@@ -163,12 +163,11 @@ class NewMovie extends React.Component {
 
 
     render() {
-        const {duration, languages, awords, states, actores, genre, Name, title, year, current, rating, submitted, titleError, yearError, canSubmit } = this.state;
+        const {duration, languages, awords, directors, states, actores, genre, Name, title, year, current, rating, submitted, titleError, yearError, canSubmit } = this.state;
         return (
             <Container>
                 <Row>
                     <Col>
-                        <h1 className="form-header">Add New Movie</h1>
                         <form onSubmit={this.handleSubmit}>
                             <FormGroup>
                                 <FormControl
@@ -203,13 +202,14 @@ class NewMovie extends React.Component {
                                 <FormControl
                                     id="duration"
                                     type="number"
-                                    placeholder="duration"
+                                    placeholder="Insert movie duration"
                                     value={duration}
                                     onChange={this.handleChange}
                                 />
                             </FormGroup>
                             <FormGroup>
-                                <FormControl as="select" placeholder="Rating" id="rating" value={rating} onChange={this.handleChange}>
+                                <FormControl as="select" placeholder="Select movie rating..." id="rating" value={rating} onChange={this.handleChange}>
+                                    <option>Select movie rating...</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
@@ -235,12 +235,22 @@ class NewMovie extends React.Component {
                             </FormGroup>
                             <FormGroup>
                                 <Multiselect
+                                options={directors}
+                                selectedValues ={directors.selectedValues}
+                                onSelect={this.onSelect}
+                                 onRemove={this.onRemove}
+                                 displayValue="name"
+                                 placeholder="Choose a director..."
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <Multiselect
                                 options={actores}
                                 selectedValues ={actores.selectedValues}
                                 onSelect={this.onSelect}
                                  onRemove={this.onRemove}
                                  displayValue="name"
-                                 placeholder="Choose a actore..."
+                                 placeholder="Choose an actor..."
                                 />
                             </FormGroup>
                             <FormGroup>
@@ -260,7 +270,7 @@ class NewMovie extends React.Component {
                                 onSelect={this.onSelect}
                                  onRemove={this.onRemove}
                                  displayValue="name"
-                                 placeholder="Choose a aword..."
+                                 placeholder="Choose an award..."
                                 />
                             </FormGroup>
                             <FormGroup>
@@ -280,7 +290,7 @@ class NewMovie extends React.Component {
                                 <option value="false">Not Current</option>
                                 </FormControl>
                             </FormGroup>
-                            <Button type="submit" disabled={submitted || !canSubmit} block>Add Movie</Button>
+                            <Button  variant="info" type="submit" disabled={submitted || !canSubmit} block>Add Movie</Button>
                         </form>
                     </Col>
                 </Row>

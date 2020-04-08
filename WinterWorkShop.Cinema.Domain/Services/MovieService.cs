@@ -39,6 +39,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             var allMovies = await _moviesRepository.GetAllWithMovieTags();
 
             List<Movie> listOfFilms = new List<Movie>();
+            List<Movie> listOfFilmByTitle = new List<Movie>();
 
             foreach (var stringData in listOfString)
             {
@@ -78,25 +79,182 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 }
                 else
                 {
-                    return null;
+                    foreach (var movieTitle in listOfString)
+                    {
+                        List<Movie> movieTitles;
+
+                        movieTitles = allMovies.Where(y => y.Title.Contains(movieTitle)).ToList();
+                        if (movieTitles.Count != 0)
+                        {
+                            if (listOfFilmByTitle.Count == 0)
+                            {
+                                foreach (var movie in movieTitles)
+                                {
+                                    listOfFilmByTitle.Add(movie);
+                                }
+                            }
+                            else
+                            {
+                                var listOfFilmsForCheck = new List<Movie>();
+                                listOfFilmsForCheck = listOfFilmByTitle;
+
+                                for (int j = 0; j < listOfFilmsForCheck.Count; j++)
+                                {
+                                    int numberOfNotMatching = 0;
+                                    for (int i = 0; i < movieTitles.Count; i++)
+                                    {
+                                        if (!movieTitles[i].Id.Equals(listOfFilmsForCheck[j].Id))
+                                        {
+                                            numberOfNotMatching = numberOfNotMatching + 1;
+                                        }
+                                        if (numberOfNotMatching == movieTitles.Count)
+                                        {
+                                            listOfFilmByTitle.Remove(listOfFilmsForCheck[j]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
                 }
             }
-            var n = listOfFilms.Count();
 
-            if (listOfFilms.Count() == 0)
+            if (listOfFilms.Count() == 0 && listOfFilmByTitle.Count == 0)
             {
                 return null;
             }
+
+            if (listOfFilmByTitle != null && listOfFilmByTitle.Count > 0)
+            {
+                foreach (var item in listOfFilmByTitle)
+                {
+                    TagsMovieModel tagsMovieModel = new TagsMovieModel();
+
+                    MovieDomainModel model = new MovieDomainModel
+                    {
+                        Title = item.Title,
+                        Current = item.Current,
+                        Id = item.Id,
+                        Year = item.Year,
+                        Rating = item.Rating ?? 0,
+                        listOfProjections = new List<ProjectionDomainModel>(),
+                        tagsMovieModel = tagsMovieModel
+
+                    };
+                    var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+                    var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+
+                    foreach (var tagData in TagsForMovie)
+                    {
+                        if (tagData.Tag.Type.Equals("director"))
+                        {
+                            tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("genre"))
+                        {
+                            tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("duration"))
+                        {
+                            tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("aword"))
+                        {
+                            tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("language"))
+                        {
+                            tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("state"))
+                        {
+                            tagsMovieModel.States = tagsMovieModel.States + " " + tagData.Tag.Name;
+                        }
+                        if (tagData.Tag.Type.Equals("actor"))
+                        {
+                            tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tagData.Tag.Name;
+                        }
+                    }
+                    model.tagsMovieModel = tagsMovieModel;
+                    foreach (var projection in projectionsForThisMovie)
+                    {
+                        model.listOfProjections.Add(new ProjectionDomainModel()
+                        {
+                            Id = projection.Id,
+                            ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                            AuditoriumName = projection.Auditorium.Name
+                        });
+
+                    }
+                    result.Add(model);
+                }
+            }
+
             foreach (var item in listOfFilms)
             {
+                TagsMovieModel tagsMovieModel = new TagsMovieModel();
+
                 MovieDomainModel model = new MovieDomainModel
                 {
                     Title = item.Title,
                     Current = item.Current,
                     Id = item.Id,
                     Year = item.Year,
-                    Rating = item.Rating ?? 0
+                    Rating = item.Rating ?? 0,
+                    listOfProjections = new List<ProjectionDomainModel>(),
+                    tagsMovieModel = tagsMovieModel
+
                 };
+                var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+
+                foreach (var tagData in TagsForMovie)
+                {
+                    if (tagData.Tag.Type.Equals("director"))
+                    {
+                        tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tagData.Tag.Name;
+                    }
+                    if (tagData.Tag.Type.Equals("genre"))
+                    {
+                        tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tagData.Tag.Name;
+                    }
+                    if (tagData.Tag.Type.Equals("duration"))
+                    {
+                        tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tagData.Tag.Name;
+                    }
+                    if (tagData.Tag.Type.Equals("aword"))
+                    {
+                        tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tagData.Tag.Name;
+                    }
+                    if (tagData.Tag.Type.Equals("language"))
+                    {
+                        tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tagData.Tag.Name;
+                    }
+                    if (tagData.Tag.Type.Equals("state"))
+                    {
+                        tagsMovieModel.States = tagsMovieModel.States + " " + tagData.Tag.Name;
+                    }
+                    if (tagData.Tag.Type.Equals("actor"))
+                    {
+                        tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tagData.Tag.Name;
+                    }
+                }
+                model.tagsMovieModel = tagsMovieModel;
+                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+
+                foreach (var projection in projectionsForThisMovie)
+                {
+                    model.listOfProjections.Add(new ProjectionDomainModel()
+                    {
+                        Id = projection.Id,
+                        ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                        AuditoriumName = projection.Auditorium.Name
+                    });
+
+                }
                 result.Add(model);
             }
             return result;
@@ -138,7 +296,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 _movieTagsRepository.Insert(movieTag);
             }
 
-            if (movieCreateTagDomainModel.tagsForMovieToAdd!= null && movieCreateTagDomainModel.tagsForMovieToAdd.Count>0)
+            if (movieCreateTagDomainModel.tagsForMovieToAdd != null && movieCreateTagDomainModel.tagsForMovieToAdd.Count > 0)
             {
                 foreach (var item in movieCreateTagDomainModel.tagsForMovieToAdd)
                 {
@@ -173,7 +331,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
         {
             var item = await _moviesRepository.GetByIdAsync(updateMovie.Id);
 
-            var projections = await _projectionsRepository.GetAllFromOneMovie(updateMovie.Id);
+            var projections = _projectionsRepository.GetAllFromOneMovie(updateMovie.Id);
 
             if (projections != null)
             {
@@ -242,7 +400,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
                 return null;
             }
             //ako je current=true i ima projekciju, ne moze biti false
-            var projections = await _projectionsRepository.GetAllFromOneMovie(id);
+            var projections = _projectionsRepository.GetAllFromOneMovie(id);
             if (item.Current)
             {
                 if (projections != null)
@@ -327,7 +485,7 @@ namespace WinterWorkShop.Cinema.Domain.Services
             {
                 return null;
             }
-            var projectionsForDelete = await _projectionsRepository.GetAllFromOneMovie(id);
+            var projectionsForDelete = _projectionsRepository.GetAllFromOneMovie(id);
             foreach (var projectionForDelete in projectionsForDelete)
             {
                 if (projectionForDelete.DateTime < DateTime.Now)
@@ -400,13 +558,17 @@ namespace WinterWorkShop.Cinema.Domain.Services
                     if (hasOskarListAnswer.Contains(true))
                     {
                         var firstElement = listaMovie[i];
-                        var secondElement = listaMovie[i-1];
+                        var secondElement = listaMovie[i - 1];
                         resultOrder.Remove(secondElement);
                         resultOrder.Add(firstElement);
                         resultOrder.Add(secondElement);
 
                     }
-                    resultOrder.Add(listaMovie[i]);
+                    else
+                    {
+                        resultOrder.Add(listaMovie[i]);
+                    }
+                    
 
                 }
                 else
@@ -420,18 +582,142 @@ namespace WinterWorkShop.Cinema.Domain.Services
 
             foreach (var item in finalOrder)
             {
+                TagsMovieModel tagsMovieModel = new TagsMovieModel();
+
                 model = new MovieDomainModel
                 {
                     Current = item.Current,
                     Id = item.Id,
                     Rating = item.Rating ?? 0,
                     Title = item.Title,
-                    Year = item.Year
+                    Year = item.Year,
+                    listOfProjections = new List<ProjectionDomainModel>(),
+                    tagsMovieModel = new TagsMovieModel(),
                 };
+                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+
+                foreach (var projection in projectionsForThisMovie)
+                {
+                    model.listOfProjections.Add(new ProjectionDomainModel()
+                    {
+                        Id = projection.Id,
+                        ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                        AuditoriumName = projection.Auditorium.Name,
+                        CinemaName = projection.Auditorium.Cinema.Name
+                    });
+
+                }
+                var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+
+                foreach (var tag in TagsForMovie)
+                {
+                    if (tag.Tag.Type.Equals("director"))
+                    {
+                        tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("genre"))
+                    {
+                        tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("duration"))
+                    {
+                        tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("aword"))
+                    {
+                        tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("language"))
+                    {
+                        tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("state"))
+                    {
+                        tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("actor"))
+                    {
+                        tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
+                    }
+                }
+                model.tagsMovieModel = tagsMovieModel;
                 result.Add(model);
 
             }
             return result;
+        }
+
+        public async Task<IEnumerable<MovieDomainModel>> GetCurrentMoviesWithoutProjections()
+        {
+            var data = await _moviesRepository.GetAll();
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<MovieDomainModel> result = new List<MovieDomainModel>();
+            MovieDomainModel model;
+            foreach (var item in data)
+            {
+                TagsMovieModel tagsMovieModel = new TagsMovieModel();
+
+                model = new MovieDomainModel
+                {
+                    Current = item.Current,
+                    Id = item.Id,
+                    Rating = item.Rating ?? 0,
+                    Title = item.Title,
+                    Year = item.Year,
+                    listOfProjections = new List<ProjectionDomainModel>(),
+                    tagsMovieModel = new TagsMovieModel()
+                };
+                var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+
+                foreach (var tag in TagsForMovie)
+                {
+                    if (tag.Tag.Type.Equals("director"))
+                    {
+                        tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("genre"))
+                    {
+                        tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("duration"))
+                    {
+                        tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("aword"))
+                    {
+                        tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("language"))
+                    {
+                        tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("state"))
+                    {
+                        tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("actor"))
+                    {
+                        tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
+                    }
+                }
+                model.tagsMovieModel = tagsMovieModel;
+                IEnumerable<Projection> lista = new List<Projection>();
+
+                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id).ToList();
+                if (projectionsForThisMovie == null || projectionsForThisMovie.Count==0)
+                {
+                    result.Add(model);
+                }
+
+            }
+
+            return result;
+
         }
 
         public async Task<IEnumerable<MovieDomainModel>> GetCurrentMovies()
@@ -447,15 +733,153 @@ namespace WinterWorkShop.Cinema.Domain.Services
             MovieDomainModel model;
             foreach (var item in data)
             {
+                TagsMovieModel tagsMovieModel = new TagsMovieModel();
+
                 model = new MovieDomainModel
                 {
                     Current = item.Current,
                     Id = item.Id,
                     Rating = item.Rating ?? 0,
                     Title = item.Title,
-                    Year = item.Year
+                    Year = item.Year,
+                    listOfProjections = new List<ProjectionDomainModel>(),
+                    tagsMovieModel = new TagsMovieModel(),
                 };
+                IEnumerable<Projection> lista = new List<Projection>();
+                var projectionsForThisMovie = _projectionsRepository.GetAllFromOneMovie(item.Id);
+                foreach (var projection in projectionsForThisMovie)
+                {
+                    model.listOfProjections.Add(new ProjectionDomainModel()
+                    {
+                        Id = projection.Id,
+                        ProjectionTimeString = projection.DateTime.ToString("MM/dd/yyyy HH:mm"),
+                        AuditoriumName = projection.Auditorium.Name,
+                        CinemaName = projection.Auditorium.Cinema.Name
+                    });
+
+                }
+                var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+
+                foreach (var tag in TagsForMovie)
+                {
+                    if (tag.Tag.Type.Equals("director"))
+                    {
+                        tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("genre"))
+                    {
+                        tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("duration"))
+                    {
+                        tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("aword"))
+                    {
+                        tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("language"))
+                    {
+                        tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("state"))
+                    {
+                        tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
+                    }
+                    if (tag.Tag.Type.Equals("actor"))
+                    {
+                        tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
+                    }
+                }
+                model.tagsMovieModel = tagsMovieModel;
                 result.Add(model);
+            }
+
+            return result;
+
+        }
+        public async Task<IEnumerable<MovieDomainModel>> GetCurrentMoviesForToday()
+        {
+            var data = await _moviesRepository.GetCurrentMoviesWithProjectionsForToday();
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            List<MovieDomainModel> result = new List<MovieDomainModel>();
+            MovieDomainModel model;
+            foreach (var item in data)
+            {
+                TagsMovieModel tagsMovieModel = new TagsMovieModel();
+
+                model = new MovieDomainModel
+                {
+                    Current = item.Current,
+                    Id = item.Id,
+                    Rating = item.Rating ?? 0,
+                    Title = item.Title,
+                    Year = item.Year,
+                    listOfProjections = new List<ProjectionDomainModel>(),
+                    tagsMovieModel = new TagsMovieModel()
+
+                };
+
+                IEnumerable<Projection> lista = new List<Projection>();
+
+                var dayToday = DateTime.Now.DayOfYear;
+                var yearToday = DateTime.Now.Year;
+
+                var projectionsForThisMovieAll = _projectionsRepository.GetAllFromOneMovie(item.Id);
+                var projectionsForThisMovieToday = projectionsForThisMovieAll.Where(x => x.DateTime.DayOfYear == dayToday && x.DateTime.Year == yearToday).ToList();
+                if (projectionsForThisMovieToday != null && projectionsForThisMovieToday.Count>0)
+                {
+                    foreach (var projection in projectionsForThisMovieToday)
+                    {
+                        model.listOfProjections.Add(new ProjectionDomainModel()
+                        {
+                            Id = projection.Id,
+                            ProjectionTimeString = projection.DateTime.ToString("hh:mm tt"),
+                            AuditoriumName = projection.Auditorium.Name,
+                            CinemaName = projection.Auditorium.Cinema.Name
+                        });
+                    }
+                    var TagsForMovie = _movieTagsRepository.GetAllForSpecificMovie(item.Id).Result.ToList();
+                    foreach (var tag in TagsForMovie)
+                    {
+                        if (tag.Tag.Type.Equals("director"))
+                        {
+                            tagsMovieModel.Directores = tagsMovieModel.Directores + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("genre"))
+                        {
+                            tagsMovieModel.Generes = tagsMovieModel.Generes + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("duration"))
+                        {
+                            tagsMovieModel.Duration = tagsMovieModel.Duration + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("aword"))
+                        {
+                            tagsMovieModel.Awards = tagsMovieModel.Awards + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("language"))
+                        {
+                            tagsMovieModel.Languages = tagsMovieModel.Languages + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("state"))
+                        {
+                            tagsMovieModel.States = tagsMovieModel.States + " " + tag.Tag.Name;
+                        }
+                        if (tag.Tag.Type.Equals("actor"))
+                        {
+                            tagsMovieModel.Actores = tagsMovieModel.Actores + " " + tag.Tag.Name;
+                        }
+                    }
+                    model.tagsMovieModel = tagsMovieModel;
+                    result.Add(model);
+                }
+
             }
 
             return result;

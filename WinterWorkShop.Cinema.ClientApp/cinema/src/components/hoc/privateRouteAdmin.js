@@ -6,12 +6,12 @@ import * as authCheck from '../helpers/authCheck';
 export const PrivateRouteAdmin = ({ component: Component, ...rest }) => {
     useEffect(() => {
         if(!authCheck.isAdmin()){
-            NotificationManager.error('You shall not pass!');
+            NotificationManager.error('Only admin can access that page!');
         }
       });
     return (
     <Route {...rest} render={ props => localStorage.getItem('jwt') && authCheck.isAdmin() ? ( <Component {...props} />) : 
-            ( <Redirect to={{ pathname: "/", state: { from: props.location } }} />
+             ( <Redirect to={{ pathname: "/dashboard"}} />
         )}/>
     )
 }

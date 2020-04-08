@@ -11,5 +11,6 @@ namespace WinterWorkShop.Cinema.Domain.Models
         public List<TagForMovieDomainModel> languages { get; set; }
         public List<TagForMovieDomainModel> states { get; set; }
         public List<TagForMovieDomainModel> awords { get; set; }
+        public List<TagForMovieDomainModel> directors { get; set; }
     }
 }

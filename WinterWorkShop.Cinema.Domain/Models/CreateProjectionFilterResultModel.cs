@@ -6,7 +6,7 @@ namespace WinterWorkShop.Cinema.Domain.Models
 {
     public class CreateProjectionFilterResultModel
     {
-        public ProjectionDomainFilterModel Projection { get; set; }
+        public List<ProjectionDomainFilterModel> Projections { get; set; }
         public bool IsSuccessful { get; set; }
         public string ErrorMessage { get; set; }
     }

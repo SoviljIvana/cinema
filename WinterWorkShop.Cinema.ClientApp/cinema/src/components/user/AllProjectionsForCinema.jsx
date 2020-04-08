@@ -1,37 +1,127 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { Container, Col, Card, Button, ListGroupItem } from 'react-bootstrap';
+import { Container, Card, Button, Form, FormControl, Nav, Navbar, Row } from 'react-bootstrap';
 import { NotificationManager } from 'react-notifications';
 import { serviceConfig } from '../../appSettings';
-import { Row, Table } from 'react-bootstrap';
 import Spinner from '../Spinner';
 import ReactStars from 'react-stars';
 import ListGroup from 'react-bootstrap/ListGroup';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import { Fade } from 'react-slideshow-image';
+import Image4 from './sliderPictures/movie4.png';
+import Image2 from './sliderPictures/movie2.jpg';
+import Image3 from './sliderPictures/movie3.png';
+import Image1 from './sliderPictures/movie1.png';
+import Image5 from './sliderPictures/movie6.png';
 
+import './App.css';
+import { Link } from 'react-router-dom';
+const fadeImages = [
+  Image1,
+  Image2,
+  Image3,
+  Image4,
+  Image5
+];
+
+const fadeProperties = {
+  duration: 5000,
+  transitionDuration: 500,
+  infinite: false,
+  indicators: true,
+  onChange: (oldIndex, newIndex) => {
+    console.log(`fade transition from ${oldIndex} to ${newIndex}`);
+  }
+}
 const ratingChanged = (newRating) => {
   console.log(newRating)
 }
+
 class AllProjectionsForCinema extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      projections: [],
       movies: [],
       isLoading: true,
-      projectionTime: '',
-      movieId: '',
-      auditoriumId: '',
-      auditoriumName: ''
+      searchData: ''
     };
-    this.details = this.details.bind(this);
+    this.seatsForProjection = this.seatsForProjection.bind(this);
+    this.renderProjectionButtons = this.renderProjectionButtons.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleTopTen = this.handleTopTen.bind(this);
+    this.handleShowAll = this.handleShowAll.bind(this);
+  }
+
+  handleChange(e) {
+    const { id, value } = e.target;
+    this.setState({ [id]: value });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    this.setState({ submitted: true });
+    const { searchData } = this.state;
+    if (searchData) {
+      this.getSearch(searchData);
+    } else {
+      NotificationManager.error('Please fill in data');
+      this.setState({ submitted: false });
+    }
+  }
+
+  handleTopTen(e) {
+    e.preventDefault();
+    this.setState({ submitted: true });
+    this.getTopTenMovies();
+  }
+
+  handleShowAll(e) {
+    e.preventDefault();
+    this.setState({ submitted: true });
+    this.getAllMovies();
   }
 
   componentDidMount() {
-    this.getProjections();
+    const token = localStorage.getItem('jwt');
+    if(!token){this.guestToken();
+    }else{
+      var jwtDecoder = require('jwt-decode');
+      const decodedToken = jwtDecoder(token);
+      var role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      if((role != 'user') && (role != 'admin') && (role != 'superUser')){
+        this.guestToken();}
+    }
+    this.getMovies();
+
   }
 
-  getProjections() {
+  guestToken() {
+    const requestOptions = {
+      method: 'GET',
+      headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('jwt')}
+    };
+
+    fetch(`${serviceConfig.baseURL}/get-token?name=gost&guest=true&admin=false&superUser=false`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem("jwt", data.token);
+        }
+      })
+      .catch(response => {
+        NotificationManager.error("Unable to sign in. ");
+        this.setState({ submitted: false });
+      });
+  }
+
+  getSearch(searchData) {
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -40,7 +130,7 @@ class AllProjectionsForCinema extends Component {
       }
     };
     this.setState({ isLoading: true });
-    fetch(`${serviceConfig.baseURL}/api/Movies/current`, requestOptions)
+    fetch(`${serviceConfig.baseURL}/api/Movies/search/${searchData}`, requestOptions)
       .then(response => {
         if (!response.ok) {
           return Promise.reject(response);
@@ -54,53 +144,208 @@ class AllProjectionsForCinema extends Component {
       })
       .catch(response => {
         this.setState({ isLoading: false });
+        NotificationManager.error("No results, please try again. ");
+        this.setState({ submitted: false });
+      });
+  }
+
+  getAllMovies() {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+    };
+    this.setState({ isLoading: true });
+    fetch(`${serviceConfig.baseURL}/api/Movies/currentMoviesWithProjections`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({
+            movies: data,
+            isLoading: false
+          });
+        }
+
+      })
+      .catch(response => {
+        this.setState({ isLoading: false });
+        NotificationManager.error(response.message || response.statusText);
+        this.setState({ submitted: false });
+      });
+
+  }
+
+  getMovies() {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+    };
+    this.setState({ isLoading: true });
+    fetch(`${serviceConfig.baseURL}/api/Movies/currentMoviesWithProjectionsForToday`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({
+            movies: data,
+            isLoading: false
+          });
+        }
+
+      })
+      .catch(response => {
+        this.setState({ isLoading: false });
         NotificationManager.error(response.message || response.statusText);
         this.setState({ submitted: false });
       });
   }
 
-  
-  fillTableWithDaata() {
-    return this.state.movies.map(movie => {
-      return <tr key={movie.id}>
-        <br></br>
-        <Card border="primary" style={{ width: '100rem' }} key={movie.id}>
-          <Card.Header text="white" style={{ width: '99rem' }}><Button variant="link" className="text-center cursor-pointer" onClick={() => this.details(movie.id)}>{movie.title}</Button></Card.Header>
-          <ListGroup className="list-group-flush">
-            <ListGroupItem text="white" style={{ width: '99rem' }}>{movie.year}</ListGroupItem>
-            <ListGroupItem bg="dark" text="white" style={{ width: '99rem' }}>{<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'grey'} color2={'#ffd700'}/>}</ListGroupItem>
-          </ListGroup>
-        </Card>
-        <br />
-      </tr>
+  getTopTenMovies() {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+    };
+    this.setState({ isLoading: true });
+    fetch(`${serviceConfig.baseURL}/api/Movies/top`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          this.setState({
+            movies: data,
+            isLoading: false
+          });
+        }
+
+      })
+      .catch(response => {
+        this.setState({ isLoading: false });
+        NotificationManager.error(response.message || response.statusText);
+        this.setState({ submitted: false });
+      });
+
+  }
+
+  seatsForProjection(id) {
+    this.props.history.push(`projectionDetails/allForProjection/` + `${id}`);
+  }
+
+  renderProjectionButtons(listOfProjections) {
+    return listOfProjections.map((list) => {
+    return <ListGroup.Item key={list.id}><Button variant="dark" onClick={() => this.seatsForProjection(list.id)}>{list.cinemaName}-{list.projectionTimeString}</Button></ListGroup.Item>
     })
   }
 
-  details(id) {
-    this.props.history.push(`projectiondetails/${id}`);
+  fillTableWithDaata() {
+
+    return this.state.movies.map(movie => {
+      return <div key={movie.id} >
+        <br></br>
+        <div class="movie" style={{ width: '100rem' }} key={movie.id}>
+          <Card.Header class="sub-section-title" as="h5">{movie.title}</Card.Header>
+          <ListGroup class="movie-details" variant="flush">
+            <ListGroup.Item > Year: {movie.year}</ListGroup.Item>
+            <ListGroup.Item > Rating:<ReactStars count={10} onChange={ratingChanged} edit={false} size={37} value={movie.rating} color1={'black'} color2={'#ffd700'} /></ListGroup.Item >
+            <ListGroup.Item > Projections:{this.renderProjectionButtons(movie.listOfProjections)}</ListGroup.Item>
+    <ListGroup.Item><b>Genres:</b> {movie.tagsMovieModel.generes}<br></br><b>Directories:</b> {movie.tagsMovieModel.directores}<br></br><b> Duration: </b>{movie.tagsMovieModel.duration} min <br></br><b> Awards:</b> {movie.tagsMovieModel.awards}
+    
+    <br></br> <b>Languages:</b>{movie.tagsMovieModel.languages}<br></br> <b>States:</b> {movie.tagsMovieModel.states}<br></br> <b>Actors:</b> {movie.tagsMovieModel.actores}
+     </ListGroup.Item>
+
+          </ListGroup>
+        </div>
+        <br />
+      </div>
+    })
   }
 
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, searchData } = this.state;
     const rowsData = this.fillTableWithDaata();
-    const table = (<Table striped bordered hover size="sm">
+    const table = (<table class="tablesaw tablesaw-stack" data-tablesaw-mode="stack">
       <tbody>
         {rowsData}
       </tbody>
-    </Table>);
+    </table>);
     const showTable = isLoading ? <Spinner></Spinner> : table;
     return (
-      <React.Fragment>
-        <Row className="no-gutters pr-5 pl-5">
-          <br>
-          </br>
+      <Row className="no-gutters pr-5 pl-5">
+        <p className="slide-container">
+          <Fade {...fadeProperties}>
+     
+            <div className="each-fade">
+              <img src={fadeImages[0]} />
+            </div>
+            <div className="each-fade">
+              <img src={fadeImages[1]} />
+              
+            </div>
+            <div className="each-fade">
+              <img src={fadeImages[2]} />
+              
+            </div>
+            <div className="each-fade">
+              <img src={fadeImages[3]} />
+              
+            </div>
+            <div className="each-fade">
+              <img src={fadeImages[4]} />
+              
+            </div>
+          </Fade>
+        </p>
+        <Navbar className="slide-container" expand="lg" variant="light" bg="light">
+          <Nav justify variant="tabs" className="mr-auto">
+            <Container>
+              <Navbar.Brand><Button size="lg" variant="outline-dark" onClick={this.handleShowAll}>Show Current movies</Button> </Navbar.Brand>
+              <Navbar.Brand><Button size="lg" variant="outline-dark" onClick={this.handleTopTen}>Show Top 10 Movies</Button> </Navbar.Brand>
+              <Navbar.Brand><Link to='/ProjectionsFilterForCinema'><Button size="lg" variant="outline-dark">Filter projections</Button></Link></Navbar.Brand>
+              <Navbar.Toggle className="text-white" />
+              <Navbar.Collapse id="basic-navbar-nav" className="text-white">
+              </Navbar.Collapse>
+            </Container>
+          </Nav>
+          <Form inline onSubmit={this.handleSubmit}>
+            <FormControl size="lg"
+              type="text" className="form-control mr-sm-2" placeholder="Insert tag or movie title" aria-label="Search" for='searchData'
+              className="mr-sm-2"
+              id='searchData'
+              type='text'
+              value={searchData}
+              onChange={this.handleChange} />
+            <Button size="lg" type="submit" variant="outline-dark" className="mr-1">Search Movies</Button>
+          </Form>
+        </Navbar>
+        <div>
           {showTable}
-          <br>
-          </br>
-        </Row>
-      </React.Fragment>
+        </div>
+      </Row>
     );
   }
 }
-
 export default AllProjectionsForCinema;
+
+
+
+               

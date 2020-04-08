@@ -39,7 +39,7 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public async Task<IEnumerable<MovieTag>> GetAllForSpecificMovie(Guid id)
         {
-            var data = await _cinemaContext.MovieTags.Include(m => m.Movie).Where(m=>m.MovieId == id).ToListAsync();
+            var data = await _cinemaContext.MovieTags.Include(m=>m.Tag).Include(m => m.Movie).Where(m=>m.MovieId == id).ToListAsync();
             return data;
         }
 
@@ -49,7 +49,7 @@ namespace WinterWorkShop.Cinema.Repositories
         }
         public Tag GetOskarId()
         {
-            var oskarTag = _cinemaContext.Tags.SingleOrDefault(x => x.Name.Equals("oskar"));
+            var oskarTag = _cinemaContext.Tags.SingleOrDefault(x => x.Name.Equals("Oscar"));
             return oskarTag;
         }
 

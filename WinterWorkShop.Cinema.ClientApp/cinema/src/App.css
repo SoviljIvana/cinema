@@ -3,7 +3,7 @@
 }
 
 .dashboard-navigation{
-  background-color: #3e444a;
+  background-color: white;
 }
 
 .app-content-main{
@@ -40,11 +40,11 @@
 .table-cinema-auditorium td {
   border: 1px solid black;
   padding: 15px !important;
-  background-color: blue;
+  background-color:  rgb(230, 20, 65);
 }
 
 .table-cinema-auditorium td:hover {
-  background-color: darkblue;
+  background-color:rgb(212, 99, 133);
   cursor: pointer;
 }
 
@@ -53,7 +53,7 @@
 }
 
 .cinema-screen {
-  background-color: blue;
+  background-color: rgb(230, 20, 65);
   height: 25px;
   width: 90%;
 }

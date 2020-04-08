@@ -34,23 +34,25 @@ namespace WinterWorkShop.Cinema.Tests.Services
         [TestInitialize]
         public void TestInitialize()
         {
+            _cinema = new Data.Cinema()
+            {
+                Name = "CinemaName",
+                Id = 1
+            };
             _auditorium = new Auditorium()
             {
                 Id = 1,
                 CinemaId = 1,
                 Name = "AuditoriumName",
-                Seats = new List<Seat>()
+                Seats = new List<Seat>(),
+                Cinema = _cinema
             };
             _auditoriumDomainModel = new AuditoriumDomainModel()
             {
                 Id = 1,
                 Name = "AuditoriumName",
-                CinemaId = 1
-            };
-            _cinema = new Data.Cinema()
-            {
-                Name = "CinemaName",
-                Id = 1
+                CinemaId = 1,
+                CinemaName = "CinemaName"
             };
             _newAuditorium = new Auditorium();
             _newAuditorium = _auditorium;

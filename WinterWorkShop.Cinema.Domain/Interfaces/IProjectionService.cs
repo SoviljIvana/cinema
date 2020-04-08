@@ -9,16 +9,16 @@ namespace WinterWorkShop.Cinema.Domain.Interfaces
     public interface IProjectionService
     {
         Task<IEnumerable<ProjectionDomainModel>> GetAllAsync();
-        Task<CreateProjectionResultModel> CreateProjection(ProjectionDomainModel domainModel);
-        Task<IEnumerable<CreateProjectionFilterResultModel>> FilterAllProjections(string searchData);
-        Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByMovieName(string searchData);
-        Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByCinemaName(string searchData);
-        Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByAuditoriumName(string searchData);
-        Task<IEnumerable<CreateProjectionFilterResultModel>> FilterProjectionsByDates(DateTime startDate, DateTime endDate);
+        Task<ProjectionResultModel> CreateProjection(ProjectionDomainModel domainModel);
+        Task<CreateProjectionFilterResultModel> FilterAllProjections(string searchData);
+        Task<CreateProjectionFilterResultModel> FilterProjectionsByMovieName(string searchData);
+        Task<CreateProjectionFilterResultModel> FilterProjectionsByCinemaName(string searchData);
+        Task<CreateProjectionFilterResultModel> FilterProjectionsByAuditoriumName(string searchData);
+        Task<CreateProjectionFilterResultModel> FilterProjectionsByDates(DateTime startDate, DateTime endDate);
         Task<IEnumerable<ProjectionDomainModel>> GetAllAsyncForSpecificMovie(Guid id);
 
 
-        Task<CreateProjectionResultModel> DeleteProjection(Guid id);
+        Task<ProjectionResultModel> DeleteProjection(Guid id);
 
 
 

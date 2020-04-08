@@ -17,6 +17,7 @@ namespace WinterWorkShop.Cinema.Domain.Models
         public Guid UserId { get; set; }
         public string UserName { get; set; }
         public bool Paid { get; set; }
+        public string ProjectionTime { get; set; }
 
         //public List<SeatDomainModel> ReservedSeats { get; set; }
     }

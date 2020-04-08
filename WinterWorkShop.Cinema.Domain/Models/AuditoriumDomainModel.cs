@@ -16,5 +16,6 @@ namespace WinterWorkShop.Cinema.Domain.Models
 
         public int SeatRows { get; set; }
         public int NumberOfSeats { get; set; }
+        public string CinemaName { get; set; }
     }
 }

@@ -30,6 +30,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
         /// Gets all auditoriums
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = "guest, user, superUser, admin")]
         [HttpGet]
         [Route("all")]
         public async Task<ActionResult<IEnumerable<AuditoriumDomainModel>>> GetAsync()
@@ -40,9 +41,27 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
             if (auditoriumDomainModels == null)
             {
-                auditoriumDomainModels = new List<AuditoriumDomainModel>();
+                return NotFound(Messages.AUDITORIUM_NOT_FOUND);
             }
+            return Ok(auditoriumDomainModels);
+        }
 
+        /// <summary>
+        /// Gets all auditoriums
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("cinema/{id}")]
+        public async Task<ActionResult<IEnumerable<AuditoriumDomainModel>>> GetAuditoriumsForCinema(int id)
+        {
+            IEnumerable<AuditoriumDomainModel> auditoriumDomainModels;
+
+            auditoriumDomainModels = _auditoriumService.GetAllOfSpecificCinema(id);
+
+            if (auditoriumDomainModels == null)
+            {
+                return NotFound(Messages.AUDITORIUM_NOT_FOUND);
+            }
             return Ok(auditoriumDomainModels);
         }
 
@@ -98,6 +117,8 @@ namespace WinterWorkShop.Cinema.API.Controllers
 
         [HttpGet]
         [Route("{id}")]
+        [Authorize(Roles = "guest, user, superUser, admin")]
+
         public async Task<ActionResult<AuditoriumDomainModel>> GetAsync(int id)
         {
             AuditoriumDomainModel auditorium;
@@ -107,11 +128,12 @@ namespace WinterWorkShop.Cinema.API.Controllers
             if (auditorium == null)
             {
                 return NotFound(Messages.AUDITORIUM_DOES_NOT_EXIST);
-
             }
 
             return Ok(auditorium);
         }
+
+
 
         /// <summary>
         /// Updates an auditorium
@@ -138,14 +160,11 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 ErrorResponseModel errorResponse = new ErrorResponseModel
                 {
                     ErrorMessage = Messages.AUDITORIUM_DOES_NOT_EXIST,
-                    StatusCode = System.Net.HttpStatusCode.BadRequest
+                    StatusCode = System.Net.HttpStatusCode.NotFound
                 };
 
-                return BadRequest(errorResponse);
+                return NotFound(errorResponse);
             }
-
-            if(auditoriumModel.cinemaId!=0)
-                auditoriumToUpdate.CinemaId = auditoriumModel.cinemaId;
 
             if (auditoriumModel.numberOfSeats != 0)
                 auditoriumToUpdate.NumberOfSeats = auditoriumModel.numberOfSeats;
@@ -154,6 +173,7 @@ namespace WinterWorkShop.Cinema.API.Controllers
                 auditoriumToUpdate.SeatRows = auditoriumModel.seatRows;
 
             auditoriumToUpdate.Name = auditoriumModel.name;
+            auditoriumToUpdate.CinemaId = auditoriumModel.cinemaId;
 
             AuditoriumResultModel auditoriumDomainModel;
             try

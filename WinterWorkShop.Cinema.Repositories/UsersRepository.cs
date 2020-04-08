@@ -38,12 +38,15 @@ namespace WinterWorkShop.Cinema.Repositories
 
         public async Task<User> GetByIdAsync(object id)
         {
-            return await _cinemaContext.Users.FindAsync(id);
+            var data = await _cinemaContext.Users.FindAsync(id);
+            return data;
         }
+
+      
 
         public User GetByUserName(string username)
         {
-            var data = _cinemaContext.Users.SingleOrDefault(x => x.UserName == username);
+            var data = _cinemaContext.Users.Include(x=>x.Tickets).SingleOrDefault(x => x.UserName == username);
 
             return data;
         }
